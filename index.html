@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v4.0</title>
+<title>VocaMate v4.1</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -75,11 +75,48 @@ let words=JSON.parse(localStorage.getItem(KEY)||'[]');
 let currentPage='home', quizIndex=0;
 
 const fallback={
+ significant:{type:'adjective',phonetic:'/sɪɡˈnɪfɪkənt/',definition:'important or notable; having a clear or meaningful effect',meaning:'önemli, kayda değer, anlamlı',example:'The study found a significant difference between the two groups.',synonyms:'important, notable, considerable',antonyms:'insignificant, minor'},
  substantial:{type:'adjective',phonetic:'/səˈstænʃəl/',definition:'of considerable importance, size, or worth',meaning:'önemli, kayda değer; büyük miktarda',example:'The project requires a substantial amount of time.',synonyms:'considerable, significant',antonyms:'insignificant, minor'},
  mitigate:{type:'verb',phonetic:'/ˈmɪtɪɡeɪt/',definition:'to make something less severe, harmful, or painful',meaning:'hafifletmek, azaltmak',example:'Governments should take measures to mitigate the effects of climate change.',synonyms:'alleviate, reduce',antonyms:'aggravate, intensify'},
  allocate:{type:'verb',phonetic:'/ˈæləkeɪt/',definition:'to give or distribute something for a particular purpose',meaning:'tahsis etmek, ayırmak',example:'The university allocated more funds to research.',synonyms:'assign, distribute',antonyms:'withhold'},
  inevitable:{type:'adjective',phonetic:'/ɪnˈevɪtəbəl/',definition:'certain to happen and impossible to avoid',meaning:'kaçınılmaz',example:'Some changes are inevitable.',synonyms:'unavoidable, certain',antonyms:'avoidable, uncertain'},
- enhance:{type:'verb',phonetic:'/ɪnˈhæns/',definition:'to improve the quality, value, or effectiveness of something',meaning:'geliştirmek, artırmak',example:'The new system will enhance customer experience.',synonyms:'improve, strengthen',antonyms:'weaken, reduce'}
+ enhance:{type:'verb',phonetic:'/ɪnˈhæns/',definition:'to improve the quality, value, or effectiveness of something',meaning:'geliştirmek, artırmak',example:'The new system will enhance customer experience.',synonyms:'improve, strengthen',antonyms:'weaken, reduce'},
+ abundant:{type:'adjective',phonetic:'/əˈbʌndənt/',definition:'existing or available in large quantities',meaning:'bol, çok miktarda',example:'The region has abundant natural resources.',synonyms:'plentiful, ample',antonyms:'scarce'},
+ acquire:{type:'verb',phonetic:'/əˈkwaɪər/',definition:'to get or obtain something',meaning:'edinmek, elde etmek',example:'Students acquire new skills through practice.',synonyms:'obtain, gain',antonyms:'lose'},
+ adapt:{type:'verb',phonetic:'/əˈdæpt/',definition:'to change in order to suit a new situation',meaning:'uyum sağlamak, adapte olmak',example:'Animals adapt to changes in their environment.',synonyms:'adjust, modify',antonyms:'resist'},
+ adjacent:{type:'adjective',phonetic:'/əˈdʒeɪsənt/',definition:'next to or near something else',meaning:'bitişik, komşu',example:'The laboratory is adjacent to the main building.',synonyms:'neighboring, adjoining',antonyms:'distant'},
+ advocate:{type:'verb',phonetic:'/ˈædvəkeɪt/',definition:'to publicly support an idea or policy',meaning:'savunmak, desteklemek',example:'Many scientists advocate stronger environmental policies.',synonyms:'support, promote',antonyms:'oppose'},
+ assess:{type:'verb',phonetic:'/əˈses/',definition:'to evaluate or estimate the nature, quality, or value of something',meaning:'değerlendirmek',example:'Researchers assessed the impact of the program.',synonyms:'evaluate, examine',antonyms:'ignore'},
+ coherent:{type:'adjective',phonetic:'/koʊˈhɪrənt/',definition:'logical, consistent, and easy to understand',meaning:'tutarlı, anlaşılır',example:'The essay presents a coherent argument.',synonyms:'logical, consistent',antonyms:'incoherent, confusing'},
+ controversial:{type:'adjective',phonetic:'/ˌkɑːntrəˈvɜːrʃəl/',definition:'causing disagreement or strong public discussion',meaning:'tartışmalı',example:'The proposal remains controversial.',synonyms:'debatable, disputed',antonyms:'uncontroversial'},
+ decline:{type:'verb',phonetic:'/dɪˈklaɪn/',definition:'to become smaller, weaker, or less',meaning:'azalmak, düşüş göstermek',example:'The population began to decline.',synonyms:'decrease, diminish',antonyms:'increase, rise'},
+ demonstrate:{type:'verb',phonetic:'/ˈdemənstreɪt/',definition:'to show clearly by evidence or example',meaning:'göstermek, kanıtlamak',example:'The experiment demonstrates the importance of sleep.',synonyms:'show, illustrate',antonyms:'conceal'},
+ derive:{type:'verb',phonetic:'/dɪˈraɪv/',definition:'to get something from a particular source',meaning:'elde etmek, türetmek',example:'Many medicines are derived from plants.',synonyms:'obtain, originate',antonyms:'lose'},
+ diminish:{type:'verb',phonetic:'/dɪˈmɪnɪʃ/',definition:'to become or make something smaller or less important',meaning:'azalmak, azaltmak',example:'The effect of the treatment diminished over time.',synonyms:'decrease, reduce',antonyms:'increase'},
+ empirical:{type:'adjective',phonetic:'/ɪmˈpɪrɪkəl/',definition:'based on observation or experiment rather than theory',meaning:'deneysel, gözleme dayalı',example:'The theory is supported by empirical evidence.',synonyms:'observational, experimental',antonyms:'theoretical'},
+ facilitate:{type:'verb',phonetic:'/fəˈsɪləteɪt/',definition:'to make an action or process easier',meaning:'kolaylaştırmak',example:'Technology can facilitate communication.',synonyms:'enable, assist',antonyms:'hinder, obstruct'},
+ fluctuate:{type:'verb',phonetic:'/ˈflʌktʃueɪt/',definition:'to change frequently in amount or level',meaning:'dalgalanmak, değişkenlik göstermek',example:'Prices fluctuate throughout the year.',synonyms:'vary, change',antonyms:'stabilize'},
+ fundamental:{type:'adjective',phonetic:'/ˌfʌndəˈmentəl/',definition:'basic and essential to a system or idea',meaning:'temel, esas',example:'Trust is fundamental to a successful relationship.',synonyms:'basic, essential',antonyms:'secondary'},
+ hypothesis:{type:'noun',phonetic:'/haɪˈpɑːθəsɪs/',definition:'an idea or explanation that can be tested',meaning:'hipotez',example:'The researchers tested their hypothesis.',synonyms:'theory, proposition',antonyms:''},
+ imply:{type:'verb',phonetic:'/ɪmˈplaɪ/',definition:'to suggest something without saying it directly',meaning:'ima etmek, dolaylı olarak belirtmek',example:'The results imply that the method is effective.',synonyms:'suggest, indicate',antonyms:'state'},
+ implement:{type:'verb',phonetic:'/ˈɪmplɪment/',definition:'to put a plan or decision into effect',meaning:'uygulamak, hayata geçirmek',example:'The company implemented a new training program.',synonyms:'execute, apply',antonyms:'abandon'},
+ incentive:{type:'noun',phonetic:'/ɪnˈsentɪv/',definition:'something that encourages a person to do something',meaning:'teşvik, özendirici unsur',example:'Financial incentives can increase productivity.',synonyms:'motivation, encouragement',antonyms:'deterrent'},
+ incorporate:{type:'verb',phonetic:'/ɪnˈkɔːrpəreɪt/',definition:'to include something as part of a larger whole',meaning:'dahil etmek, birleştirmek',example:'The course incorporates practical exercises.',synonyms:'include, integrate',antonyms:'exclude'},
+ interpret:{type:'verb',phonetic:'/ɪnˈtɜːrprət/',definition:'to explain the meaning of information or results',meaning:'yorumlamak, açıklamak',example:'Scientists must interpret the results carefully.',synonyms:'explain, analyze',antonyms:'misinterpret'},
+ justify:{type:'verb',phonetic:'/ˈdʒʌstɪfaɪ/',definition:'to give a good reason for something',meaning:'haklı göstermek, gerekçelendirmek',example:'The evidence does not justify the conclusion.',synonyms:'defend, support',antonyms:'condemn'},
+ maintain:{type:'verb',phonetic:'/meɪnˈteɪn/',definition:'to keep something at the same level or in good condition',meaning:'sürdürmek, korumak',example:'It is important to maintain a healthy balance.',synonyms:'preserve, sustain',antonyms:'neglect'},
+ predominant:{type:'adjective',phonetic:'/prɪˈdɑːmɪnənt/',definition:'more important, common, or noticeable than others',meaning:'baskın, ağırlıklı',example:'Agriculture is the predominant industry in the region.',synonyms:'dominant, leading',antonyms:'minor'},
+ reinforce:{type:'verb',phonetic:'/ˌriːɪnˈfɔːrs/',definition:'to strengthen an idea, behavior, or structure',meaning:'güçlendirmek, pekiştirmek',example:'The findings reinforce the need for further research.',synonyms:'strengthen, support',antonyms:'weaken'},
+ relevant:{type:'adjective',phonetic:'/ˈreləvənt/',definition:'closely connected with the subject or situation',meaning:'ilgili, alakalı',example:'Please provide relevant information.',synonyms:'related, pertinent',antonyms:'irrelevant'},
+ require:{type:'verb',phonetic:'/rɪˈkwaɪər/',definition:'to need something or make something necessary',meaning:'gerektirmek, ihtiyaç duymak',example:'The task requires careful planning.',synonyms:'need, demand',antonyms:'waive'},
+ retain:{type:'verb',phonetic:'/rɪˈteɪn/',definition:'to keep something or continue to have it',meaning:'korumak, elde tutmak',example:'The brain can retain information through repetition.',synonyms:'keep, preserve',antonyms:'discard'},
+ significant:{type:'adjective',phonetic:'/sɪɡˈnɪfɪkənt/',definition:'important or notable; having a clear or meaningful effect',meaning:'önemli, kayda değer, anlamlı',example:'The study found a significant difference between the two groups.',synonyms:'important, notable, considerable',antonyms:'insignificant, minor'},
+ subsequent:{type:'adjective',phonetic:'/ˈsʌbsɪkwənt/',definition:'happening or coming after something else',meaning:'sonraki, müteakip',example:'Subsequent studies confirmed the original finding.',synonyms:'following, later',antonyms:'previous'},
+ sufficient:{type:'adjective',phonetic:'/səˈfɪʃənt/',definition:'enough for a particular purpose',meaning:'yeterli',example:'The evidence is sufficient to support the claim.',synonyms:'adequate, enough',antonyms:'insufficient'},
+ sustainable:{type:'adjective',phonetic:'/səˈsteɪnəbəl/',definition:'able to continue without causing serious long-term harm',meaning:'sürdürülebilir',example:'The city needs sustainable transport solutions.',synonyms:'viable, maintainable',antonyms:'unsustainable'},
+ valid:{type:'adjective',phonetic:'/ˈvælɪd/',definition:'based on sound reasoning or evidence',meaning:'geçerli, sağlam',example:'The researchers used a valid method.',synonyms:'sound, legitimate',antonyms:'invalid'},
+ whereas:{type:'conjunction',phonetic:'/werˈæz/',definition:'used to contrast two facts or situations',meaning:'oysa, halbuki',example:'The first group improved, whereas the second did not.',synonyms:'while, although',antonyms:''},
+ yield:{type:'verb',phonetic:'/jiːld/',definition:'to produce or provide a result',meaning:'üretmek, sonuç vermek',example:'The new method yielded better results.',synonyms:'produce, generate',antonyms:'consume'}
 };
 
 function save(){localStorage.setItem(KEY,JSON.stringify(words))}
@@ -117,7 +154,7 @@ function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</s
 function add(m){
  m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimelerini kategorize et.</div>
  <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
- <div class="meta" style="margin-top:12px">İnternet gerekir. Yaygın TOEFL kelimelerinde yedek sözlük de bulunur.</div><div id="result"></div></div>
+ <div class="meta" style="margin-top:12px">İnternet sözlüğü çalışmazsa yerleşik TOEFL sözlüğü devreye girer. Bilinmeyen kelimeleri de manuel ekleyebilirsin.</div><div id="result"></div></div>
  <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
 }
 async function prepareWord(){
@@ -134,8 +171,18 @@ async function prepareWord(){
     data={type:first.partOfSpeech||'',phonetic:x.phonetic||(x.phonetics||[]).find(p=>p.text)?.text||'',definition:d.definition||'',meaning:'',example:d.example||'',synonyms:(d.synonyms||[]).join(', '),antonyms:(d.antonyms||[]).join(', ')}}
   }catch(e){}
  }
- if(!data){result.innerHTML='<div class="info error">Kelime bilgisi alınamadı. İnternet bağlantını kontrol et veya farklı bir kelime dene.</div>';return}
- result.innerHTML=`<div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div><div class="mini"><b>Tanım</b>${esc(data.definition)}</div>
+ if(!data){
+  result.innerHTML=`<div class="info error">Bu kelime için otomatik bilgi bulunamadı.</div>
+  <div class="card" style="margin-top:12px"><div class="mini"><b>Manuel ekleme</b> Kelimeyi yine de kaydedebilirsin.</div>
+  <div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div>
+  <label>Türkçe anlam *</label><input id="meaning" placeholder="Türkçe anlamını yaz">
+  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
+  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
+  <label>Örnek cümlen</label><textarea id="example" placeholder="İstersen örnek cümle ekle"></textarea>
+  <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+  <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet</button></div></div>`;return}
+ const sourceNote=fallback[word]?'📚 Yerleşik TOEFL sözlüğünden bulundu':'🌐 İnternet sözlüğünden bulundu';
+ result.innerHTML=`<div class="info">${sourceNote}</div><div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div><div class="mini"><b>Tanım</b>${esc(data.definition)}</div>
  <div class="mini"><b>Telaffuz</b>${esc(data.phonetic||'—')} &nbsp; <b style="display:inline">Tür</b> ${esc(data.type||'—')}</div>
  <label>Türkçe anlam *</label><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Örn. önemli, kayda değer">
  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
