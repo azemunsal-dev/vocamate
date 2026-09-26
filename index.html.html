@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173B67">
+<title>VocaMate v2</title>
+<style>
+:root{--navy:#173B67;--blue:#2F6FED;--bg:#F5F7FA;--card:#fff;--text:#172033;--muted:#718096;--green:#1FA774;--red:#E05252}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 100px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.logo{font-weight:800;font-size:22px;color:var(--navy)}
+.streak{background:#fff;padding:9px 12px;border-radius:18px;font-weight:700;box-shadow:0 3px 14px #173b6712}
+h1{font-size:28px;margin:5px 0 4px}.sub{color:var(--muted);margin:0 0 20px}
+.progress-card{background:var(--navy);color:white;border-radius:22px;padding:20px;margin-bottom:16px}.row{display:flex;justify-content:space-between}
+.bar{height:9px;background:#ffffff35;border-radius:10px;margin-top:14px;overflow:hidden}.bar span{display:block;width:45%;height:100%;background:white;border-radius:10px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+button{border:0;border-radius:16px;padding:15px;font-size:15px;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#fff;color:var(--navy);box-shadow:0 4px 18px #173b6710}
+.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 5px 22px #173b6710;margin-bottom:16px}
+.word h2{font-size:36px;margin:12px 0 3px}.tag{display:inline-block;background:#EAF0FF;color:var(--blue);padding:6px 10px;border-radius:10px;font-size:12px;font-weight:800}.pron{color:var(--muted)}
+.meaning{font-size:20px;font-weight:700;margin:14px 0}.example,.note{background:#F7F9FC;border-radius:14px;padding:14px;line-height:1.5;margin-top:10px}
+.example b{color:var(--blue)}.rate{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.easy{background:#E7F7F0;color:#157A56}.hard{background:#FFF0F0;color:#B13E3E}
+.hidden{display:none!important}
+label{display:block;font-size:13px;font-weight:750;margin:14px 0 7px}input,textarea,select{width:100%;border:1px solid #DCE3EC;border-radius:13px;padding:13px;font:inherit;background:#fff;outline:none}input:focus,textarea:focus{border-color:var(--blue)}textarea{min-height:82px;resize:vertical}
+.save{width:100%;margin-top:18px;background:var(--blue);color:#fff}.word-list{display:grid;gap:10px}.word-item{background:#fff;border-radius:17px;padding:15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 12px #173b6710}.word-item strong{font-size:17px}.word-item small{color:var(--muted);display:block;margin-top:3px}
+.empty{text-align:center;color:var(--muted);padding:25px 10px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#ffffffee;backdrop-filter:blur(12px);border-top:1px solid #e8edf3;display:flex;justify-content:center;gap:35px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));z-index:5}
+nav button{background:none;padding:5px;color:var(--muted);font-size:12px}nav button.active{color:var(--navy)}
+.topbtn{float:right;background:#EAF0FF;color:var(--blue);padding:9px 12px;font-size:13px}.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#172033;color:white;padding:11px 16px;border-radius:14px;display:none;z-index:10;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">VocaMate</div><div class="streak">🔥 <span id="streak">1</span> gün</div></header>
+
+<section id="home">
+<h1>Bugünkü çalışma</h1><p class="sub">Kısa çalış, sık tekrar et.</p>
+<div class="progress-card"><div class="row"><strong>Günlük hedef</strong><strong><span id="learnedToday">0</span> / 20</strong></div><div class="bar"><span id="progressBar"></span></div><p style="margin:12px 0 0;opacity:.82"><span id="remaining">20</span> kelime daha</p></div>
+<div class="actions"><button class="primary" onclick="startLearn()">▶ Öğren</button><button class="secondary" onclick="showToast('Tekrar modu hazırlanıyor 🔄')">↻ Tekrar et</button></div>
+<div id="dailyCard" class="card word"><span class="tag">Örnek TOEFL kelimesi</span><h2>mitigate</h2><div class="pron">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <b>mitigate</b> the effects of climate change.</div><div class="rate"><button class="hard" onclick="rate('Zorlandım')">✕ Zorlandım</button><button class="easy" onclick="rate('Hatırladım')">✓ Hatırladım</button></div></div>
+</section>
+
+<section id="add" class="hidden">
+<h1>Yeni kelime <button class="topbtn" onclick="show('words')">Kelimelerim</button></h1><p class="sub">Kendi kelime defterini oluştur.</p>
+<div class="card">
+<label>İngilizce kelime *</label><input id="w" placeholder="ör. substantial">
+<label>Türkçe anlamı</label><input id="m" placeholder="ör. önemli, kayda değer">
+<label>Kelime türü</label><select id="type"><option>Verb</option><option>Noun</option><option>Adjective</option><option>Adverb</option><option>Other</option></select>
+<label>Örnek cümle</label><textarea id="ex" placeholder="Kelimeni kullandığın İngilizce cümle..."></textarea>
+<label>Benim notum</label><textarea id="note" placeholder="Nerede gördüm? Ne ile ilişkilendirdim?"></textarea>
+<button class="save" onclick="saveWord()">✓ Kelimeyi Kaydet</button>
+</div>
+</section>
+
+<section id="words" class="hidden">
+<h1>Kelimelerim</h1><p class="sub">Kendi eklediğin kelimeler burada.</p>
+<div id="wordList" class="word-list"></div>
+</section>
+
+<section id="quiz" class="hidden">
+<h1>Mini Quiz</h1><p class="sub">Kelimelerini hatırlamayı test et.</p>
+<div class="card" id="quizCard"></div>
+</section>
+
+<section id="stats" class="hidden">
+<h1>İlerlemem</h1><p class="sub">Vocabulary yolculuğun.</p>
+<div class="card"><div class="row"><strong>Toplam kelime</strong><strong id="total">0</strong></div><hr><div class="row"><strong>Bugün eklenen</strong><strong id="today">0</strong></div><hr><div class="row"><strong>Hatırlanan</strong><strong id="remembered">0</strong></div></div>
+</section>
+</div>
+
+<nav>
+<button id="navhome" class="active" onclick="show('home')">🏠<br>Ana sayfa</button>
+<button id="navadd" onclick="show('add')">＋<br>Kelime ekle</button>
+<button id="navquiz" onclick="show('quiz')">🎯<br>Quiz</button>
+<button id="navstats" onclick="show('stats')">📊<br>İlerleme</button>
+</nav>
+<div id="toast" class="toast"></div>
+
+<script>
+const KEY='vocamate_words_v2';
+let words=JSON.parse(localStorage.getItem(KEY)||'[]');
+let quizIndex=0;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(words));updateStats();}
+function show(id){
+['home','add','words','quiz','stats'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+const map={home:'navhome',add:'navadd',quiz:'navquiz',stats:'navstats'};if(map[id])document.getElementById(map[id]).classList.add('active');
+if(id==='words')renderWords();if(id==='quiz')renderQuiz();if(id==='stats')updateStats();
+}
+function saveWord(){
+const word=document.getElementById('w').value.trim();
+if(!word){showToast('Önce İngilizce kelimeyi yazalım.');return}
+const item={id:Date.now(),word,meaning:document.getElementById('m').value.trim(),type:document.getElementById('type').value,example:document.getElementById('ex').value.trim(),note:document.getElementById('note').value.trim(),remembered:0,date:new Date().toISOString()};
+words.unshift(item);save();
+['w','m','ex','note'].forEach(id=>document.getElementById(id).value='');
+showToast('Kelime kaydedildi ✓');show('words');
+}
+function renderWords(){
+const el=document.getElementById('wordList');
+if(!words.length){el.innerHTML='<div class="card empty">Henüz kendi kelimeni eklemedin.<br><br>＋ Kelime ekle ile başlayalım.</div>';return}
+el.innerHTML=words.map(x=>`<div class="word-item"><div><strong>${esc(x.word)}</strong><small>${esc(x.meaning||'Anlam eklenmedi')} • ${x.type}</small></div><button class="secondary" style="padding:9px 11px" onclick="deleteWord(${x.id})">Sil</button></div>`).join('');
+}
+function deleteWord(id){words=words.filter(x=>x.id!==id);save();renderWords();showToast('Kelime silindi');}
+function renderQuiz(){
+const el=document.getElementById('quizCard');
+if(!words.length){el.innerHTML='<div class="empty">Quiz için önce birkaç kelime ekleyelim. 📚</div>';return}
+const x=words[quizIndex%words.length];
+el.innerHTML=`<span class="tag">Kendini test et</span><h2 style="font-size:32px;margin-bottom:5px">${esc(x.word)}</h2><p style="color:var(--muted)">Bu kelimenin Türkçe anlamı nedir?</p><input id="quizAnswer" placeholder="Cevabını yaz..."><button class="save" onclick="checkQuiz(${x.id})">Cevabı kontrol et</button><div id="quizResult" style="margin-top:14px"></div>`;
+}
+function checkQuiz(id){
+const x=words.find(w=>w.id===id), ans=document.getElementById('quizAnswer').value.trim().toLowerCase(), correct=(x.meaning||'').toLowerCase();
+const ok=correct && (ans.includes(correct.split(',')[0].trim())||correct.includes(ans));
+document.getElementById('quizResult').innerHTML=ok?'<b style="color:var(--green)">✓ Harika! Doğru.</b>':'<b style="color:var(--red)">Tekrar bakalım.</b><br><br>Doğru cevap: '+esc(x.meaning||'Anlam eklenmemiş');
+if(ok){x.remembered=(x.remembered||0)+1;save();}
+quizIndex++;setTimeout(renderQuiz,1400);
+}
+function rate(t){showToast(t+' • tekrar planına işlendi');}
+function startLearn(){showToast(words.length?'Kendi kelimelerinle öğrenme başlıyor 🚀':'Önce birkaç kelime ekleyelim 📚');}
+function updateStats(){
+const todayStr=new Date().toDateString();
+const today=words.filter(x=>new Date(x.date).toDateString()===todayStr).length;
+document.getElementById('total').textContent=words.length;document.getElementById('today').textContent=today;document.getElementById('remembered').textContent=words.reduce((a,x)=>a+(x.remembered||0),0);
+document.getElementById('learnedToday').textContent=Math.min(today,20);document.getElementById('remaining').textContent=Math.max(20-today,0);document.getElementById('progressBar').style.width=Math.min(today/20*100,100)+'%';
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+updateStats();
+</script>
+</body>
+</html>
