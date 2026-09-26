@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v3.2</title>
+<title>VocaMate v4.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -41,6 +41,20 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .due{background:#fff7e6;color:#8a6411;border-radius:14px;padding:10px 13px;font-weight:700;display:inline-block}
 .progressline{display:flex;justify-content:space-between;color:#71809a;font-size:15px;margin-top:10px}
 .toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#172033;color:#fff;padding:12px 18px;border-radius:15px;z-index:10;font-weight:650}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mode{border:1px solid #dfe5ef;background:#f7f9fc;border-radius:18px;padding:14px;text-align:left;font-weight:750;color:#23406f}
+.mode.active{background:#edf2ff;border-color:#4772e6}
+.choice-grid{display:grid;gap:10px;margin-top:16px}
+.choice{border:1px solid #dfe5ef;background:#fff;border-radius:17px;padding:15px;text-align:left;font-size:17px;font-weight:700;color:#172033}
+.choice.correct{background:#eaf8f1;border-color:#77c7a3;color:#287957}
+.choice.wrong{background:#fff0f0;border-color:#e2a0a0;color:#a44343}
+.small{font-size:14px;color:#71809a}
+.section-title{font-size:20px;font-weight:800;margin:0 0 10px}
+.selectrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.badge{display:inline-block;background:#f0f3f8;color:#5e6c84;padding:7px 10px;border-radius:12px;font-size:13px;font-weight:750}
+.speak{margin-left:7px;border:0;background:#edf2ff;color:#4772e6;border-radius:12px;padding:7px 10px;font-weight:800}
+@media(max-width:380px){.word{font-size:40px}h1{font-size:34px}.btn{font-size:16px}}
 </style>
 </head>
 <body>
@@ -97,11 +111,11 @@ function home(m){
  ${words.length?wordCard(words[words.length-1]):sampleCard()}`;
 }
 function sampleCard(){return `<div class="card"><span class="pill">Örnek TOEFL kelimesi</span><div class="word">mitigate</div><div class="meta">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <span class="tag">mitigate</span> the effects of climate change.</div></div>`}
-function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</span><div class="word">${esc(w.word)}</div><div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div><div class="meaning">${esc(w.meaning||'Türkçe anlam eklenmedi')}</div><div class="example">${esc(w.example||w.definition||'')}</div>
+function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</span><div class="word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div><div style="margin-top:10px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span></div><div class="meaning">${esc(w.meaning||'Türkçe anlam eklenmedi')}</div><div class="example">${esc(w.example||w.definition||'')}</div>
 <div class="progressline"><span>Tekrar aralığı</span><b>${intervalLabel(w.interval||0)}</b></div></div>`}
 
 function add(m){
- m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin.</div>
+ m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimelerini kategorize et.</div>
  <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
  <div class="meta" style="margin-top:12px">İnternet gerekir. Yaygın TOEFL kelimelerinde yedek sözlük de bulunur.</div><div id="result"></div></div>
  <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
@@ -124,16 +138,20 @@ async function prepareWord(){
  result.innerHTML=`<div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div><div class="mini"><b>Tanım</b>${esc(data.definition)}</div>
  <div class="mini"><b>Telaffuz</b>${esc(data.phonetic||'—')} &nbsp; <b style="display:inline">Tür</b> ${esc(data.type||'—')}</div>
  <label>Türkçe anlam *</label><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Örn. önemli, kayda değer">
+ <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
+ <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
  <label>Örnek cümlen</label><textarea id="example">${esc(data.example||'')}</textarea><label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
  ${data.synonyms?`<div class="mini"><b>Synonym</b>${esc(data.synonyms)}</div>`:''}${data.antonyms?`<div class="mini"><b>Antonym</b>${esc(data.antonyms)}</div>`:''}
  <button class="btn primary" onclick='saveWord(${JSON.stringify({word,...data})})'>💾 Kelimeyi kaydet</button></div>`;
 }
 function saveWord(data){
  const meaning=document.getElementById('meaning').value.trim(),example=document.getElementById('example').value.trim(),note=document.getElementById('note').value.trim();
+ const category=document.getElementById('category')?.value||'TOEFL Academic';
+ const difficulty=document.getElementById('difficulty')?.value||'Orta';
  if(!meaning){toast('Türkçe anlamı yazmalısın.');return}
  const old=words.find(w=>w.word===data.word);
  words=words.filter(w=>w.word!==data.word);
- words.push({...data,meaning,example,note,added:today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:new Date().toISOString()});
+ words.push({...data,meaning,example,note,category,difficulty,added:today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:new Date().toISOString(),quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
  save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
 }
 
@@ -162,19 +180,85 @@ function rateWord(encoded,quality){
 }
 function intervalLabel(n){return n?`${n} gün`:'ilk tekrar'}
 
-function quiz(m){
- if(!words.length){m.innerHTML=`<h1>Quiz</h1><div class="sub">Henüz kendi kelimelerin yok.</div><div class="card empty">Önce birkaç kelime ekleyelim. 🚀</div><button class="btn primary" style="width:100%" onclick="nav('add')">＋ İlk kelimeyi ekle</button>`;return}
- const w=words[quizIndex%words.length];
- m.innerHTML=`<h1>Quiz</h1><div class="sub">${quizIndex+1}. soru</div><div class="card"><div class="pill">İngilizce → Türkçe</div><div class="quizq" style="margin-top:20px">${esc(w.word)}</div>
- <input id="answer" style="margin-top:20px" placeholder="Türkçe anlamını yaz..." onkeydown="if(event.key==='Enter')checkAnswer()"><button class="btn primary" style="width:100%;margin-top:12px" onclick="checkAnswer()">Cevabı kontrol et</button><div id="quizResult"></div></div>`;
+let quizMode='meaning', quizScore=0, quizAnswered=false;
+
+function speakWord(word){
+ if('speechSynthesis' in window){
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);
+  u.lang='en-US'; u.rate=.85;
+  speechSynthesis.speak(u);
+ }
 }
-function checkAnswer(){const w=words[quizIndex%words.length],a=document.getElementById('answer').value.trim().toLowerCase(),target=(w.meaning||'').toLowerCase(),ok=a&&target.split(/[,;]/).some(x=>a.includes(x.trim())||x.trim().includes(a));document.getElementById('quizResult').innerHTML=`<div class="info ${ok?'success':'error'}">${ok?'✅ Doğru!':'❌ Tekrar et.'}<br><b>Doğru anlam:</b> ${esc(w.meaning)}</div><button class="btn secondary" style="width:100%;margin-top:10px" onclick="quizIndex++;quiz(document.getElementById('main'))">Sonraki soru →</button>`}
+
+function quiz(m){
+ if(!words.length){
+  m.innerHTML=`<h1>Quiz</h1><div class="sub">Henüz kendi kelimelerin yok.</div><div class="card empty">Önce birkaç kelime ekleyelim. 🚀</div><button class="btn primary" style="width:100%" onclick="nav('add')">＋ İlk kelimeyi ekle</button>`;
+  return;
+ }
+ const w=words[quizIndex%words.length];
+ const allMeanings=words.map(x=>x.meaning).filter(Boolean);
+ let choices=[w.meaning];
+ while(choices.length<4 && allMeanings.length){
+   const candidate=allMeanings[Math.floor(Math.random()*allMeanings.length)];
+   if(!choices.includes(candidate)) choices.push(candidate);
+   if(choices.length>=Math.min(4,allMeanings.length)) break;
+ }
+ choices=choices.sort(()=>Math.random()-.5);
+ quizAnswered=false;
+
+ m.innerHTML=`<h1>Quiz</h1><div class="sub">Soru ${quizIndex+1} • Skor ${quizScore}</div>
+ <div class="card">
+ <div class="mode-grid">
+  <button class="mode ${quizMode==='meaning'?'active':''}" onclick="setQuizMode('meaning')">🇹🇷 Anlam</button>
+  <button class="mode ${quizMode==='reverse'?'active':''}" onclick="setQuizMode('reverse')">🇬🇧 İngilizce</button>
+ </div>
+ <div class="pill" style="margin-top:18px">${esc(w.category||'TOEFL Academic')} · ${esc(w.difficulty||'Orta')}</div>
+ <div class="quizq" style="margin-top:18px">${quizMode==='meaning'?esc(w.word):esc(w.meaning)}</div>
+ ${quizMode==='meaning'?`<button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊 Dinle</button>`:''}
+ <div class="choice-grid">
+ ${choices.map(c=>`<button class="choice" onclick='answerChoice(${JSON.stringify(c)},${JSON.stringify(w.meaning)})'>${esc(quizMode==='meaning'?c:reverseChoice(c))}</button>`).join('')}
+ </div>
+ <div id="quizResult"></div>
+ </div>`;
+}
+function reverseChoice(c){
+ const hit=words.find(w=>w.meaning===c);
+ return hit?hit.word:c;
+}
+function setQuizMode(mode){quizMode=mode;quiz(document.getElementById('main'))}
+function answerChoice(selected,correct){
+ if(quizAnswered)return;
+ quizAnswered=true;
+ const ok=selected===correct;
+ const w=words[quizIndex%words.length];
+ if(ok){quizScore++;w.quizCorrect=(w.quizCorrect||0)+1}else{w.quizWrong=(w.quizWrong||0)+1}
+ save();
+ document.querySelectorAll('.choice').forEach(btn=>{
+   const txt=btn.textContent.trim();
+   const expected=quizMode==='meaning'?correct:reverseChoice(correct);
+   if(txt===expected)btn.classList.add('correct');
+   if(txt=== (quizMode==='meaning'?selected:reverseChoice(selected)) && !ok)btn.classList.add('wrong');
+   btn.disabled=true;
+ });
+ document.getElementById('quizResult').innerHTML=`<div class="info ${ok?'success':'error'}">${ok?'✅ Doğru!':'❌ Bu sefer olmadı.'}<br><b>${esc(w.word)}</b> → ${esc(w.meaning)}</div>
+ <button class="btn secondary" style="width:100%;margin-top:10px" onclick="quizIndex++;quiz(document.getElementById('main'))">Sonraki soru →</button>`;
+}
 
 function stats(m){
  const due=dueWords();
- m.innerHTML=`<h1>İlerleme</h1><div class="sub">Kelime hazineni takip et.</div><div class="stats"><div class="stat"><strong>${words.length}</strong>Toplam kelime</div><div class="stat"><strong>${due.length}</strong>Tekrar bekleyen</div></div>
- <div class="card" style="margin-top:18px"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map(w=>`<div class="listitem"><div><b>${esc(w.word)}</b><div class="meta">${esc(w.meaning||'')}</div><div class="progressline"><span>Tekrar</span><span>${w.nextReview&&new Date(w.nextReview)>new Date()?'📅 '+new Date(w.nextReview).toLocaleDateString('tr-TR'):'🔔 Şimdi'}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`;
+ const totalCorrect=words.reduce((a,w)=>a+(w.quizCorrect||0),0);
+ const totalWrong=words.reduce((a,w)=>a+(w.quizWrong||0),0);
+ const accuracy=(totalCorrect+totalWrong)?Math.round(totalCorrect/(totalCorrect+totalWrong)*100):0;
+ const cats={};
+ words.forEach(w=>cats[w.category||'TOEFL Academic']=(cats[w.category||'TOEFL Academic']||0)+1);
+ m.innerHTML=`<h1>İlerleme</h1><div class="sub">Kelime hazineni takip et.</div>
+ <div class="stats"><div class="stat"><strong>${words.length}</strong>Toplam kelime</div><div class="stat"><strong>${due.length}</strong>Tekrar bekleyen</div><div class="stat"><strong>${accuracy}%</strong>Quiz başarısı</div><div class="stat"><strong>${totalCorrect}</strong>Doğru cevap</div></div>
+ <div class="card" style="margin-top:18px"><div class="section-title">Kategoriler</div>
+ ${Object.keys(cats).length?Object.entries(cats).map(([k,v])=>`<div class="progressline"><span>${esc(k)}</span><b>${v}</b></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>
+ <div class="card"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map(w=>`<div class="listitem"><div><b>${esc(w.word)}</b><button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button><div class="meta">${esc(w.meaning||'')}</div><div><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span></div><div class="progressline"><span>Tekrar</span><span>${w.nextReview&&new Date(w.nextReview)>new Date()?'📅 '+new Date(w.nextReview).toLocaleDateString('tr-TR'):'🔔 Şimdi'}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`;
 }
+
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');render()}
 render();
 </script>
