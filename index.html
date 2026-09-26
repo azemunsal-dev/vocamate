@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v5.0</title>
+<title>VocaMate v6.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -62,6 +62,12 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .review-progress{height:9px;background:#e9edf4;border-radius:9px;overflow:hidden;margin:14px 0 6px}.review-progress>div{height:100%;background:#4772e6;border-radius:9px}
 .level-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.level{background:#f7f9fd;border-radius:18px;padding:15px}.level b{display:block;font-size:24px;margin-bottom:3px}.level span{color:#71809a;font-size:14px}
 .next-review{background:#f7f9ff;border-radius:18px;padding:15px;margin-top:14px;color:#51627f}
+
+.quiz-tools{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.smallbtn{border:1px solid #dce3ef;background:#fff;border-radius:14px;padding:10px 13px;font-weight:700;color:#23406f}
+.smallbtn.active{background:#eaf0ff;border-color:#8da8e8}
+.sprint-result{text-align:center;padding:35px 24px}
+.bigscore{font-size:64px;font-weight:850;color:#23406f}
 </style>
 </head>
 <body>
@@ -148,7 +154,7 @@ function home(m){
  m.innerHTML=`<h1>Bugünkü çalışma</h1><div class="sub">Kısa çalış, sık tekrar et.</div>
  <div class="card goal"><div class="goalrow"><span>Günlük hedef</span><span>${addedToday} / ${TARGET}</span></div>
  <div class="bar"><div class="fill" style="width:${pct}%"></div></div><div>${Math.max(0,TARGET-addedToday)} kelime daha</div></div>
- <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div>
+ <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div><div class="card" style="margin-top:18px"><span class="pill">🎯 TOEFL Sprint</span><h2 style="margin:10px 0 6px">10 soruluk kelime antrenmanı</h2><div class="meta">Anlam ve İngilizce modlarında hızlı bir TOEFL kelime turu.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="startToeflSprint()">Sprinti başlat →</button></div>
  <div class="card"><span class="pill">🧠 Akıllı tekrar</span><h2 style="margin-bottom:8px">${due.length?due.length+' kelime tekrar bekliyor':'Bugün tekrar bekleyen kelime yok'}</h2>
  <div class="meta">${due.length?'Unutmaya başlamadan önce tekrar edelim.':'Yeni kelime ekleyebilir veya quiz yapabilirsin.'}</div>
  ${due.length?`<button class="btn primary" style="width:100%;margin-top:18px" onclick="startReview()">Tekrara başla →</button>`:`<div class="next-review">🎯 Harika! Bir sonraki tekrarlar zamanı geldiğinde burada görünecek.</div>`}</div>
@@ -251,7 +257,7 @@ function rateWord(encoded,quality){
 }
 function intervalLabel(n){return n?`${n} gün`:'ilk tekrar'}
 
-let quizMode='meaning', quizScore=0, quizAnswered=false;
+let quizMode='meaning', quizScore=0, quizAnswered=false, quizSession=false, quizQ=0, quizTotal=10, quizCorrectSession=0;
 
 function speakWord(word){
  if('speechSynthesis' in window){
@@ -267,7 +273,7 @@ function quiz(m){
   m.innerHTML=`<h1>Quiz</h1><div class="sub">Henüz kendi kelimelerin yok.</div><div class="card empty">Önce birkaç kelime ekleyelim. 🚀</div><button class="btn primary" style="width:100%" onclick="nav('add')">＋ İlk kelimeyi ekle</button>`;
   return;
  }
- const w=words[quizIndex%words.length];
+ const w=words[(quizIndex)%words.length];
  const allMeanings=words.map(x=>x.meaning).filter(Boolean);
  let choices=[w.meaning];
  while(choices.length<4 && allMeanings.length){
@@ -278,11 +284,16 @@ function quiz(m){
  choices=choices.sort(()=>Math.random()-.5);
  quizAnswered=false;
 
- m.innerHTML=`<h1>Quiz</h1><div class="sub">Soru ${quizIndex+1} • Skor ${quizScore}</div>
+ const sessionLabel=quizSession?`TOEFL Sprint • ${quizQ+1}/${quizTotal}`:`Soru ${quizIndex+1} • Skor ${quizScore}`;
+ m.innerHTML=`<h1>Quiz</h1><div class="sub">${sessionLabel} • Skor ${quizSession?quizCorrectSession:quizScore}</div>
  <div class="card">
  <div class="mode-grid">
   <button class="mode ${quizMode==='meaning'?'active':''}" onclick="setQuizMode('meaning')">🇹🇷 Anlam</button>
   <button class="mode ${quizMode==='reverse'?'active':''}" onclick="setQuizMode('reverse')">🇬🇧 İngilizce</button>
+ </div>
+ <div class="quiz-tools">
+   <button class="smallbtn ${quizSession?'active':''}" onclick="startToeflSprint()">🎯 TOEFL Sprint</button>
+   ${quizSession?`<button class="smallbtn" onclick="endSprint()">✕ Bitir</button>`:''}
  </div>
  <div class="pill" style="margin-top:18px">${esc(w.category||'TOEFL Academic')} · ${esc(w.difficulty||'Orta')}</div>
  <div class="quizq" style="margin-top:18px">${quizMode==='meaning'?esc(w.word):esc(w.meaning)}</div>
@@ -298,12 +309,22 @@ function reverseChoice(c){
  return hit?hit.word:c;
 }
 function setQuizMode(mode){quizMode=mode;quiz(document.getElementById('main'))}
+function startToeflSprint(){
+ if(!words.length){toast('Önce kelime ekle.');return}
+ quizSession=true;quizQ=0;quizCorrectSession=0;quizIndex=Math.floor(Math.random()*words.length);
+ quizMode=['meaning','reverse'][Math.floor(Math.random()*2)];
+ quiz(document.getElementById('main'));
+}
+function endSprint(){
+ quizSession=false;quizQ=0;quizCorrectSession=0;quiz(document.getElementById('main'));
+}
 function answerChoice(selected,correct){
  if(quizAnswered)return;
  quizAnswered=true;
  const ok=selected===correct;
  const w=words[quizIndex%words.length];
- if(ok){quizScore++;w.quizCorrect=(w.quizCorrect||0)+1}else{w.quizWrong=(w.quizWrong||0)+1}
+ if(ok){quizScore++;w.quizCorrect=(w.quizCorrect||0)+1;if(quizSession)quizCorrectSession++}
+ else{w.quizWrong=(w.quizWrong||0)+1}
  save();
  document.querySelectorAll('.choice').forEach(btn=>{
    const txt=btn.textContent.trim();
@@ -312,10 +333,20 @@ function answerChoice(selected,correct){
    if(txt=== (quizMode==='meaning'?selected:reverseChoice(selected)) && !ok)btn.classList.add('wrong');
    btn.disabled=true;
  });
- document.getElementById('quizResult').innerHTML=`<div class="info ${ok?'success':'error'}">${ok?'✅ Doğru!':'❌ Bu sefer olmadı.'}<br><b>${esc(w.word)}</b> → ${esc(w.meaning)}</div>
- <button class="btn secondary" style="width:100%;margin-top:10px" onclick="quizIndex++;quiz(document.getElementById('main'))">Sonraki soru →</button>`;
+ const resultText=ok?'✅ Doğru!':'❌ Bu sefer olmadı.';
+ const nextAction=quizSession && quizQ+1>=quizTotal
+   ? `<button class="btn primary" style="width:100%;margin-top:10px" onclick="finishSprint()">🏁 Sprint sonucunu gör</button>`
+   : `<button class="btn secondary" style="width:100%;margin-top:10px" onclick="quizIndex++;if(quizSession)quizQ++;quiz(document.getElementById('main'))">Sonraki soru →</button>`;
+ document.getElementById('quizResult').innerHTML=`<div class="info ${ok?'success':'error'}">${resultText}<br><b>${esc(w.word)}</b> → ${esc(w.meaning)}</div>${nextAction}`;
 }
-
+function finishSprint(){
+ const score=quizCorrectSession, total=quizTotal, pct=Math.round(score/total*100);
+ quizSession=false;
+ document.getElementById('main').innerHTML=`<h1>🎯 Sprint tamamlandı</h1><div class="sub">10 soruluk TOEFL kelime çalışması</div>
+ <div class="card sprint-result"><div class="bigscore">${pct}%</div><h2>${score} / ${total} doğru</h2>
+ <div class="meta">${pct>=80?'Çok iyi gidiyorsun!':'Bir tur daha tekrar ederek güçlendirebilirsin.'}</div>
+ <div class="btnrow" style="margin-top:20px"><button class="btn primary" onclick="startToeflSprint()">Tekrar sprint</button><button class="btn secondary" onclick="nav('stats')">İlerlemeyi gör</button></div></div>`;
+}
 function stats(m){
  const due=dueWords();
  const totalCorrect=words.reduce((a,w)=>a+(w.quizCorrect||0),0);
