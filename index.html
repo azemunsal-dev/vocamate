@@ -1,158 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#173B67">
-<title>VocaMate v3</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#23406f">
+<title>VocaMate v3.1</title>
 <style>
-:root{--navy:#173B67;--blue:#2F6FED;--bg:#F5F7FA;--card:#fff;--text:#172033;--muted:#718096;--green:#1FA774;--red:#E05252}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-.app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 100px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.logo{font-weight:800;font-size:22px;color:var(--navy)}
-.streak{background:#fff;padding:9px 12px;border-radius:18px;font-weight:700;box-shadow:0 3px 14px #173b6712}
-h1{font-size:28px;margin:5px 0 4px}.sub{color:var(--muted);margin:0 0 20px}
-.progress-card{background:var(--navy);color:white;border-radius:22px;padding:20px;margin-bottom:16px}.row{display:flex;justify-content:space-between}
-.bar{height:9px;background:#ffffff35;border-radius:10px;margin-top:14px;overflow:hidden}.bar span{display:block;width:45%;height:100%;background:white;border-radius:10px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-button{border:0;border-radius:16px;padding:15px;font-size:15px;font-weight:750;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#fff;color:var(--navy);box-shadow:0 4px 18px #173b6710}
-.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 5px 22px #173b6710;margin-bottom:16px}
-.word h2{font-size:36px;margin:12px 0 3px}.tag{display:inline-block;background:#EAF0FF;color:var(--blue);padding:6px 10px;border-radius:10px;font-size:12px;font-weight:800}.pron{color:var(--muted)}
-.meaning{font-size:20px;font-weight:700;margin:14px 0}.example,.note{background:#F7F9FC;border-radius:14px;padding:14px;line-height:1.5;margin-top:10px}
-.example b{color:var(--blue)}.rate{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.easy{background:#E7F7F0;color:#157A56}.hard{background:#FFF0F0;color:#B13E3E}
-.hidden{display:none!important}.ai{background:#173B67;color:#fff;border:0;border-radius:13px;padding:12px 14px;font-weight:750;white-space:nowrap}.loading{padding:12px;border-radius:13px;background:#EAF0FF;color:#2F6FED;margin-top:10px}
-label{display:block;font-size:13px;font-weight:750;margin:14px 0 7px}input,textarea,select{width:100%;border:1px solid #DCE3EC;border-radius:13px;padding:13px;font:inherit;background:#fff;outline:none}input:focus,textarea:focus{border-color:var(--blue)}textarea{min-height:82px;resize:vertical}
-.save{width:100%;margin-top:18px;background:var(--blue);color:#fff}.word-list{display:grid;gap:10px}.word-item{background:#fff;border-radius:17px;padding:15px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 3px 12px #173b6710}.word-item strong{font-size:17px}.word-item small{color:var(--muted);display:block;margin-top:3px}
-.empty{text-align:center;color:var(--muted);padding:25px 10px}
-nav{position:fixed;bottom:0;left:0;right:0;background:#ffffffee;backdrop-filter:blur(12px);border-top:1px solid #e8edf3;display:flex;justify-content:center;gap:35px;padding:10px 10px calc(10px + env(safe-area-inset-bottom));z-index:5}
-nav button{background:none;padding:5px;color:var(--muted);font-size:12px}nav button.active{color:var(--navy)}
-.topbtn{float:right;background:#EAF0FF;color:var(--blue);padding:9px 12px;font-size:13px}.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#172033;color:white;padding:11px 16px;border-radius:14px;display:none;z-index:10;white-space:nowrap}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+.app{max-width:540px;margin:auto;min-height:100vh;padding:20px 18px 100px}
+header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 28px}
+.logo{font-size:34px;font-weight:800;color:#23406f}.streak{background:white;border-radius:30px;padding:13px 20px;font-weight:750;box-shadow:0 5px 18px #0000000c}
+h1{font-size:40px;line-height:1.08;margin:0 0 10px}.sub{font-size:20px;color:#71809a;margin-bottom:25px}
+.card{background:#fff;border-radius:28px;padding:25px;margin-bottom:18px;box-shadow:0 8px 28px #203b6810}
+.goal{background:#23406f;color:white}.goalrow{display:flex;justify-content:space-between;font-size:21px;font-weight:750}.bar{height:11px;background:#ffffff36;border-radius:10px;margin:22px 0 12px;overflow:hidden}.fill{height:100%;background:#6d92ed;border-radius:10px;width:0}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}.btn{border:0;border-radius:22px;padding:18px 12px;font-size:19px;font-weight:750;cursor:pointer}.primary{background:#4772e6;color:#fff}.secondary{background:#fff;color:#23406f}.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e9f0;display:flex;justify-content:center;z-index:5}.navin{max-width:540px;width:100%;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:none;padding:12px 3px 14px;color:#75829a;font-size:14px;font-weight:700}.nav button.active{color:#23406f}.navicon{font-size:21px;display:block;margin-bottom:3px}
+.word{font-size:46px;font-weight:800;margin:12px 0 5px}.pill{display:inline-block;background:#edf2ff;color:#4772e6;padding:9px 15px;border-radius:16px;font-weight:750}.meta{color:#71809a;font-size:18px}.meaning{font-size:24px;font-weight:750;margin:22px 0}.example{background:#f5f7fb;border-radius:20px;padding:18px;font-size:18px;line-height:1.5}.tag{color:#4772e6;font-weight:800}
+input,textarea,select{width:100%;border:1px solid #d9e0eb;border-radius:18px;padding:16px;font-size:18px;background:#fff;color:#172033}textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;margin:16px 0 8px}.searchrow{display:grid;grid-template-columns:1fr auto;gap:10px}.searchrow .btn{padding:15px 18px}
+.info{background:#eef3ff;color:#4772e6;border-radius:18px;padding:14px;font-size:16px;margin-top:12px}.success{background:#eaf8f1;color:#287957}.error{background:#fff0f0;color:#a44343}.hidden{display:none!important}
+.resultgrid{display:grid;gap:10px;margin-top:18px}.mini{background:#f7f8fb;border-radius:18px;padding:15px}.mini b{display:block;margin-bottom:5px}.listitem{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:16px 0;border-bottom:1px solid #edf0f5}.listitem:last-child{border-bottom:0}.delete{border:0;background:#fff0f0;color:#a44343;border-radius:12px;padding:9px 11px}.empty{text-align:center;color:#71809a;padding:25px}
+.quizq{font-size:30px;font-weight:800}.option{width:100%;text-align:left;margin-top:10px;border:1px solid #dfe5ef;background:#fff;border-radius:16px;padding:15px;font-size:17px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stat{background:#f5f7fb;border-radius:20px;padding:20px}.stat strong{font-size:30px;display:block}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#172033;color:white;padding:12px 18px;border-radius:15px;z-index:10;font-weight:650}
 </style>
 </head>
 <body>
 <div class="app">
 <header><div class="logo">VocaMate</div><div class="streak">🔥 <span id="streak">1</span> gün</div></header>
-
-<section id="home">
-<h1>Bugünkü çalışma</h1><p class="sub">Kısa çalış, sık tekrar et.</p>
-<div class="progress-card"><div class="row"><strong>Günlük hedef</strong><strong><span id="learnedToday">0</span> / 20</strong></div><div class="bar"><span id="progressBar"></span></div><p style="margin:12px 0 0;opacity:.82"><span id="remaining">20</span> kelime daha</p></div>
-<div class="actions"><button class="primary" onclick="startLearn()">▶ Öğren</button><button class="secondary" onclick="showToast('Tekrar modu hazırlanıyor 🔄')">↻ Tekrar et</button></div>
-<div id="dailyCard" class="card word"><span class="tag">Örnek TOEFL kelimesi</span><h2>mitigate</h2><div class="pron">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <b>mitigate</b> the effects of climate change.</div><div class="rate"><button class="hard" onclick="rate('Zorlandım')">✕ Zorlandım</button><button class="easy" onclick="rate('Hatırladım')">✓ Hatırladım</button></div></div>
-</section>
-
-<section id="add" class="hidden">
-<h1>Akıllı kelime ekle <button class="topbtn" onclick="show('words')">Kelimelerim</button></h1><p class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin.</p>
-<div class="card">
-<label>İngilizce kelime *</label>
-<div style="display:flex;gap:9px"><input id="w" placeholder="ör. substantial" autocomplete="off"><button class="ai" onclick="prepareWord()">🤖 Hazırla</button></div>
-<p style="font-size:12px;color:#718096">İnternet bağlantısı gerekir.</p>
-<div id="loading" class="loading hidden">🔎 Kelime bilgileri aranıyor...</div>
-<div id="details" class="hidden">
-<label>Türkçe anlamı</label><input id="m" placeholder="ör. önemli, kayda değer">
-<label>Kelime türü</label><select id="type"><option>Verb</option><option>Noun</option><option>Adjective</option><option>Adverb</option><option>Other</option></select>
-<div id="autoInfo" class="example"></div>
-<label>Benim örnek cümlem</label><textarea id="ex" placeholder="Kelimeni kendi cümlende kullan..."></textarea>
-<label>Benim notum</label><textarea id="note" placeholder="Nerede gördüm? Neyle ilişkilendirdim?"></textarea>
-<button class="save" onclick="saveWord()">✓ Kelimeyi Kaydet</button>
-</div></div></section>
-
-<section id="words" class="hidden">
-<h1>Kelimelerim</h1><p class="sub">Kendi eklediğin kelimeler burada.</p>
-<div id="wordList" class="word-list"></div>
-</section>
-
-<section id="quiz" class="hidden">
-<h1>Mini Quiz</h1><p class="sub">Kelimelerini hatırlamayı test et.</p>
-<div class="card" id="quizCard"></div>
-</section>
-
-<section id="stats" class="hidden">
-<h1>İlerlemem</h1><p class="sub">Vocabulary yolculuğun.</p>
-<div class="card"><div class="row"><strong>Toplam kelime</strong><strong id="total">0</strong></div><hr><div class="row"><strong>Bugün eklenen</strong><strong id="today">0</strong></div><hr><div class="row"><strong>Hatırlanan</strong><strong id="remembered">0</strong></div></div>
-</section>
+<main id="main"></main>
 </div>
-
-<nav>
-<button id="navhome" class="active" onclick="show('home')">🏠<br>Ana sayfa</button>
-<button id="navadd" onclick="show('add')">＋<br>Kelime ekle</button>
-<button id="navquiz" onclick="show('quiz')">🎯<br>Quiz</button>
-<button id="navstats" onclick="show('stats')">📊<br>İlerleme</button>
-</nav>
-<div id="toast" class="toast"></div>
-
+<nav class="nav"><div class="navin">
+<button data-page="home" class="active"><span class="navicon">🏠</span>Ana sayfa</button>
+<button data-page="add"><span class="navicon">＋</span>Kelime ekle</button>
+<button data-page="quiz"><span class="navicon">🎯</span>Quiz</button>
+<button data-page="stats"><span class="navicon">📊</span>İlerleme</button>
+</div></nav>
+<div id="toast" class="toast hidden"></div>
 <script>
-const KEY='vocamate_words_v3';
+const KEY='vocamate_words_v31';
+const TARGET=20;
 let words=JSON.parse(localStorage.getItem(KEY)||'[]');
+let currentPage='home';
 let quizIndex=0;
 
-function save(){localStorage.setItem(KEY,JSON.stringify(words));updateStats();}
-function show(id){
-['home','add','words','quiz','stats'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-const map={home:'navhome',add:'navadd',quiz:'navquiz',stats:'navstats'};if(map[id])document.getElementById(map[id]).classList.add('active');
-if(id==='words')renderWords();if(id==='quiz')renderQuiz();if(id==='stats')updateStats();
+const fallback={
+ substantial:{type:'adjective',phonetic:'/səˈstænʃəl/',definition:'of considerable importance, size, or worth',meaning:'önemli, kayda değer; büyük miktarda',example:'The project requires a substantial amount of time.',synonyms:'considerable, significant',antonyms:'insignificant, minor'},
+ mitigate:{type:'verb',phonetic:'/ˈmɪtɪɡeɪt/',definition:'to make something less severe, harmful, or painful',meaning:'hafifletmek, azaltmak',example:'Governments should take measures to mitigate the effects of climate change.',synonyms:'alleviate, reduce',antonyms:'aggravate, intensify'},
+ allocate:{type:'verb',phonetic:'/ˈæləkeɪt/',definition:'to give or distribute something for a particular purpose',meaning:'tahsis etmek, ayırmak',example:'The university allocated more funds to research.',synonyms:'assign, distribute',antonyms:'withhold'},
+ inevitable:{type:'adjective',phonetic:'/ɪnˈevɪtəbəl/',definition:'certain to happen and impossible to avoid',meaning:'kaçınılmaz',example:'Some changes are inevitable.',synonyms:'unavoidable, certain',antonyms:'avoidable, uncertain'},
+ enhance:{type:'verb',phonetic:'/ɪnˈhæns/',definition:'to improve the quality, value, or effectiveness of something',meaning:'geliştirmek, artırmak',example:'The new system will enhance customer experience.',synonyms:'improve, strengthen',antonyms:'weaken, reduce'}
+};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(words))}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');setTimeout(()=>e.classList.add('hidden'),2200)}
+function nav(page){currentPage=page;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));render()}
+function render(){const m=document.getElementById('main'); if(currentPage==='home')home(m); if(currentPage==='add')add(m); if(currentPage==='quiz')quiz(m); if(currentPage==='stats')stats(m)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>nav(b.dataset.page));
+
+function home(m){
+ const today=words.filter(w=>w.added===new Date().toISOString().slice(0,10)).length;
+ const pct=Math.min(100,today/TARGET*100);
+ m.innerHTML=`<h1>Bugünkü çalışma</h1><div class="sub">Kısa çalış, sık tekrar et.</div>
+ <div class="card goal"><div class="goalrow"><span>Günlük hedef</span><span>${today} / ${TARGET}</span></div><div class="bar"><div class="fill" style="width:${pct}%"></div></div><div>${Math.max(0,TARGET-today)} kelime daha</div></div>
+ <div class="btnrow"><button class="btn primary" onclick="nav('add')">▶ Öğren</button><button class="btn secondary" onclick="nav('quiz')">↻ Tekrar et</button></div>
+ ${words.length?wordCard(words[words.length-1]):sampleCard()}`;
 }
-let currentAuto=null;
+function sampleCard(){return `<div class="card"><span class="pill">Örnek TOEFL kelimesi</span><div class="word">mitigate</div><div class="meta">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <span class="tag">mitigate</span> the effects of climate change.</div></div>`}
+function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</span><div class="word">${esc(w.word)}</div><div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div><div class="meaning">${esc(w.meaning||'Türkçe anlam eklenmedi')}</div><div class="example">${esc(w.example||w.definition||'')}</div></div>`}
+
+function add(m){
+ m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin.</div>
+ <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" value="" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
+ <div class="meta" style="margin-top:12px">İnternet bağlantısı gerekir. İnternet yanıt vermezse yaygın TOEFL kelimeleri için yerleşik yedek sözlük kullanılır.</div>
+ <div id="result"></div></div>
+ <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
+}
 async function prepareWord(){
- const word=document.getElementById('w').value.trim().toLowerCase();
- if(!word){showToast('Önce İngilizce kelimeyi yaz.');return}
- document.getElementById('loading').classList.remove('hidden');document.getElementById('details').classList.add('hidden');
- try{
-  const r=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word));
-  if(!r.ok) throw new Error();
-  const data=await r.json(), d=data[0], meanings=d.meanings||[];
-  const phon=d.phonetic || (d.phonetics||[]).find(x=>x.text)?.text || '';
-  const defs=meanings.flatMap(m=>(m.definitions||[]).map(x=>x.definition)).slice(0,2);
-  const examples=meanings.flatMap(m=>(m.definitions||[]).map(x=>x.example).filter(Boolean)).slice(0,2);
-  const syn=[...new Set(meanings.flatMap(m=>m.synonyms||[]))].slice(0,8);
-  const ant=[...new Set(meanings.flatMap(m=>m.antonyms||[]))].slice(0,8);
-  const pos=meanings[0]?.partOfSpeech||'other';
-  const map={verb:'Verb',noun:'Noun',adjective:'Adjective',adverb:'Adverb'};
-  currentAuto={word,phon,defs,examples,syn,ant,pos};
-  document.getElementById('type').value=map[pos]||'Other';
-  document.getElementById('autoInfo').innerHTML='<b>🇬🇧 English definition</b><br>'+defs.map(esc).join('<br>')+
-   (phon?'<br><br><b>🔊 Pronunciation</b><br>'+esc(phon):'')+
-   (examples.length?'<br><br><b>✍️ Example</b><br>'+examples.map(esc).join('<br>'):'')+
-   (syn.length?'<br><br><b>Synonyms</b><br>'+syn.map(esc).join(', '):'')+
-   (ant.length?'<br><br><b>Antonyms</b><br>'+ant.map(esc).join(', '):'');
-  document.getElementById('details').classList.remove('hidden');showToast('Kelime bilgileri hazır ✓');
- }catch(e){showToast('Kelime bulunamadı. Yazımı kontrol et.')}
- finally{document.getElementById('loading').classList.add('hidden')}
+ const input=document.getElementById('wordInput'), result=document.getElementById('result');
+ const word=input.value.trim().toLowerCase();
+ if(!word){toast('Önce bir kelime yaz.');return}
+ result.innerHTML='<div class="info">🔎 Kelime bilgileri aranıyor...</div>';
+ let data=null;
+ if(fallback[word]) data=fallback[word];
+ else{
+   try{
+    const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),5000);
+    const r=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word),{signal:controller.signal});
+    clearTimeout(timer);
+    if(r.ok){
+      const json=await r.json(), x=json[0];
+      const phon=x.phonetic || (x.phonetics||[]).find(p=>p.text)?.text || '';
+      const meanings=x.meanings||[]; const first=meanings[0]||{};
+      const defs=first.definitions||[]; const d=defs[0]||{};
+      data={type:first.partOfSpeech||'',phonetic:phon,definition:d.definition||'',meaning:'',example:d.example||'',synonyms:(d.synonyms||[]).join(', '),antonyms:(d.antonyms||[]).join(', ')};
+    }
+   }catch(e){}
+ }
+ if(!data){result.innerHTML='<div class="info error">Kelime bilgisi alınamadı. İnternet bağlantını kontrol et veya farklı bir kelime dene.</div>';return}
+ result.innerHTML=`<div class="resultgrid">
+ <div class="mini"><b>Kelime</b>${esc(word)}</div><div class="mini"><b>Tanım</b>${esc(data.definition)}</div>
+ <div class="mini"><b>Telaffuz</b>${esc(data.phonetic||'—')} &nbsp; <b style="display:inline">Tür</b> ${esc(data.type||'—')}</div>
+ <label>Türkçe anlam *</label><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Örn. önemli, kayda değer">
+ <label>Örnek cümlen</label><textarea id="example">${esc(data.example||'')}</textarea>
+ <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+ ${data.synonyms?`<div class="mini"><b>Synonym</b>${esc(data.synonyms)}</div>`:''}
+ ${data.antonyms?`<div class="mini"><b>Antonym</b>${esc(data.antonyms)}</div>`:''}
+ <button class="btn primary" onclick='saveWord(${JSON.stringify({word,...data})})'>💾 Kelimeyi kaydet</button>
+ </div>`;
 }
-function saveWord(){
- if(!currentAuto){showToast('Önce “Hazırla” butonuna bas.');return}
- const item={id:Date.now(),word:currentAuto.word,meaning:document.getElementById('m').value.trim(),type:document.getElementById('type').value,phon:currentAuto.phon,definition:currentAuto.defs.join(' '),synonyms:currentAuto.syn,antonyms:currentAuto.ant,example:document.getElementById('ex').value.trim()||currentAuto.examples[0]||'',note:document.getElementById('note').value.trim(),remembered:0,date:new Date().toISOString()};
- words.unshift(item);save();['w','m','ex','note'].forEach(id=>document.getElementById(id).value='');document.getElementById('details').classList.add('hidden');currentAuto=null;showToast('Kelime kaydedildi ✓');show('words')
+function saveWord(data){
+ const meaning=document.getElementById('meaning').value.trim(), example=document.getElementById('example').value.trim(), note=document.getElementById('note').value.trim();
+ if(!meaning){toast('Türkçe anlamı yazmalısın.');return}
+ words=words.filter(w=>w.word!==data.word); words.push({...data,meaning,example,note,added:new Date().toISOString().slice(0,10)});
+ save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
 }
-function renderWords(){
-const el=document.getElementById('wordList');
-if(!words.length){el.innerHTML='<div class="card empty">Henüz kendi kelimeni eklemedin.<br><br>＋ Kelime ekle ile başlayalım.</div>';return}
-el.innerHTML=words.map(x=>`<div class="word-item"><div><strong>${esc(x.word)}</strong><small>${esc(x.meaning||'Anlam eklenmedi')} • ${x.type}</small></div><button class="secondary" style="padding:9px 11px" onclick="deleteWord(${x.id})">Sil</button></div>`).join('');
+function quiz(m){
+ if(!words.length){m.innerHTML=`<h1>Quiz</h1><div class="sub">Henüz kendi kelimelerin yok.</div><div class="card empty">Önce birkaç kelime ekleyelim. 🚀</div><button class="btn primary" style="width:100%" onclick="nav('add')">＋ İlk kelimeyi ekle</button>`;return}
+ const w=words[quizIndex%words.length];
+ m.innerHTML=`<h1>Quiz</h1><div class="sub">${quizIndex+1}. soru</div><div class="card"><div class="pill">İngilizce → Türkçe</div><div class="quizq" style="margin-top:20px">${esc(w.word)}</div><input id="answer" style="margin-top:20px" placeholder="Türkçe anlamını yaz..." onkeydown="if(event.key==='Enter')checkAnswer()"><button class="btn primary" style="width:100%;margin-top:12px" onclick="checkAnswer()">Cevabı kontrol et</button><div id="quizResult"></div></div>`;
 }
-function deleteWord(id){words=words.filter(x=>x.id!==id);save();renderWords();showToast('Kelime silindi');}
-function renderQuiz(){
-const el=document.getElementById('quizCard');
-if(!words.length){el.innerHTML='<div class="empty">Quiz için önce birkaç kelime ekleyelim. 📚</div>';return}
-const x=words[quizIndex%words.length];
-el.innerHTML=`<span class="tag">Kendini test et</span><h2 style="font-size:32px;margin-bottom:5px">${esc(x.word)}</h2><p style="color:var(--muted)">Bu kelimenin Türkçe anlamı nedir?</p><input id="quizAnswer" placeholder="Cevabını yaz..."><button class="save" onclick="checkQuiz(${x.id})">Cevabı kontrol et</button><div id="quizResult" style="margin-top:14px"></div>`;
-}
-function checkQuiz(id){
-const x=words.find(w=>w.id===id), ans=document.getElementById('quizAnswer').value.trim().toLowerCase(), correct=(x.meaning||'').toLowerCase();
-const ok=correct && (ans.includes(correct.split(',')[0].trim())||correct.includes(ans));
-document.getElementById('quizResult').innerHTML=ok?'<b style="color:var(--green)">✓ Harika! Doğru.</b>':'<b style="color:var(--red)">Tekrar bakalım.</b><br><br>Doğru cevap: '+esc(x.meaning||'Anlam eklenmemiş');
-if(ok){x.remembered=(x.remembered||0)+1;save();}
-quizIndex++;setTimeout(renderQuiz,1400);
-}
-function rate(t){showToast(t+' • tekrar planına işlendi');}
-function startLearn(){showToast(words.length?'Kendi kelimelerinle öğrenme başlıyor 🚀':'Önce birkaç kelime ekleyelim 📚');}
-function updateStats(){
-const todayStr=new Date().toDateString();
-const today=words.filter(x=>new Date(x.date).toDateString()===todayStr).length;
-document.getElementById('total').textContent=words.length;document.getElementById('today').textContent=today;document.getElementById('remembered').textContent=words.reduce((a,x)=>a+(x.remembered||0),0);
-document.getElementById('learnedToday').textContent=Math.min(today,20);document.getElementById('remaining').textContent=Math.max(20-today,0);document.getElementById('progressBar').style.width=Math.min(today/20*100,100)+'%';
-}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-updateStats();
+function checkAnswer(){const w=words[quizIndex%words.length], a=document.getElementById('answer').value.trim().toLowerCase(), target=(w.meaning||'').toLowerCase();const ok=a&&target.split(/[,;]/).some(x=>a.includes(x.trim())||x.trim().includes(a));document.getElementById('quizResult').innerHTML=`<div class="info ${ok?'success':'error'}">${ok?'✅ Doğru!':'❌ Tekrar et.'}<br><b>Doğru anlam:</b> ${esc(w.meaning)}</div><button class="btn secondary" style="width:100%;margin-top:10px" onclick="quizIndex++;quiz(document.getElementById('main'))">Sonraki soru →</button>`}
+function stats(m){
+ m.innerHTML=`<h1>İlerleme</h1><div class="sub">Kelime hazineni takip et.</div><div class="stats"><div class="stat"><strong>${words.length}</strong>Toplam kelime</div><div class="stat"><strong>${words.length?Math.round(words.length/10):0}</strong>TOEFL seti</div></div><div class="card" style="margin-top:18px"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map((w,i)=>`<div class="listitem"><div><b>${esc(w.word)}</b><div class="meta">${esc(w.meaning||'')}</div></div><button class="delete" onclick="deleteWord('${esc(w.word)}')">Sil</button></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`}
+function deleteWord(word){words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');render()}
+render();
 </script>
 </body>
 </html>
