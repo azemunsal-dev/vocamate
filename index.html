@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v4.1</title>
+<title>VocaMate v5.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -55,6 +55,13 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .badge{display:inline-block;background:#f0f3f8;color:#5e6c84;padding:7px 10px;border-radius:12px;font-size:13px;font-weight:750}
 .speak{margin-left:7px;border:0;background:#edf2ff;color:#4772e6;border-radius:12px;padding:7px 10px;font-weight:800}
 @media(max-width:380px){.word{font-size:40px}h1{font-size:34px}.btn{font-size:16px}}
+
+.review-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.review-actions button{border:0;border-radius:18px;padding:15px 7px;font-size:14px;font-weight:800;cursor:pointer}
+.review-actions .again{background:#fff0f0;color:#b33a3a}.review-actions .hard{background:#fff7e8;color:#9b6a12}.review-actions .good{background:#edf9f2;color:#287b52}
+.review-progress{height:9px;background:#e9edf4;border-radius:9px;overflow:hidden;margin:14px 0 6px}.review-progress>div{height:100%;background:#4772e6;border-radius:9px}
+.level-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.level{background:#f7f9fd;border-radius:18px;padding:15px}.level b{display:block;font-size:24px;margin-bottom:3px}.level span{color:#71809a;font-size:14px}
+.next-review{background:#f7f9ff;border-radius:18px;padding:15px;margin-top:14px;color:#51627f}
 </style>
 </head>
 <body>
@@ -144,7 +151,7 @@ function home(m){
  <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div>
  <div class="card"><span class="pill">🧠 Akıllı tekrar</span><h2 style="margin-bottom:8px">${due.length?due.length+' kelime tekrar bekliyor':'Bugün tekrar bekleyen kelime yok'}</h2>
  <div class="meta">${due.length?'Unutmaya başlamadan önce tekrar edelim.':'Yeni kelime ekleyebilir veya quiz yapabilirsin.'}</div>
- ${due.length?`<button class="btn primary" style="width:100%;margin-top:18px" onclick="startReview()">Tekrara başla →</button>`:''}</div>
+ ${due.length?`<button class="btn primary" style="width:100%;margin-top:18px" onclick="startReview()">Tekrara başla →</button>`:`<div class="next-review">🎯 Harika! Bir sonraki tekrarlar zamanı geldiğinde burada görünecek.</div>`}</div>
  ${words.length?wordCard(words[words.length-1]):sampleCard()}`;
 }
 function sampleCard(){return `<div class="card"><span class="pill">Örnek TOEFL kelimesi</span><div class="word">mitigate</div><div class="meta">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <span class="tag">mitigate</span> the effects of climate change.</div></div>`}
@@ -198,32 +205,49 @@ function saveWord(data){
  if(!meaning){toast('Türkçe anlamı yazmalısın.');return}
  const old=words.find(w=>w.word===data.word);
  words=words.filter(w=>w.word!==data.word);
- words.push({...data,meaning,example,note,category,difficulty,added:today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:new Date().toISOString(),quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+ words.push({...data,meaning,example,note,category,difficulty,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
  save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
 }
 
 function startLearning(){currentPage='review';showReview(0)}
 function startReview(){currentPage='review';showReview(0)}
 function showReview(i){
- const due=dueWords();
+ const due=dueWords().sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0));
  if(!due.length){currentPage='home';render();toast('🎉 Bugünlük tekrarın tamam!');return}
- const w=due[i%due.length],m=document.getElementById('main');
- m.innerHTML=`<h1>Akıllı tekrar</h1><div class="sub">${(i%due.length)+1} / ${due.length} kelime</div>
- <div class="card"><span class="pill">Hatırlıyor musun?</span><div class="word">${esc(w.word)}</div>
- <div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div>
- <div id="answerBox" class="hidden"><div class="meaning">${esc(w.meaning)}</div><div class="example">${esc(w.example||w.definition||'')}</div>${w.note?`<div class="mini" style="margin-top:12px"><b>Notum</b>${esc(w.note)}</div>`:''}</div>
+ const pos=i%due.length, w=due[pos],m=document.getElementById('main');
+ const dueNow=due.length;
+ const intervalText=w.interval?`${w.interval} gün`:'İlk tekrar';
+ m.innerHTML=`<h1>Akıllı tekrar</h1><div class="sub">${pos+1} / ${dueNow} kelime • ${esc(intervalText)}</div>
+ <div class="review-progress"><div style="width:${((pos+1)/dueNow)*100}%"></div></div>
+ <div class="card"><span class="pill">Hatırlıyor musun?</span><div class="word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div>
+ <div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')} • ${esc(w.category||'TOEFL Academic')}</div>
+ <div id="answerBox" class="hidden"><div class="meaning">${esc(w.meaning)}</div><div class="example">${esc(w.example||w.definition||'')}</div>${w.synonyms?`<div class="mini" style="margin-top:12px"><b>Synonym</b> ${esc(w.synonyms)}</div>`:''}${w.note?`<div class="mini" style="margin-top:8px"><b>Notum</b> ${esc(w.note)}</div>`:''}</div>
  <button id="showBtn" class="btn primary" style="width:100%;margin-top:22px" onclick="revealAnswer()">Anlamı göster</button>
- <div id="actions" class="hidden"><div class="meta" style="margin-top:18px">Nasıl hatırladın?</div>
- <div class="review-actions"><button class="again" onclick="rateWord('${encodeURIComponent(w.word)}','again')">😵 Unuttum</button><button class="hard" onclick="rateWord('${encodeURIComponent(w.word)}','hard')">🤔 Zorlandım</button><button class="good" onclick="rateWord('${encodeURIComponent(w.word)}','good')">😊 Hatırladım</button></div></div></div>`;
+ <div id="actions" class="hidden"><div class="meta" style="margin-top:18px">Ne kadar hatırladın?</div>
+ <div class="review-actions"><button class="again" onclick="rateWord('${encodeURIComponent(w.word)}','again')">😵 Unuttum<br><small>10 dk</small></button><button class="hard" onclick="rateWord('${encodeURIComponent(w.word)}','hard')">🤔 Zorlandım<br><small>1 gün</small></button><button class="good" onclick="rateWord('${encodeURIComponent(w.word)}','good')">😊 Hatırladım<br><small>sonraki</small></button></div></div></div>`;
 }
 function revealAnswer(){document.getElementById('answerBox').classList.remove('hidden');document.getElementById('showBtn').classList.add('hidden');document.getElementById('actions').classList.remove('hidden')}
 function rateWord(encoded,quality){
  const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;
- const intervals={again:10*60*1000,hard:24*60*60*1000,good:0};
- if(quality==='good'){w.repetitions=(w.repetitions||0)+1;const levels=[1,3,7,14,30];w.interval=levels[Math.min(w.repetitions-1,levels.length-1)];intervals.good=w.interval*24*60*60*1000}
- if(quality==='hard'){w.repetitions=Math.max(0,w.repetitions||0);w.interval=1}
- if(quality==='again'){w.repetitions=0;w.interval=0}
- w.nextReview=new Date(Date.now()+intervals[quality]).toISOString();save();showReview(0);
+ const now=Date.now();
+ if(quality==='again'){
+   w.repetitions=0;w.interval=0;w.reviewLevel='Unutuldu';
+   w.nextReview=new Date(now+10*60*1000).toISOString();
+ }
+ if(quality==='hard'){
+   w.repetitions=Math.max(0,w.repetitions||0);w.interval=1;w.reviewLevel='Zorlanıyorum';
+   w.nextReview=new Date(now+24*60*60*1000).toISOString();
+ }
+ if(quality==='good'){
+   w.repetitions=(w.repetitions||0)+1;
+   const levels=[1,3,7,14,30];
+   w.interval=levels[Math.min(w.repetitions-1,levels.length-1)];
+   w.reviewLevel=w.interval>=14?'Güçlü':'Öğreniliyor';
+   w.nextReview=new Date(now+w.interval*24*60*60*1000).toISOString();
+ }
+ w.lastReviewed=new Date(now).toISOString();
+ w.reviewCount=(w.reviewCount||0)+1;
+ save();showReview(0);
 }
 function intervalLabel(n){return n?`${n} gün`:'ilk tekrar'}
 
@@ -298,12 +322,30 @@ function stats(m){
  const totalWrong=words.reduce((a,w)=>a+(w.quizWrong||0),0);
  const accuracy=(totalCorrect+totalWrong)?Math.round(totalCorrect/(totalCorrect+totalWrong)*100):0;
  const cats={};
- words.forEach(w=>cats[w.category||'TOEFL Academic']=(cats[w.category||'TOEFL Academic']||0)+1);
+ let strong=0,learning=0,hard=0,forgot=0;
+ words.forEach(w=>{
+   cats[w.category||'TOEFL Academic']=(cats[w.category||'TOEFL Academic']||0)+1;
+   if(w.reviewLevel==='Güçlü')strong++;
+   else if(w.reviewLevel==='Zorlanıyorum')hard++;
+   else if(w.reviewLevel==='Unutuldu')forgot++;
+   else learning++;
+ });
  m.innerHTML=`<h1>İlerleme</h1><div class="sub">Kelime hazineni takip et.</div>
  <div class="stats"><div class="stat"><strong>${words.length}</strong>Toplam kelime</div><div class="stat"><strong>${due.length}</strong>Tekrar bekleyen</div><div class="stat"><strong>${accuracy}%</strong>Quiz başarısı</div><div class="stat"><strong>${totalCorrect}</strong>Doğru cevap</div></div>
- <div class="card" style="margin-top:18px"><div class="section-title">Kategoriler</div>
+ <div class="card" style="margin-top:18px"><div class="section-title">🧠 Kelime hafıza durumu</div>
+ <div class="level-grid"><div class="level"><b>${strong}</b><span>💪 Güçlü</span></div><div class="level"><b>${learning}</b><span>📖 Öğreniliyor</span></div><div class="level"><b>${hard}</b><span>🤔 Zorlanıyorum</span></div><div class="level"><b>${forgot}</b><span>🔁 Yeniden öğren</span></div></div>
+ </div>
+ <div class="card"><div class="section-title">📅 Tekrar planı</div>
+ <div class="meta">${due.length?`Bugün ${due.length} kelimeyi tekrar etmen gerekiyor.`:'Bugün tekrar bekleyen kelime yok.'}</div>
+ ${due.length?`<button class="btn primary" style="width:100%;margin-top:16px" onclick="startReview()">Tekrara başla →</button>`:''}
+ </div>
+ <div class="card"><div class="section-title">Kategoriler</div>
  ${Object.keys(cats).length?Object.entries(cats).map(([k,v])=>`<div class="progressline"><span>${esc(k)}</span><b>${v}</b></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>
- <div class="card"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map(w=>`<div class="listitem"><div><b>${esc(w.word)}</b><button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button><div class="meta">${esc(w.meaning||'')}</div><div><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span></div><div class="progressline"><span>Tekrar</span><span>${w.nextReview&&new Date(w.nextReview)>new Date()?'📅 '+new Date(w.nextReview).toLocaleDateString('tr-TR'):'🔔 Şimdi'}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`;
+ <div class="card"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map(w=>{
+   const next=w.nextReview&&new Date(w.nextReview)>new Date()?`📅 ${new Date(w.nextReview).toLocaleDateString('tr-TR')}`:'🔔 Şimdi';
+   const level=w.reviewLevel||'Öğreniliyor';
+   return `<div class="listitem"><div><b>${esc(w.word)}</b><button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button><div class="meta">${esc(w.meaning||'')}</div><div><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span></div><div class="progressline"><span>Tekrar</span><span>${next}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`;
+ }).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`;
 }
 
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');render()}
