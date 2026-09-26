@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v6.0</title>
+<title>VocaMate v7.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -68,7 +68,24 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .smallbtn.active{background:#eaf0ff;border-color:#8da8e8}
 .sprint-result{text-align:center;padding:35px 24px}
 .bigscore{font-size:64px;font-weight:850;color:#23406f}
+
+.reading-text{font-size:19px;line-height:1.8;background:#f7f9fc;border-radius:18px;padding:18px}
+.reading-word{border:0;background:transparent;padding:2px 3px;border-radius:7px;color:#172033;font:inherit;cursor:pointer}
+.reading-word.candidate{background:#eef3ff;color:#23406f;font-weight:650}
+.reading-word.selected{background:#d9f4e8;color:#176b4a;font-weight:800}
+.candidate-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.candidate-chip{border:0;border-radius:18px;padding:9px 13px;background:#eef3ff;color:#23406f;font-weight:700}
+.candidate-chip.chosen{background:#d9f4e8;color:#176b4a}
+.reading-form{padding:16px 0;border-bottom:1px solid #e5eaf2}
+.reading-form:last-child{border-bottom:0}
+.reading-form label{display:block;margin-top:10px;font-weight:700;font-size:14px}
+.reading-form input,.reading-form select{width:100%;padding:13px;border:1px solid #dbe2ee;border-radius:14px;margin-top:6px;font-size:16px;background:#fff}
+
+.navin{grid-template-columns:repeat(5,1fr)}
+.nav button{font-size:12px}
+.navicon{font-size:22px}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 <div class="app">
@@ -79,6 +96,7 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 <button data-page="home" class="active"><span class="navicon">🏠</span>Ana sayfa</button>
 <button data-page="add"><span class="navicon">＋</span>Kelime ekle</button>
 <button data-page="quiz"><span class="navicon">🎯</span>Quiz</button>
+<button data-page="reading"><span class="navicon">📖</span>Reading</button>
 <button data-page="stats"><span class="navicon">📊</span>İlerleme</button>
 </div></nav>
 <div id="toast" class="toast hidden"></div>
@@ -145,6 +163,7 @@ function render(){
  if(currentPage==='home')home(m);
  if(currentPage==='add')add(m);
  if(currentPage==='quiz')quiz(m);
+ if(currentPage==='reading')reading(m);
  if(currentPage==='stats')stats(m);
 }
 
@@ -154,7 +173,7 @@ function home(m){
  m.innerHTML=`<h1>Bugünkü çalışma</h1><div class="sub">Kısa çalış, sık tekrar et.</div>
  <div class="card goal"><div class="goalrow"><span>Günlük hedef</span><span>${addedToday} / ${TARGET}</span></div>
  <div class="bar"><div class="fill" style="width:${pct}%"></div></div><div>${Math.max(0,TARGET-addedToday)} kelime daha</div></div>
- <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div><div class="card" style="margin-top:18px"><span class="pill">🎯 TOEFL Sprint</span><h2 style="margin:10px 0 6px">10 soruluk kelime antrenmanı</h2><div class="meta">Anlam ve İngilizce modlarında hızlı bir TOEFL kelime turu.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="startToeflSprint()">Sprinti başlat →</button></div>
+ <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div><div class="card" style="margin-top:18px"><span class="pill">🎯 TOEFL Sprint</span><h2 style="margin:10px 0 6px">10 soruluk kelime antrenmanı</h2><div class="meta">Anlam ve İngilizce modlarında hızlı bir TOEFL kelime turu.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="startToeflSprint()">Sprinti başlat →</button></div><div class="card"><span class="pill">📖 Reading Lab</span><h2 style="margin:10px 0 6px">Reading ekran görüntüsünden kelime çıkar</h2><div class="meta">Bilmediğin kelimeleri seç, VocaMate listene ekle ve tekrar planına dahil et.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="nav('reading')">Reading'i aç →</button></div>
  <div class="card"><span class="pill">🧠 Akıllı tekrar</span><h2 style="margin-bottom:8px">${due.length?due.length+' kelime tekrar bekliyor':'Bugün tekrar bekleyen kelime yok'}</h2>
  <div class="meta">${due.length?'Unutmaya başlamadan önce tekrar edelim.':'Yeni kelime ekleyebilir veya quiz yapabilirsin.'}</div>
  ${due.length?`<button class="btn primary" style="width:100%;margin-top:18px" onclick="startReview()">Tekrara başla →</button>`:`<div class="next-review">🎯 Harika! Bir sonraki tekrarlar zamanı geldiğinde burada görünecek.</div>`}</div>
@@ -347,6 +366,107 @@ function finishSprint(){
  <div class="meta">${pct>=80?'Çok iyi gidiyorsun!':'Bir tur daha tekrar ederek güçlendirebilirsin.'}</div>
  <div class="btnrow" style="margin-top:20px"><button class="btn primary" onclick="startToeflSprint()">Tekrar sprint</button><button class="btn secondary" onclick="nav('stats')">İlerlemeyi gör</button></div></div>`;
 }
+
+let readingText='', readingWords=[], selectedReading=new Set(), readingFile=null;
+
+const commonWords=new Set(('the a an and or but if then than of to in on at for from by with without as is are was were be been being this that these those it its they them their there here into about after before during while which who whom what when where why how can could may might must should would will shall do does did done have has had having not no yes very more most some any each every both either neither other another such only also too so because through over under between among against per as we your our my his her their i you he she we they me him us them'.split(/\s+/)));
+
+function normalizeToken(s){return s.toLowerCase().replace(/[^a-z'-]/g,'').trim()}
+function candidateReadingWords(){
+ return [...new Set(readingWords.map(normalizeToken).filter(w=>w.length>=4 && !commonWords.has(w) && !words.some(x=>x.word===w)))];
+}
+function reading(m){
+ m.innerHTML=`<h1>📖 Reading Lab</h1><div class="sub">Reading ekran görüntünü yükle, bilmediğin kelimeleri seç ve VocaMate listene ekle.</div>
+ <div class="card">
+ <span class="pill">📷 Ekran görüntüsü</span>
+ <h2 style="margin:10px 0 6px">Reading metni yükle</h2>
+ <div class="meta">İngilizce bir PDF/soru ekran görüntüsünü fotoğraf olarak yükleyebilirsin. Metin cihazında işlenir; sonra kelimelere dokunarak seçim yaparsın.</div>
+ <input id="readingFile" type="file" accept="image/*" style="margin-top:18px;width:100%" onchange="runOCR(this.files[0])">
+ <div id="ocrStatus" class="info" style="margin-top:14px">Henüz görsel yüklenmedi.</div>
+ </div>
+ <div id="readingResult"></div>
+ ${readingText?`<button class="btn secondary" style="width:100%" onclick="resetReading()">Yeni görsel yükle</button>`:''}`;
+ if(readingText) renderReadingResult();
+}
+async function runOCR(file){
+ if(!file)return;
+ readingFile=file; readingText=''; readingWords=[]; selectedReading=new Set();
+ const status=document.getElementById('ocrStatus');
+ status.innerHTML='🔎 Görsel okunuyor...';
+ try{
+   const result=await Tesseract.recognize(file,'eng',{logger:msg=>{
+     if(msg.status==='recognizing text' && msg.progress) status.innerHTML=`🔎 Metin okunuyor... ${Math.round(msg.progress*100)}%`;
+   }});
+   readingText=result.data.text||'';
+   readingWords=(readingText.match(/[A-Za-z][A-Za-z'-]*/g)||[]);
+   status.innerHTML=`✅ Metin okundu. ${readingWords.length} kelime bulundu.`;
+   renderReadingResult();
+ }catch(e){
+   status.innerHTML='❌ Görsel okunamadı. Daha net bir ekran görüntüsü deneyebilirsin.';
+ }
+}
+function renderReadingResult(){
+ const box=document.getElementById('readingResult'); if(!box)return;
+ const candidates=candidateReadingWords();
+ const spans=(readingText.match(/\s+|[A-Za-z][A-Za-z'-]*|[^A-Za-z\s]+/g)||[]).map(token=>{
+   const n=normalizeToken(token);
+   if(!n)return esc(token);
+   const isSel=selectedReading.has(n);
+   const isCandidate=candidates.includes(n);
+   const cls=isSel?'reading-word selected':(isCandidate?'reading-word candidate':'reading-word');
+   return `<button class="${cls}" onclick="toggleReadingWord('${encodeURIComponent(n)}')" title="Kelimeyi seç">${esc(token)}</button>`;
+ }).join('');
+ box.innerHTML=`<div class="card">
+ <div class="section-title">📄 Okunan metin</div>
+ <div class="meta" style="margin-bottom:14px">Mavi/önerilen kelimelere dokunabilir, bilmediğin kelimeleri kendin seçebilirsin.</div>
+ <div class="reading-text">${spans}</div>
+ </div>
+ <div class="card">
+ <div class="section-title">🧠 Muhtemel bilinmeyenler</div>
+ <div class="meta">${candidates.length?`${candidates.length} kelime mevcut kelime listende yok.`:'Yeni/ayrı bir kelime adayı bulunamadı.'}</div>
+ <div class="candidate-row">${candidates.slice(0,40).map(w=>`<button class="candidate-chip ${selectedReading.has(w)?'chosen':''}" onclick="toggleReadingWord('${encodeURIComponent(w)}')">${esc(w)}</button>`).join('')}</div>
+ </div>
+ <div class="card">
+ <div class="section-title">➕ Seçilen kelimeler</div>
+ <div class="meta">${selectedReading.size?`${selectedReading.size} kelime seçildi.`:'Metin üzerindeki kelimelere dokunarak seç.'}</div>
+ <div id="selectedWordsBox">${selectedReading.size?[...selectedReading].map(w=>`<div class="progressline"><span>${esc(w)}</span><button class="delete" onclick="toggleReadingWord('${encodeURIComponent(w)}')">Çıkar</button></div>`).join(''):'<div class="empty">Henüz kelime seçmedin.</div>'}</div>
+ ${selectedReading.size?`<button class="btn primary" style="width:100%;margin-top:16px" onclick="prepareReadingSelected()">Seçilenleri listeye hazırla →</button>`:''}
+ </div>`;
+}
+function toggleReadingWord(encoded){
+ const w=decodeURIComponent(encoded); if(!w)return;
+ if(selectedReading.has(w))selectedReading.delete(w); else selectedReading.add(w);
+ renderReadingResult();
+}
+async function prepareReadingSelected(){
+ const selected=[...selectedReading];
+ if(!selected.length){toast('Önce kelime seç.');return}
+ const box=document.getElementById('readingResult');
+ box.innerHTML=`<div class="card"><div class="section-title">✍️ Kelime anlamlarını kontrol et</div><div class="meta">Yerleşik TOEFL sözlüğünde bulunanlar otomatik gelir. Diğerleri için Türkçe anlamı sen girebilirsin.</div>
+ <div id="readingForms">${selected.map((w,i)=>{
+   const d=fallback[w]||{};
+   return `<div class="reading-form"><b>${esc(w)}</b>${d.definition?`<div class="mini">${esc(d.definition)}</div>`:''}<label>Türkçe anlam *</label><input id="rmeaning_${i}" value="${esc(d.meaning||'')}" placeholder="Örn. önemli, kayda değer"><label>Zorluk</label><select id="rdiff_${i}"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div>`;
+ }).join('')}</div><button class="btn primary" style="width:100%;margin-top:18px" onclick="saveReadingSelected()">💾 Listeye ekle</button></div>`;
+}
+function saveReadingSelected(){
+ const selected=[...selectedReading];
+ let added=0;
+ selected.forEach((w,i)=>{
+   const meaning=document.getElementById(`rmeaning_${i}`)?.value.trim();
+   if(!meaning)return;
+   const d=fallback[w]||{};
+   const old=words.find(x=>x.word===w);
+   words=words.filter(x=>x.word!==w);
+   words.push({word:w,type:d.type||'word',phonetic:d.phonetic||'',definition:d.definition||'',meaning,example:d.example||'',synonyms:d.synonyms||'',antonyms:d.antonyms||'',category:'TOEFL Academic',difficulty:document.getElementById(`rdiff_${i}`)?.value||'Orta',added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+   added++;
+ });
+ save();
+ selectedReading=new Set();
+ toast(`✅ ${added} kelime listeye eklendi`);
+ setTimeout(()=>nav('reading'),500);
+}
+function resetReading(){readingText='';readingWords=[];selectedReading=new Set();render()}
+
 function stats(m){
  const due=dueWords();
  const totalCorrect=words.reduce((a,w)=>a+(w.quizCorrect||0),0);
