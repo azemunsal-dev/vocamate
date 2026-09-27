@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v24.0</title>
+<title>VocaMate v25.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -140,7 +140,16 @@ body{padding-bottom:180px}
 
 @media(max-width:380px){.toefl-use{grid-template-columns:1fr}.sentence-actions{grid-template-columns:1fr}}
 
-/* V24 Vocabulary Mastery */
+
+/* V25 AI Sentence Coach */
+.ai-coach-btn{width:100%;margin-top:9px;border:1px solid #cfdcf7;background:#eef3ff;color:#23406f;border-radius:14px;padding:12px;font-weight:850;font-size:14px;cursor:pointer}
+.ai-coach-box{margin-top:10px;background:linear-gradient(135deg,#f1f5ff,#ffffff);border:1px solid #d8e2f7;border-radius:16px;padding:13px;color:#263a5b;font-size:13px;line-height:1.55}
+.ai-coach-box h4{margin:0 0 8px;font-size:15px;color:#23406f}
+.ai-coach-grid{display:grid;gap:8px}.ai-coach-item{background:#fff;border-radius:12px;padding:10px;border:1px solid #e2e8f2}.ai-coach-item b{display:block;margin-bottom:3px;color:#5a6b86}
+.ai-loading{display:flex;align-items:center;gap:8px;color:#4772e6;font-weight:800}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#4772e6;animation:aiPulse 1s infinite alternate}@keyframes aiPulse{to{opacity:.25;transform:scale(.7)}}
+
+/* V25 Vocabulary Mastery + AI Sentence Coach */
 .mastery-card{background:linear-gradient(135deg,#f4f7ff,#ffffff);border:1px solid #dfe7f8;border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 7px 20px #203b6808}.mastery-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.mastery-title{font-size:20px;font-weight:900;color:#233553}.mastery-sub{font-size:13px;color:#71809a;line-height:1.4;margin-top:3px}.mastery-level{background:#23406f;color:#fff;border-radius:15px;padding:9px 11px;font-weight:850;white-space:nowrap}.mastery-bar{height:10px;background:#e6ebf4;border-radius:10px;overflow:hidden;margin:14px 0 13px}.mastery-bar span{display:block;height:100%;background:#4772e6;border-radius:10px}.mastery-stages{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.mastery-stage{font-size:10px;color:#8793a9;text-align:center;line-height:1.25}.mastery-dot{width:25px;height:25px;border-radius:50%;background:#e5eaf2;color:#7d899e;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-weight:900}.mastery-stage.done .mastery-dot{background:#287957;color:#fff}.mastery-stage.current .mastery-dot{background:#4772e6;color:#fff;box-shadow:0 0 0 4px #e6edff}.feedback-list{margin:8px 0 0;padding-left:18px}.feedback-list li{margin:4px 0}.feedback-score{display:inline-block;background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:4px 8px;font-weight:850;color:#23406f;margin-bottom:6px}.active-tip{background:#fff;border:1px dashed #b9c8e6;border-radius:14px;padding:10px 12px;color:#52627c;font-size:12px;line-height:1.45;margin-top:9px}
 
 /* V23 Vocabulary Learning Path */
@@ -901,7 +910,7 @@ function wordDetail(m){
 
  <div class="v23-mission"><div class="kicker">BUGÜNÜN KELİME GÖREVİ</div><h3>${sentenceDone?'Bir adım daha!':'Kelimeyi aktif hale getir'}</h3><p>${mission}</p>${!sentenceDone?`<button onclick="document.getElementById('activeSentence')?.focus()">✍️ Cümlemi yaz</button>`:`<button onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Tekrar et</button>`}</div>
 
- <div class="v22-focus"><div class="v22-focus-head"><div class="v22-focus-icon">✍️</div><div><h3>Aktif kullanım</h3><div class="small">Vocabulary'nin en önemli adımı: kelimeyi sen kullan.</div></div></div><p>${`Write one natural English sentence using <b>${exWord}</b>. Try to use the word in the same meaning shown above.`}</p><div class="v22-prompt">💡 <b>Mini görev:</b> ${w.word} kelimesini bugün bir konuşmada veya yazıda kullan.</div><textarea id="activeSentence" class="sentence-box" style="margin-top:10px" placeholder="Write your own sentence with ${exWord}...">${esc(w.userExample||'')}</textarea><div class="v22-row"><button class="listen" onclick="saveActiveSentence('${encodeURIComponent(w.word)}')">💾 Kaydet</button><button class="practice" onclick="checkActiveSentence('${encodeURIComponent(w.word)}')">✓ Cümlemi kontrol et</button></div><div id="sentenceFeedback"></div>${saved}</div>
+ <div class="v22-focus"><div class="v22-focus-head"><div class="v22-focus-icon">✍️</div><div><h3>Aktif kullanım</h3><div class="small">Vocabulary'nin en önemli adımı: kelimeyi sen kullan.</div></div></div><p>${`Write one natural English sentence using <b>${exWord}</b>. Try to use the word in the same meaning shown above.`}</p><div class="v22-prompt">💡 <b>Mini görev:</b> ${w.word} kelimesini bugün bir konuşmada veya yazıda kullan.</div><textarea id="activeSentence" class="sentence-box" style="margin-top:10px" placeholder="Write your own sentence with ${exWord}...">${esc(w.userExample||'')}</textarea><div class="v22-row"><button class="listen" onclick="saveActiveSentence('${encodeURIComponent(w.word)}')">💾 Kaydet</button><button class="practice" onclick="checkActiveSentence('${encodeURIComponent(w.word)}')">✓ Cümlemi kontrol et</button></div><button class="ai-coach-btn" onclick="aiCoachSentence('${encodeURIComponent(w.word)}')">🤖 AI Cümle Koçu</button><div id="sentenceFeedback"></div>${saved}</div>
 
  <div class="active-learning"><h3>🎓 TOEFL'da kullan</h3><p>Öğrendiğin kelimeyi sınavın Speaking ve Writing cevaplarına taşı.</p><div class="toefl-use"><div class="use-card"><b>🎤 Speaking</b><span>${esc(speakingUse)}</span></div><div class="use-card"><b>✍️ Writing</b><span>${esc(writingUse)}</span></div></div><button class="btn primary" style="width:100%;margin-top:10px" onclick="markToeflUse('${encodeURIComponent(w.word)}')">🎓 Bu kelimeyi TOEFL'da kullandım</button></div>
  <div class="stats" style="margin-top:14px"><div class="stat"><strong>${w.reviewCount||0}</strong><span>Tekrar sayısı</span></div><div class="stat"><strong>${w.quizCorrect||0}</strong><span>Quiz doğru</span></div><div class="stat"><strong>${w.repetitions||0}</strong><span>Başarılı tekrar</span></div><div class="stat"><strong>${w.interval||0} gün</strong><span>Aralık</span></div></div>
@@ -935,27 +944,41 @@ function checkActiveSentence(encoded){
  const hasCapital=/^[A-Z]/.test(text);
  const hasPunctuation=/[.!?]$/.test(text);
  const repeatedSpaces=/\\s{2,}/.test(text);
- const scoreParts=[];
- let score=0;
- if(hasWord){score+=45;scoreParts.push('Kelime doğru biçimde cümlede yer alıyor.')}else scoreParts.push('Hedef kelime cümlede görünmüyor.');
+ const scoreParts=[]; let score=0;
+ if(hasWord){score+=45;scoreParts.push('Kelime cümlede kullanılmış.')}else scoreParts.push('Hedef kelime cümlede görünmüyor.');
  if(wordsCount>=6){score+=20;scoreParts.push('Cümle yeterli uzunlukta.')}else scoreParts.push('Cümleyi biraz daha geliştir.');
  if(hasCapital){score+=10;scoreParts.push('Büyük harf kullanımı uygun.')}else scoreParts.push('Cümle başında büyük harf kullan.');
  if(hasPunctuation){score+=10;scoreParts.push('Noktalama işareti var.')}else scoreParts.push('Sonuna nokta, soru işareti veya ünlem ekle.');
- if(!repeatedSpaces){score+=5;}
+ if(!repeatedSpaces)score+=5;
  if(/[.!?]/.test(text))score+=5;
  if(/\b(is|are|was|were|has|have|had|can|could|will|would|do|does|did|the|a|an)\b/i.test(text))score+=5;
  score=Math.min(100,score);
  w.userExample=text;w.activeSentenceScore=score;w.lastActivePractice=today();save();
- if(hasWord&&wordsCount>=6&&score>=70){
-   box.className='sentence-feedback feedback-good';
-   box.innerHTML=`<span class="feedback-score">${score}/100</span><br>✅ <b>Aktif kullanım başarılı!</b><ul class="feedback-list">${scoreParts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="active-tip">💡 Not: Bu kontrol hızlı bir VocaMate kontrolüdür; gerçek bir grammar değerlendirmesi değildir.</div>`;
- }else{
-   box.className='sentence-feedback feedback-warn';
-   box.innerHTML=`<span class="feedback-score">${score}/100</span><br>🟡 <b>Biraz daha geliştir.</b><ul class="feedback-list">${scoreParts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="active-tip">🎯 Hedefin: kelimeyi doğal, en az 6 kelimelik ve anlamına uygun bir cümlede kullanmak.</div>`;
+ box.className=score>=70?'sentence-feedback feedback-good':'sentence-feedback feedback-warn';
+ box.innerHTML=`<span class="feedback-score">${score}/100</span><br>${score>=70?'✅ <b>Temel kullanım başarılı.</b>':'🟡 <b>Biraz daha geliştir.</b>'}<ul class="feedback-list">${scoreParts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="active-tip">🤖 Daha ayrıntılı grammar, doğallık ve alternatif cümle için <b>AI Cümle Koçu</b>nu kullan.</div>`;
+ if(currentPage==='wordDetail')setTimeout(()=>render(),900);
+}
+
+async function aiCoachSentence(encoded){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence'),box=document.getElementById('sentenceFeedback');
+ if(!w||!input||!box)return;
+ const sentence=input.value.trim();
+ if(!sentence){box.className='sentence-feedback feedback-warn';box.innerHTML='💡 Önce kendi cümleni yaz, sonra AI Cümle Koçu ile analiz edelim.';return}
+ const endpoint=localStorage.getItem('vocamate_ai_endpoint')||'';
+ if(!endpoint){
+   box.className='ai-coach-box';
+   box.innerHTML=`<h4>🤖 AI Cümle Koçu</h4><div class="ai-coach-grid"><div class="ai-coach-item"><b>Şu anki durum</b> Cümlen kaydedildi ve temel VocaMate kontrolünden geçti.</div><div class="ai-coach-item"><b>AI desteği</b> Gerçek AI analizi için VocaMate'ye güvenli bir backend bağlantısı eklememiz gerekiyor. API anahtarını uygulamanın içine koymayacağız.</div><div class="ai-coach-item"><b>Önerilen düzeltme</b> ${word==='substantial'&&/substantial time/i.test(sentence)?'“substantial amount of time” ifadesi daha doğal olabilir.':'AI bağlantısı kurulduğunda grammar, doğallık ve kelime anlamını ayrı ayrı analiz edecek.'}</div></div>`;
+   return;
  }
- if(score>=70){w.toeflUseCount=w.toeflUseCount||0;}
- save();
- if(currentPage==='wordDetail')setTimeout(()=>render(),1200);
+ box.className='ai-coach-box';box.innerHTML='<div class="ai-loading"><span class="ai-dot"></span> AI cümleni analiz ediyor…</div>';
+ try{
+   const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({word,meaning:w.meaning||'',definition:w.definition||'',sentence})});
+   if(!res.ok)throw new Error('AI endpoint '+res.status);
+   const data=await res.json();
+   const r=data.result||data;
+   box.innerHTML=`<h4>🤖 AI Cümle Koçu</h4><div class="ai-coach-grid"><div class="ai-coach-item"><b>Değerlendirme</b>${esc(r.evaluation||'')}</div><div class="ai-coach-item"><b>Grammar</b>${esc(r.grammar||'')}</div><div class="ai-coach-item"><b>Doğallık</b>${esc(r.naturalness||'')}</div><div class="ai-coach-item"><b>Önerilen cümle</b><strong>${esc(r.corrected_sentence||sentence)}</strong></div><div class="ai-coach-item"><b>Neden?</b>${esc(r.explanation||'')}</div><div class="ai-coach-item"><b>TOEFL önerisi</b>${esc(r.toefl_tip||'')}</div></div>`;
+   w.aiFeedback=r;w.aiCheckedAt=new Date().toISOString();w.userExample=sentence;save();
+ }catch(e){box.innerHTML='<div class="ai-coach-item"><b>⚠️ AI bağlantısı kurulamadı</b> Şimdilik temel VocaMate kontrolünü kullanabilirsin. AI bağlantısını daha sonra tekrar deneyebiliriz.</div>';}
 }
 function practicePronunciation(word){const w=words.find(x=>x.word===word);if(w){w.pronunciationPracticed=true;save();}if('SpeechRecognition' in window || 'webkitSpeechRecognition' in window){const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const heard=(e.results[0][0].transcript||'').toLowerCase();const ok=heard.includes(word.toLowerCase());toast(ok?'🎉 Kelimeyi doğru söyledin!':'🔁 Bir kez daha dene.');};r.onerror=()=>toast('🎤 Ses tanıma bu tarayıcıda kullanılamıyor.');r.start();toast('🎤 Dinliyorum...');}else{toast('🔊 Telaffuz çalışması kaydedildi. Ses tanıma bu tarayıcıda desteklenmiyor.');}if(currentPage==='wordDetail')setTimeout(()=>render(),700)}
 function markToeflUse(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.toeflUseCount=(w.toeflUseCount||0)+1;save();toast('🎓 TOEFL kullanımı kaydedildi');if(currentPage==='wordDetail')setTimeout(()=>render(),500);}
