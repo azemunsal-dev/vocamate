@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v16.0</title>
+<title>VocaMate v17.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -111,13 +111,14 @@ header{display:flex;justify-content:space-between;align-items:center;margin:4px 
 
 /* V14 bottom navigation */
 .app-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:0;z-index:1000;pointer-events:none}
-.app-bottom-nav button{appearance:none;-webkit-appearance:none;position:fixed;bottom:max(82px,calc(env(safe-area-inset-bottom) + 78px));width:58px;height:58px;border:0;border-radius:50%;background:#23406f;color:#fff;box-shadow:0 8px 24px #203b6840;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;line-height:1;pointer-events:auto;transition:transform .15s,opacity .15s}
+.app-bottom-nav button{appearance:none;-webkit-appearance:none;position:fixed;bottom:76px;width:58px;height:58px;border:0;border-radius:50%;background:#23406f;color:#fff;box-shadow:0 8px 24px #203b6840;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;line-height:1;pointer-events:auto;transition:transform .15s,opacity .15s}
 .app-bottom-nav button:not(:disabled):active{transform:scale(.92)}
 .app-bottom-nav button:disabled{background:#dfe5ef;color:#9aa7ba;box-shadow:none;opacity:.75}
 .app-bottom-nav #bottomBack{left:16px}
 .app-bottom-nav #bottomForward{right:16px}
 .app-bottom-nav .arrow{font-size:38px;line-height:1;font-weight:500;margin-top:-3px}
 .app-bottom-nav .bottom-home{display:none}
+body{padding-bottom:110px}
 @media(min-width:700px){.app-bottom-nav button{bottom:24px}}
 
 
