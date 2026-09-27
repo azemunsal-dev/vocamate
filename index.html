@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v8.0</title>
+<title>VocaMate v9.1</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -225,7 +225,8 @@ async function prepareWord(){
   <label>Türkçe anlam *</label><input id="meaning" placeholder="Türkçe anlamını yaz">
   <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
   <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
-  <label>Örnek cümlen</label><textarea id="example" placeholder="İstersen örnek cümle ekle"></textarea>
+  <label>📘 Örnek cümle</label><textarea id="example" placeholder="Sözlükten gelen örnek cümle"></textarea>
+  <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz..."></textarea>
   <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
   <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet</button></div></div>`;return}
  const sourceNote=fallback[word]?'📚 Yerleşik TOEFL sözlüğünden bulundu':'🌐 İnternet sözlüğünden bulundu';
@@ -234,18 +235,18 @@ async function prepareWord(){
  <label>Türkçe anlam *</label><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Örn. önemli, kayda değer">
  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
- <label>Örnek cümlen</label><textarea id="example">${esc(data.example||'')}</textarea><label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+ <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea><label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz...">${esc(data.userExample||'')}</textarea><label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
  ${data.synonyms?`<div class="mini"><b>Synonym</b>${esc(data.synonyms)}</div>`:''}${data.antonyms?`<div class="mini"><b>Antonym</b>${esc(data.antonyms)}</div>`:''}
  <button class="btn primary" onclick='saveWord(${JSON.stringify({word,...data})})'>💾 Kelimeyi kaydet</button></div>`;
 }
 function saveWord(data){
- const meaning=document.getElementById('meaning').value.trim(),example=document.getElementById('example').value.trim(),note=document.getElementById('note').value.trim();
+ const meaning=document.getElementById('meaning').value.trim(),example=document.getElementById('example').value.trim(),userExample=document.getElementById('userExample')?.value.trim()||'',note=document.getElementById('note').value.trim();
  const category=document.getElementById('category')?.value||'TOEFL Academic';
  const difficulty=document.getElementById('difficulty')?.value||'Orta';
  if(!meaning){toast('Türkçe anlamı yazmalısın.');return}
  const old=words.find(w=>w.word===data.word);
  words=words.filter(w=>w.word!==data.word);
- words.push({...data,meaning,example,note,category,difficulty,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+ words.push({...data,meaning,example,userExample,note,category,difficulty,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
  save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
 }
 
@@ -400,6 +401,7 @@ function candidateScore(w){
 function candidateReadingWords(){
   return [...new Set(readingWords.map(normalizeToken)
     .filter(w=>w.length>=5 && !commonWords.has(w) && !readingNoise.has(w) && !words.some(x=>x.word===w)))]
+    .filter(w=>candidateScore(w)>=5)
     .sort((a,b)=>candidateScore(b)-candidateScore(a) || b.length-a.length || a.localeCompare(b));
 }
 
@@ -446,12 +448,12 @@ function renderReadingResult(){
  }).join('');
  box.innerHTML=`<div class="card">
  <div class="section-title">📄 Okunan metin</div>
- <div class="meta" style="margin-bottom:14px">Yeşil kelimeler TOEFL açısından daha anlamlı adaylardır. Mavi kelimelere dokunarak kendin seçebilirsin. VocaMate sen onaylamadan hiçbir kelimeyi listeye eklemez.</div>
+ <div class="meta" style="margin-bottom:14px">Yeşil kelimeler yüksek güvenli TOEFL adaylarıdır. Metindeki diğer kelimelere de dokunarak kendin seçim yapabilirsin. VocaMate sen onaylamadan hiçbir kelimeyi listeye eklemez.</div>
  <div class="reading-text">${spans}</div>
  </div>
  <div class="card"> 
-<div class="section-title">🧠 TOEFL kelime adayları</div>
-  <div class="meta">${candidates.length?`${candidates.length} yeni kelime adayı bulundu. Akademik açıdan daha anlamlı olanlar üstte.`:'Yeni/ayrı bir kelime adayı bulunamadı.'}</div>
+<div class="section-title">🧠 🎯 TOEFL kelime adayları</div>
+  <div class="meta">${candidates.length?`${candidates.length} yüksek güvenli TOEFL kelime adayı bulundu. Diğer kelimeleri metin üzerinde kendin seçebilirsin.`:'Yüksek güvenli TOEFL adayı bulunamadı. Metindeki kelimelere dokunarak kendin seçebilirsin.'}</div>
   <div class="candidate-row">${candidates.slice(0,40).map(w=>`<button class="candidate-chip ${selectedReading.has(w)?'chosen':''}" onclick="toggleReadingWord('${encodeURIComponent(w)}')">${esc(w)}${fallback[w]?' •':''}</button>`).join('')}</div>
   ${candidates.length?`<button class="btn secondary" style="width:100%;margin-top:12px" onclick="selectTopReadingCandidates()">⭐ İlk ${Math.min(10,candidates.length)} adayı seç</button>`:''}
   </div>
@@ -469,26 +471,91 @@ function toggleReadingWord(encoded){
  if(selectedReading.has(w))selectedReading.delete(w); else selectedReading.add(w);
  renderReadingResult();
 }
+
+function readingSentenceFor(word){
+ const text=readingText||'';
+ const parts=text.split(/(?<=[.!?])\s+/).filter(Boolean);
+ const hit=parts.find(s=>new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(s));
+ if(hit)return hit.trim();
+ const idx=readingWords.findIndex(x=>normalizeToken(x)===word);
+ if(idx<0)return '';
+ return readingWords.slice(Math.max(0,idx-6),Math.min(readingWords.length,idx+7)).join(' ');
+}
+async function translateContextToTurkish(word, sentence){
+ if(!sentence)return '';
+ try{
+   const phrase=sentence.length>500?sentence.slice(0,500):sentence;
+   const q=encodeURIComponent(phrase);
+   const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=${q}`;
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),7000);
+   const r=await fetch(url,{signal:controller.signal}); clearTimeout(timer);
+   if(!r.ok)return '';
+   const j=await r.json();
+   const out=(j?.[0]||[]).map(x=>x?.[0]||'').join('').trim();
+   return out;
+ }catch(e){return ''}
+}
+async function contextualMeaning(word, sentence){
+ const d=fallback[word]||{};
+ const translated=await translateContextToTurkish(word,sentence);
+ if(!translated)return d.meaning||'';
+ // Keep the concise dictionary meaning when available; otherwise use a context-aware phrase translation
+ // so the user does not have to type a Turkish meaning manually.
+ if(d.meaning)return d.meaning;
+ return translated;
+}
 async function prepareReadingSelected(){
  const selected=[...selectedReading];
  if(!selected.length){toast('Önce kelime seç.');return}
  const box=document.getElementById('readingResult');
- box.innerHTML=`<div class="card"><div class="section-title">✍️ Kelime anlamlarını kontrol et</div><div class="meta">Yerleşik TOEFL sözlüğünde bulunanlar otomatik gelir. Diğerleri için Türkçe anlamı sen girebilirsin.</div>
- <div id="readingForms">${selected.map((w,i)=>{
-   const d=fallback[w]||{};
-   return `<div class="reading-form"><b>${esc(w)}</b>${d.definition?`<div class="mini">${esc(d.definition)}</div>`:''}<label>Türkçe anlam *</label><input id="rmeaning_${i}" value="${esc(d.meaning||'')}" placeholder="Örn. önemli, kayda değer"><label>Zorluk</label><select id="rdiff_${i}"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div>`;
- }).join('')}</div><button class="btn primary" style="width:100%;margin-top:18px" onclick="saveReadingSelected()">💾 Listeye ekle</button></div>`;
+ box.innerHTML=`<div class="card"><div class="section-title">🧠 Reading bağlamından kelime bilgileri hazırlanıyor...</div><div class="meta">VocaMate seçtiğin kelimenin geçtiği cümleyi bulup Türkçe anlamı otomatik dolduruyor. Ardından kendi örnek cümleni ekleyebilirsin.</div><div id="readingForms"><div class="info">🔎 ${selected.length} kelime hazırlanıyor...</div></div></div>`;
+ const forms=[];
+ for(let i=0;i<selected.length;i++){
+   const w=selected[i], d=fallback[w]||{}, sentence=readingSentenceFor(w);
+   const meaning=await contextualMeaning(w,sentence);
+   forms.push({w,d,sentence,meaning});
+   const formsBox=document.getElementById('readingForms');
+   if(formsBox){
+     formsBox.innerHTML=forms.map((x,j)=>`<div class="reading-form">
+       <b>${esc(x.w)}</b>
+       ${x.sentence?`<div class="mini"><b>📖 Reading'deki cümle</b>${esc(x.sentence)}</div>`:''}
+       ${x.meaning?`<div class="mini success"><b>🇹🇷 Otomatik anlam</b>${esc(x.meaning)}</div>`:'<div class="mini error">Otomatik çeviri bulunamadı. Tekrar deneyebilir veya anlamı düzenleyebilirsin.</div>'}
+       <label>Türkçe anlam</label><input id="rmeaning_${j}" value="${esc(x.meaning||'')}" placeholder="Reading bağlamındaki anlam">
+       <label>📘 VocaMate örnek cümlesi</label><textarea id="rexample_${j}" placeholder="Varsa sözlük örnek cümlesi">${esc(x.d.example||'')}</textarea>
+       <label>✍️ Kendi örnek cümlen</label><textarea id="ruserExample_${j}" placeholder="Bu kelimeyle kendi İngilizce cümleni yaz..."></textarea>
+       <label>Zorluk</label><select id="rdiff_${j}"><option>Orta</option><option>Kolay</option><option>Zor</option></select>
+     </div>`).join('');
+   }
+ }
+ const finalBox=document.getElementById('readingResult');
+ if(finalBox){
+   finalBox.innerHTML=`<div class="card"><div class="section-title">🧠 Reading'den otomatik kelime bilgileri</div>
+   <div class="meta">Anlamlar Reading cümlesinin bağlamından otomatik hazırlanır. İstersen düzenleyebilirsin. Ayrıca her kelime için kendi İngilizce örnek cümleni ekleyebilirsin.</div>
+   <div id="readingForms">${forms.map((x,j)=>`<div class="reading-form">
+     <b>${esc(x.w)}</b>
+     ${x.sentence?`<div class="mini"><b>📖 Reading'deki cümle</b>${esc(x.sentence)}</div>`:''}
+     ${x.meaning?`<div class="mini success"><b>🇹🇷 Otomatik anlam</b>${esc(x.meaning)}</div>`:'<div class="mini error">Otomatik anlam bulunamadı; alanı düzenleyebilirsin.</div>'}
+     <label>Türkçe anlam</label><input id="rmeaning_${j}" value="${esc(x.meaning||'')}" placeholder="Reading bağlamındaki anlam">
+     <label>📘 VocaMate örnek cümlesi</label><textarea id="rexample_${j}" placeholder="Varsa sözlük örnek cümlesi">${esc(x.d.example||'')}</textarea>
+     <label>✍️ Kendi örnek cümlen</label><textarea id="ruserExample_${j}" placeholder="Bu kelimeyle kendi İngilizce cümleni yaz..."></textarea>
+     <label>Zorluk</label><select id="rdiff_${j}"><option>Orta</option><option>Kolay</option><option>Zor</option></select>
+   </div>`).join('')}</div>
+   <button class="btn primary" style="width:100%;margin-top:18px" onclick="saveReadingSelected()">💾 Kelimeleri listeye ekle</button></div>`;
+ }
 }
 function saveReadingSelected(){
  const selected=[...selectedReading];
  let added=0;
  selected.forEach((w,i)=>{
    const meaning=document.getElementById(`rmeaning_${i}`)?.value.trim();
+   const example=document.getElementById(`rexample_${i}`)?.value.trim()||'';
+   const userExample=document.getElementById(`ruserExample_${i}`)?.value.trim()||'';
    if(!meaning)return;
    const d=fallback[w]||{};
+   const contextSentence=readingSentenceFor(w);
    const old=words.find(x=>x.word===w);
    words=words.filter(x=>x.word!==w);
-   words.push({word:w,type:d.type||'word',phonetic:d.phonetic||'',definition:d.definition||'',meaning,example:d.example||'',synonyms:d.synonyms||'',antonyms:d.antonyms||'',category:'TOEFL Academic',difficulty:document.getElementById(`rdiff_${i}`)?.value||'Orta',added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+   words.push({word:w,type:d.type||'word',phonetic:d.phonetic||'',definition:d.definition||'',meaning,example,userExample,note:'Reading bağlamından eklendi',readingContext:contextSentence,readingSource:'Reading Lab',synonyms:d.synonyms||'',antonyms:d.antonyms||'',category:'TOEFL Academic',difficulty:document.getElementById(`rdiff_${i}`)?.value||'Orta',added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
    added++;
  });
  save();
@@ -526,7 +593,7 @@ function stats(m){
  <div class="card"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map(w=>{
    const next=w.nextReview&&new Date(w.nextReview)>new Date()?`📅 ${new Date(w.nextReview).toLocaleDateString('tr-TR')}`:'🔔 Şimdi';
    const level=w.reviewLevel||'Öğreniliyor';
-   return `<div class="listitem"><div><b>${esc(w.word)}</b><button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button><div class="meta">${esc(w.meaning||'')}</div><div><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span></div><div class="progressline"><span>Tekrar</span><span>${next}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`;
+   return `<div class="listitem"><div><b>${esc(w.word)}</b><button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button><div class="meta">${esc(w.meaning||'')}</div>${w.example?`<div class="example" style="margin-top:10px"><b>📘</b> ${esc(w.example)}</div>`:''}${w.userExample?`<div class="example" style="margin-top:8px;background:#eef8f3"><b>✍️ Benim cümlem:</b> ${esc(w.userExample)}</div>`:''}<div><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span></div><div class="progressline"><span>Tekrar</span><span>${next}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`;
  }).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`;
 }
 
