@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v17.0</title>
+<title>VocaMate v18.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -123,6 +123,7 @@ body{padding-bottom:110px}
 
 
 body{padding-bottom:120px}
+.word-profile{background:#fff;border:1px solid #e7ebf2;border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 7px 20px #203b6808}.profile-word{font-size:34px;font-weight:900;color:#172033;display:flex;align-items:center;gap:8px}.profile-meta{color:#71809a;margin-top:4px;font-size:14px}.profile-meta span{margin:0 5px;color:#b2bccb}.profile-grid{display:grid;gap:10px;margin-top:16px}.profile-box{background:#f7f9fc;border-radius:17px;padding:14px;color:#24334d;line-height:1.5}.profile-box.highlight{background:#eef3ff}.profile-label{font-size:12px;font-weight:850;color:#6f7e96;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}.profile-box input{width:100%;border:0;background:transparent;padding:4px 0;font-size:17px;color:#172033;outline:0}.full-select{width:100%;margin:4px 0 14px;border:1px solid #dfe5ef;background:#fff;border-radius:15px;padding:14px;font-size:16px;color:#24334d}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
@@ -368,23 +369,35 @@ async function prepareWord(){
   <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
   <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet</button></div></div>`;return}
  const sourceNote=fallback[word]?'📚 Yerleşik sözlükten bulundu':'🌐 İnternet sözlüğünden bulundu';
- result.innerHTML=`<div class="info">${sourceNote}</div><div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div><div class="mini"><b>Tanım</b>${esc(data.definition)}</div>
- <div class="mini"><b>Telaffuz</b>${esc(data.phonetic||'—')} &nbsp; <b style="display:inline">Tür</b> ${esc(data.type||'—')}</div>
- <label>Türkçe anlam *</label><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Örn. önemli, kayda değer">
- <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>General English</option><option>Banking</option></select></div>
+ result.innerHTML=`<div class="info">${sourceNote}</div>
+ <div class="word-profile">
+   <div class="profile-word">${esc(word)} <button class="speak" onclick="speakWord(${JSON.stringify(word)})">🔊</button></div>
+   <div class="profile-meta">${esc(data.phonetic||'Telaffuz bulunamadı')} <span>•</span> ${esc(data.type||'word')}</div>
+   <div class="profile-grid">
+     <div class="profile-box"><div class="profile-label">📖 Tanım</div><div>${esc(data.definition||'Tanım bulunamadı.')}</div></div>
+     <div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Anlamı otomatik geldiyse kontrol et"></div>
+   </div>
+   ${data.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms)}</div></div>`:''}
+   ${data.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms)}</div></div>`:''}
+ </div>
+ <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>General English</option><option>Daily English</option><option>Business</option><option>Banking</option></select></div>
  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
- <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea><label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz...">${esc(data.userExample||'')}</textarea><label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
- ${data.synonyms?`<div class="mini"><b>Synonym</b>${esc(data.synonyms)}</div>`:''}${data.antonyms?`<div class="mini"><b>Antonym</b>${esc(data.antonyms)}</div>`:''}
- <button class="btn primary" onclick='saveWord(${JSON.stringify({word,...data})})'>💾 Kelimeyi kaydet</button></div>`;
+ <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option>TOEFL</option><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>General English</option><option>Business</option><option>Banking</option></select>
+ <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea>
+ <div class="mini">💡 Örneği yüksek sesle oku; sonra kendi cümleni kur.</div>
+ <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="I used this word because...">${esc(data.userExample||'')}</textarea>
+ <label>📝 Kendi notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+ <button class="btn primary" onclick='saveWord(${JSON.stringify({word,...data})})'>💾 Kelimeyi kaydet ve öğrenmeye başla</button></div>`;
 }
 function saveWord(data){
  const meaning=document.getElementById('meaning').value.trim(),example=document.getElementById('example').value.trim(),userExample=document.getElementById('userExample')?.value.trim()||'',note=document.getElementById('note').value.trim();
  const category=document.getElementById('category')?.value||'TOEFL Academic';
+ const sourceContext=document.getElementById('sourceContext')?.value||'TOEFL';
  const difficulty=document.getElementById('difficulty')?.value||'Orta';
  if(!meaning){toast('Türkçe anlamı yazmalısın.');return}
  const old=words.find(w=>w.word===data.word);
  words=words.filter(w=>w.word!==data.word);
- words.push({...data,meaning,example,userExample,note,category,difficulty,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+ words.push({...data,meaning,example,userExample,note,category,difficulty,sourceContext,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
  save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
 }
 
