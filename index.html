@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v23.0</title>
+<title>VocaMate v24.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -139,6 +139,9 @@ body{padding-bottom:180px}
 .v22-saved{margin-top:10px;background:#eaf8f1;color:#176b4a;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45}
 
 @media(max-width:380px){.toefl-use{grid-template-columns:1fr}.sentence-actions{grid-template-columns:1fr}}
+
+/* V24 Vocabulary Mastery */
+.mastery-card{background:linear-gradient(135deg,#f4f7ff,#ffffff);border:1px solid #dfe7f8;border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 7px 20px #203b6808}.mastery-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.mastery-title{font-size:20px;font-weight:900;color:#233553}.mastery-sub{font-size:13px;color:#71809a;line-height:1.4;margin-top:3px}.mastery-level{background:#23406f;color:#fff;border-radius:15px;padding:9px 11px;font-weight:850;white-space:nowrap}.mastery-bar{height:10px;background:#e6ebf4;border-radius:10px;overflow:hidden;margin:14px 0 13px}.mastery-bar span{display:block;height:100%;background:#4772e6;border-radius:10px}.mastery-stages{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.mastery-stage{font-size:10px;color:#8793a9;text-align:center;line-height:1.25}.mastery-dot{width:25px;height:25px;border-radius:50%;background:#e5eaf2;color:#7d899e;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-weight:900}.mastery-stage.done .mastery-dot{background:#287957;color:#fff}.mastery-stage.current .mastery-dot{background:#4772e6;color:#fff;box-shadow:0 0 0 4px #e6edff}.feedback-list{margin:8px 0 0;padding-left:18px}.feedback-list li{margin:4px 0}.feedback-score{display:inline-block;background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:4px 8px;font-weight:850;color:#23406f;margin-bottom:6px}.active-tip{background:#fff;border:1px dashed #b9c8e6;border-radius:14px;padding:10px 12px;color:#52627c;font-size:12px;line-height:1.45;margin-top:9px}
 
 /* V23 Vocabulary Learning Path */
 .v23-path{background:#fff;border:1px solid #e4e9f2;border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 7px 20px #203b6808}
@@ -868,6 +871,7 @@ function wordDetail(m){
  const reviewDone=(w.repetitions||0)>0;
  const pronunciationDone=!!w.pronunciationPracticed;
  const learnedDone=!!w.meaning;
+ const mastery=masteryInfo(w);
  const steps=[
    {done:learnedDone,icon:'📖',title:'Anlamı öğren',sub:'Türkçe ve İngilizce anlamı incele',action:''},
    {done:pronunciationDone,icon:'🔊',title:'Dinle & söyle',sub:'Kelimeyi sesli olarak tekrar et',action:`<button onclick="practicePronunciation(${JSON.stringify(w.word)})">Başlat</button>`},
@@ -891,19 +895,70 @@ function wordDetail(m){
    <div class="v23-steps">${pathHtml}</div>
  </div>
 
+ <div class="mastery-card"><div class="mastery-head"><div><div class="mastery-title">⭐ Vocabulary Mastery</div><div class="mastery-sub">Hedef: kelimeyi sadece tanımak değil, bağımsız olarak kullanabilmek.</div></div><div class="mastery-level">${mastery.level}</div></div><div class="mastery-bar"><span style="width:${mastery.pct}%"></span></div><div class="mastery-stages">${mastery.stages.map((x,i)=>`<div class="mastery-stage ${x.done?'done':''} ${i===mastery.index?'current':''}"><div class="mastery-dot">${x.done?'✓':i+1}</div><div>${x.label}</div></div>`).join('')}</div></div>
+
  <div class="profile-grid"><div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><div style="font-size:20px;font-weight:800">${esc(w.meaning||'Anlam eklenmedi')}</div></div><div class="profile-box"><div class="profile-label">📖 İngilizce tanım</div><div>${esc(w.definition||'Tanım bulunamadı.')}</div></div>${w.example?`<div class="profile-box"><div class="profile-label">📘 VocaMate örnek cümlesi</div><div>${esc(w.example)}</div></div>`:''}${w.readingContext?`<div class="profile-box"><div class="profile-label">📖 Reading bağlamı</div><div>${esc(w.readingContext)}</div></div>`:''}${w.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(w.synonyms)}</div></div>`:''}${w.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(w.antonyms)}</div></div>`:''}${w.note?`<div class="profile-box"><div class="profile-label">📝 Notum</div><div>${esc(w.note)}</div></div>`:''}</div>
 
  <div class="v23-mission"><div class="kicker">BUGÜNÜN KELİME GÖREVİ</div><h3>${sentenceDone?'Bir adım daha!':'Kelimeyi aktif hale getir'}</h3><p>${mission}</p>${!sentenceDone?`<button onclick="document.getElementById('activeSentence')?.focus()">✍️ Cümlemi yaz</button>`:`<button onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Tekrar et</button>`}</div>
 
  <div class="v22-focus"><div class="v22-focus-head"><div class="v22-focus-icon">✍️</div><div><h3>Aktif kullanım</h3><div class="small">Vocabulary'nin en önemli adımı: kelimeyi sen kullan.</div></div></div><p>${`Write one natural English sentence using <b>${exWord}</b>. Try to use the word in the same meaning shown above.`}</p><div class="v22-prompt">💡 <b>Mini görev:</b> ${w.word} kelimesini bugün bir konuşmada veya yazıda kullan.</div><textarea id="activeSentence" class="sentence-box" style="margin-top:10px" placeholder="Write your own sentence with ${exWord}...">${esc(w.userExample||'')}</textarea><div class="v22-row"><button class="listen" onclick="saveActiveSentence('${encodeURIComponent(w.word)}')">💾 Kaydet</button><button class="practice" onclick="checkActiveSentence('${encodeURIComponent(w.word)}')">✓ Cümlemi kontrol et</button></div><div id="sentenceFeedback"></div>${saved}</div>
 
- <div class="active-learning"><h3>🎓 TOEFL'da kullan</h3><p>Öğrendiğin kelimeyi sınavın Speaking ve Writing cevaplarına taşı.</p><div class="toefl-use"><div class="use-card"><b>🎤 Speaking</b><span>${esc(speakingUse)}</span></div><div class="use-card"><b>✍️ Writing</b><span>${esc(writingUse)}</span></div></div></div>
+ <div class="active-learning"><h3>🎓 TOEFL'da kullan</h3><p>Öğrendiğin kelimeyi sınavın Speaking ve Writing cevaplarına taşı.</p><div class="toefl-use"><div class="use-card"><b>🎤 Speaking</b><span>${esc(speakingUse)}</span></div><div class="use-card"><b>✍️ Writing</b><span>${esc(writingUse)}</span></div></div><button class="btn primary" style="width:100%;margin-top:10px" onclick="markToeflUse('${encodeURIComponent(w.word)}')">🎓 Bu kelimeyi TOEFL'da kullandım</button></div>
  <div class="stats" style="margin-top:14px"><div class="stat"><strong>${w.reviewCount||0}</strong><span>Tekrar sayısı</span></div><div class="stat"><strong>${w.quizCorrect||0}</strong><span>Quiz doğru</span></div><div class="stat"><strong>${w.repetitions||0}</strong><span>Başarılı tekrar</span></div><div class="stat"><strong>${w.interval||0} gün</strong><span>Aralık</span></div></div>
  <div class="detail-actions" style="margin-top:14px"><button class="btn primary" onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Şimdi tekrar et</button><button class="btn secondary" onclick="editWord('${encodeURIComponent(w.word)}')">✏️ Düzenle</button></div><button class="delete" style="width:100%;margin-top:10px;padding:14px" onclick="deleteWord('${encodeURIComponent(w.word)}')">🗑️ Kelimeyi sil</button>`;
 }
 function saveActiveSentence(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence');if(!w||!input)return;w.userExample=input.value.trim();save();toast('✍️ Kendi cümlen kaydedildi');}
-function checkActiveSentence(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence'),box=document.getElementById('sentenceFeedback');if(!w||!input||!box)return;const text=input.value.trim(),lower=text.toLowerCase(),target=word.toLowerCase();if(!text){box.className='sentence-feedback feedback-warn';box.innerHTML='💡 Önce kelimeyi kullanarak bir İngilizce cümle yaz.';return}const hasWord=new RegExp('\\b'+target.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?:s|ed|ing)?\\b','i').test(text);const wordsCount=text.split(/\s+/).filter(Boolean).length;w.userExample=text;save();if(!hasWord){box.className='sentence-feedback feedback-warn';box.innerHTML=`⚠️ Cümlende <b>${esc(word)}</b> kelimesini göremedim. Kelimeyi doğrudan kullanmayı dene.`;return}if(wordsCount<5){box.className='sentence-feedback feedback-warn';box.innerHTML='💡 Cümlen çok kısa görünüyor. En az 5–6 kelimelik doğal bir cümle kurmayı dene.';return}box.className='sentence-feedback feedback-good';box.innerHTML=`✅ <b>İyi başlangıç!</b> “${esc(word)}” cümlende kullanılmış. Bir sonraki adımda grammar ve doğallık kontrolünü de ekleyebiliriz.`;w.lastActivePractice=today();save();}
+function masteryInfo(w){
+ const stages=[
+  {label:'Tanıyorum',done:!!w.meaning},
+  {label:'Telaffuz',done:!!w.pronunciationPracticed},
+  {label:'Cümlede',done:!!(w.userExample&&w.userExample.trim())},
+  {label:'Aktif',done:(w.activeSentenceScore||0)>=70},
+  {label:'TOEFL',done:(w.toeflUseCount||0)>0}
+ ];
+ const done=stages.filter(x=>x.done).length;
+ let level='Tanıyorum',index=0;
+ if(done>=5){level='TOEFL kullanıyorum';index=4}
+ else if(done>=4){level='Aktif kullanıyorum';index=3}
+ else if(done>=3){level='Cümlede kullanıyorum';index=2}
+ else if(done>=2){level='Tanıyorum + telaffuz';index=1}
+ const pct=Math.round(done/5*100);
+ return {level,index,pct,stages};
+}
+function checkActiveSentence(encoded){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence'),box=document.getElementById('sentenceFeedback');
+ if(!w||!input||!box)return;
+ const text=input.value.trim(), target=word.toLowerCase();
+ if(!text){box.className='sentence-feedback feedback-warn';box.innerHTML='💡 Önce kelimeyi kullanarak bir İngilizce cümle yaz.';return}
+ const hasWord=new RegExp('\\b'+target.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')+'(?:s|es|ed|ing)?\\b','i').test(text);
+ const wordsCount=text.split(/\\s+/).filter(Boolean).length;
+ const hasCapital=/^[A-Z]/.test(text);
+ const hasPunctuation=/[.!?]$/.test(text);
+ const repeatedSpaces=/\\s{2,}/.test(text);
+ const scoreParts=[];
+ let score=0;
+ if(hasWord){score+=45;scoreParts.push('Kelime doğru biçimde cümlede yer alıyor.')}else scoreParts.push('Hedef kelime cümlede görünmüyor.');
+ if(wordsCount>=6){score+=20;scoreParts.push('Cümle yeterli uzunlukta.')}else scoreParts.push('Cümleyi biraz daha geliştir.');
+ if(hasCapital){score+=10;scoreParts.push('Büyük harf kullanımı uygun.')}else scoreParts.push('Cümle başında büyük harf kullan.');
+ if(hasPunctuation){score+=10;scoreParts.push('Noktalama işareti var.')}else scoreParts.push('Sonuna nokta, soru işareti veya ünlem ekle.');
+ if(!repeatedSpaces){score+=5;}
+ if(/[.!?]/.test(text))score+=5;
+ if(/\b(is|are|was|were|has|have|had|can|could|will|would|do|does|did|the|a|an)\b/i.test(text))score+=5;
+ score=Math.min(100,score);
+ w.userExample=text;w.activeSentenceScore=score;w.lastActivePractice=today();save();
+ if(hasWord&&wordsCount>=6&&score>=70){
+   box.className='sentence-feedback feedback-good';
+   box.innerHTML=`<span class="feedback-score">${score}/100</span><br>✅ <b>Aktif kullanım başarılı!</b><ul class="feedback-list">${scoreParts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="active-tip">💡 Not: Bu kontrol hızlı bir VocaMate kontrolüdür; gerçek bir grammar değerlendirmesi değildir.</div>`;
+ }else{
+   box.className='sentence-feedback feedback-warn';
+   box.innerHTML=`<span class="feedback-score">${score}/100</span><br>🟡 <b>Biraz daha geliştir.</b><ul class="feedback-list">${scoreParts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="active-tip">🎯 Hedefin: kelimeyi doğal, en az 6 kelimelik ve anlamına uygun bir cümlede kullanmak.</div>`;
+ }
+ if(score>=70){w.toeflUseCount=w.toeflUseCount||0;}
+ save();
+ if(currentPage==='wordDetail')setTimeout(()=>render(),1200);
+}
 function practicePronunciation(word){const w=words.find(x=>x.word===word);if(w){w.pronunciationPracticed=true;save();}if('SpeechRecognition' in window || 'webkitSpeechRecognition' in window){const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const heard=(e.results[0][0].transcript||'').toLowerCase();const ok=heard.includes(word.toLowerCase());toast(ok?'🎉 Kelimeyi doğru söyledin!':'🔁 Bir kez daha dene.');};r.onerror=()=>toast('🎤 Ses tanıma bu tarayıcıda kullanılamıyor.');r.start();toast('🎤 Dinliyorum...');}else{toast('🔊 Telaffuz çalışması kaydedildi. Ses tanıma bu tarayıcıda desteklenmiyor.');}if(currentPage==='wordDetail')setTimeout(()=>render(),700)}
+function markToeflUse(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.toeflUseCount=(w.toeflUseCount||0)+1;save();toast('🎓 TOEFL kullanımı kaydedildi');if(currentPage==='wordDetail')setTimeout(()=>render(),500);}
 function startSingleReview(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;w.nextReview=new Date().toISOString();save();nav('review');}
 function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;pushPage('add');render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');if(currentPage==='wordDetail')nav('stats');else render()}
