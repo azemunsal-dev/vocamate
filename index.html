@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v9.1</title>
+<title>VocaMate v10.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -81,8 +81,10 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .reading-form label{display:block;margin-top:10px;font-weight:700;font-size:14px}
 .reading-form input,.reading-form select{width:100%;padding:13px;border:1px solid #dbe2ee;border-radius:14px;margin-top:6px;font-size:16px;background:#fff}
 
-.navin{grid-template-columns:repeat(5,1fr)}
+.navin{grid-template-columns:repeat(6,1fr)}
 .nav button{font-size:12px}
+.phrase{padding:16px 0;border-bottom:1px solid #e5eaf2}.phrase:last-child{border-bottom:0}.phrase-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.copybtn{border:0;background:#eef3ff;color:#23406f;border-radius:12px;padding:8px 11px;font-weight:700}.phrase b{font-size:19px;line-height:1.35}.phrase .mini{margin-top:8px}
+
 .navicon{font-size:22px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -97,6 +99,7 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 <button data-page="add"><span class="navicon">＋</span>Kelime ekle</button>
 <button data-page="quiz"><span class="navicon">🎯</span>Quiz</button>
 <button data-page="reading"><span class="navicon">📖</span>Reading</button>
+<button data-page="patterns"><span class="navicon">💬</span>Kalıplar</button>
 <button data-page="stats"><span class="navicon">📊</span>İlerleme</button>
 </div></nav>
 <div id="toast" class="toast hidden"></div>
@@ -179,6 +182,7 @@ function render(){
  if(currentPage==='add')add(m);
  if(currentPage==='quiz')quiz(m);
  if(currentPage==='reading')reading(m);
+ if(currentPage==='patterns')patterns(m);
  if(currentPage==='stats')stats(m);
 }
 
@@ -188,7 +192,7 @@ function home(m){
  m.innerHTML=`<h1>Bugünkü çalışma</h1><div class="sub">Kısa çalış, sık tekrar et.</div>
  <div class="card goal"><div class="goalrow"><span>Günlük hedef</span><span>${addedToday} / ${TARGET}</span></div>
  <div class="bar"><div class="fill" style="width:${pct}%"></div></div><div>${Math.max(0,TARGET-addedToday)} kelime daha</div></div>
- <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div><div class="card" style="margin-top:18px"><span class="pill">🎯 TOEFL Sprint</span><h2 style="margin:10px 0 6px">10 soruluk kelime antrenmanı</h2><div class="meta">Anlam ve İngilizce modlarında hızlı bir TOEFL kelime turu.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="startToeflSprint()">Sprinti başlat →</button></div><div class="card"><span class="pill">📖 Reading Lab</span><h2 style="margin:10px 0 6px">Reading ekran görüntüsünden kelime çıkar</h2><div class="meta">Bilmediğin kelimeleri seç, VocaMate listene ekle ve tekrar planına dahil et.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="nav('reading')">Reading'i aç →</button></div>
+ <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div><div class="card" style="margin-top:18px"><span class="pill">🎯 TOEFL Sprint</span><h2 style="margin:10px 0 6px">10 soruluk kelime antrenmanı</h2><div class="meta">Anlam ve İngilizce modlarında hızlı bir TOEFL kelime turu.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="startToeflSprint()">Sprinti başlat →</button></div><div class="card"><span class="pill">💬 TOEFL Kalıpları</span><h2 style="margin:10px 0 6px">Speaking & Writing ifadeleri</h2><div class="meta">However, in conclusion, for example ve TOEFL cevaplarında işine yarayacak genel kalıpları konu başlıklarına göre çalış.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="nav('patterns')">Kalıpları aç →</button></div><div class="card"><span class="pill">📖 Reading Lab</span><h2 style="margin:10px 0 6px">Reading ekran görüntüsünden kelime çıkar</h2><div class="meta">Bilmediğin kelimeleri seç, VocaMate listene ekle ve tekrar planına dahil et.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="nav('reading')">Reading'i aç →</button></div>
  <div class="card"><span class="pill">🧠 Akıllı tekrar</span><h2 style="margin-bottom:8px">${due.length?due.length+' kelime tekrar bekliyor':'Bugün tekrar bekleyen kelime yok'}</h2>
  <div class="meta">${due.length?'Unutmaya başlamadan önce tekrar edelim.':'Yeni kelime ekleyebilir veya quiz yapabilirsin.'}</div>
  ${due.length?`<button class="btn primary" style="width:100%;margin-top:18px" onclick="startReview()">Tekrara başla →</button>`:`<div class="next-review">🎯 Harika! Bir sonraki tekrarlar zamanı geldiğinde burada görünecek.</div>`}</div>
@@ -199,7 +203,7 @@ function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</s
 <div class="progressline"><span>Tekrar aralığı</span><b>${intervalLabel(w.interval||0)}</b></div></div>`}
 
 function add(m){
- m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimelerini kategorize et.</div>
+ m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimeleri yanında günlük ve genel İngilizce kelimeleri de ekleyebilirsin.</div>
  <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
  <div class="meta" style="margin-top:12px">İnternet sözlüğü çalışmazsa yerleşik TOEFL sözlüğü devreye girer. Bilinmeyen kelimeleri de manuel ekleyebilirsin.</div><div id="result"></div></div>
  <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
@@ -223,17 +227,17 @@ async function prepareWord(){
   <div class="card" style="margin-top:12px"><div class="mini"><b>Manuel ekleme</b> Kelimeyi yine de kaydedebilirsin.</div>
   <div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div>
   <label>Türkçe anlam *</label><input id="meaning" placeholder="Türkçe anlamını yaz">
-  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
+  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>General English</option><option>Banking</option></select></div>
   <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
   <label>📘 Örnek cümle</label><textarea id="example" placeholder="Sözlükten gelen örnek cümle"></textarea>
   <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz..."></textarea>
   <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
   <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet</button></div></div>`;return}
- const sourceNote=fallback[word]?'📚 Yerleşik TOEFL sözlüğünden bulundu':'🌐 İnternet sözlüğünden bulundu';
+ const sourceNote=fallback[word]?'📚 Yerleşik sözlükten bulundu':'🌐 İnternet sözlüğünden bulundu';
  result.innerHTML=`<div class="info">${sourceNote}</div><div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div><div class="mini"><b>Tanım</b>${esc(data.definition)}</div>
  <div class="mini"><b>Telaffuz</b>${esc(data.phonetic||'—')} &nbsp; <b style="display:inline">Tür</b> ${esc(data.type||'—')}</div>
  <label>Türkçe anlam *</label><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Örn. önemli, kayda değer">
- <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>Banking</option></select></div>
+ <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>General English</option><option>Banking</option></select></div>
  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
  <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea><label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz...">${esc(data.userExample||'')}</textarea><label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
  ${data.synonyms?`<div class="mini"><b>Synonym</b>${esc(data.synonyms)}</div>`:''}${data.antonyms?`<div class="mini"><b>Antonym</b>${esc(data.antonyms)}</div>`:''}
@@ -565,6 +569,52 @@ function saveReadingSelected(){
 }
 function resetReading(){readingText='';readingWords=[];selectedReading=new Set();render()}
 
+
+const phraseBank = [
+ {area:'Speaking',group:'Görüş belirtme',en:'In my opinion, ...',tr:'Bence / Bana göre ...',use:'Bağımsız speaking sorularında görüşünü net başlatmak için.'},
+ {area:'Speaking',group:'Görüş belirtme',en:'Personally, I think that ...',tr:'Şahsen, ... düşünüyorum.',use:'Kişisel görüşü doğal biçimde ifade etmek için.'},
+ {area:'Speaking',group:'Neden verme',en:'There are two main reasons for my opinion.',tr:'Görüşümün iki temel nedeni var.',use:'Cevabı iki nedenle yapılandırmak için.'},
+ {area:'Speaking',group:'Neden verme',en:'The first reason is that ...',tr:'İlk neden şu ki ...',use:'İlk nedeni açıklamak için.'},
+ {area:'Speaking',group:'Neden verme',en:'Another reason is that ...',tr:'Bir diğer neden ise ...',use:'İkinci nedeni eklemek için.'},
+ {area:'Speaking',group:'Örnek verme',en:'For example, ...',tr:'Örneğin, ...',use:'Kısa ve net bir örnek vermek için.'},
+ {area:'Speaking',group:'Örnek verme',en:'For instance, ...',tr:'Örneğin, ...',use:'Örnek eklemek için alternatif ifade.'},
+ {area:'Speaking',group:'Sonuç',en:'For these reasons, I would prefer ...',tr:'Bu nedenlerle ... tercih ederim.',use:'Bağımsız speaking cevabını toparlamak için.'},
+ {area:'Speaking',group:'Açıklama',en:'What I mean is that ...',tr:'Demek istediğim şu ki ...',use:'Fikrini yeniden açıklamak veya netleştirmek için.'},
+ {area:'Speaking',group:'Karşılaştırma',en:'Compared with ..., ...',tr:'... ile karşılaştırıldığında, ...',use:'İki seçenek arasında karşılaştırma yapmak için.'},
+ {area:'Writing',group:'Giriş',en:'The topic of whether ... has been widely discussed.',tr:'... konusu geniş çapta tartışılmıştır.',use:'Bağımsız writing girişinde konuya giriş yapmak için.'},
+ {area:'Writing',group:'Görüş',en:'I believe that ...',tr:'... olduğuna inanıyorum / düşünüyorum.',use:'Tez veya ana görüşü açıkça belirtmek için.'},
+ {area:'Writing',group:'Neden',en:'One important reason is that ...',tr:'Önemli bir neden şu ki ...',use:'Paragrafın ana gerekçesini sunmak için.'},
+ {area:'Writing',group:'Ek fikir',en:'In addition, ...',tr:'Buna ek olarak, ...',use:'Yeni bir destekleyici fikir eklemek için.'},
+ {area:'Writing',group:'Karşıtlık',en:'However, ...',tr:'Ancak / Bununla birlikte, ...',use:'Karşıt veya sınırlayıcı bir fikir sunmak için.'},
+ {area:'Writing',group:'Karşıtlık',en:'On the other hand, ...',tr:'Öte yandan, ...',use:'Alternatif bakış açısına geçmek için.'},
+ {area:'Writing',group:'Karşılaştırma',en:'In contrast, ...',tr:'Buna karşılık, ...',use:'İki fikir arasındaki farkı vurgulamak için.'},
+ {area:'Writing',group:'Örnek',en:'For example, ...',tr:'Örneğin, ...',use:'İddiayı somut bir örnekle desteklemek için.'},
+ {area:'Writing',group:'Neden-sonuç',en:'As a result, ...',tr:'Sonuç olarak, ...',use:'Bir olayın sonucunu açıklamak için.'},
+ {area:'Writing',group:'Neden-sonuç',en:'Therefore, ...',tr:'Bu nedenle / Dolayısıyla, ...',use:'Mantıksal sonuç belirtmek için.'},
+ {area:'Writing',group:'Vurgu',en:'It is worth noting that ...',tr:'... olduğunu belirtmekte fayda var.',use:'Önemli bir noktayı vurgulamak için.'},
+ {area:'Writing',group:'Sonuç',en:'In conclusion, ...',tr:'Sonuç olarak, ...',use:'Sonuç paragrafını başlatmak için.'},
+ {area:'Writing',group:'Sonuç',en:'To sum up, ...',tr:'Özetlemek gerekirse, ...',use:'Kısa bir sonuç özeti için.'},
+ {area:'Writing',group:'Integrated',en:'The reading passage states that ...',tr:'Okuma metni ... olduğunu belirtmektedir.',use:'Integrated writingde reading tarafını aktarmak için.'},
+ {area:'Writing',group:'Integrated',en:'The lecturer challenges this point by arguing that ...',tr:'Öğretim görevlisi bu noktaya ... ileri sürerek karşı çıkmaktadır.',use:'Integrated writingde lecture ile reading arasındaki karşıtlığı açıklamak için.'},
+ {area:'Writing',group:'Integrated',en:'This contradicts the claim that ...',tr:'Bu, ... iddiasıyla çelişmektedir.',use:'Karşıt kanıtı açıkça belirtmek için.'},
+ {area:'Writing',group:'Integrated',en:'According to the lecture, ...',tr:'Derse göre, ...',use:'Lecture bilgisini aktarırken.'}
+];
+
+function copyPhrase(i){
+ const p=phraseBank[i];
+ navigator.clipboard?.writeText(p.en).then(()=>toast('📋 Kalıp kopyalandı')).catch(()=>toast('Kalıbı seçip kopyalayabilirsin.'));
+}
+
+function patterns(m){
+ const groups=[...new Set(phraseBank.map(p=>p.group))];
+ m.innerHTML=`<h1>💬 TOEFL kalıpları</h1>
+ <div class="sub">Speaking ve Writing cevaplarını daha düzenli kurmak için kullanabileceğin genel ifadeler.</div>
+ <div class="info">💡 Bunları ezberlemek yerine, kendi fikirlerinle tamamlayarak kullan. Kalıp tek başına yüksek skor garantisi vermez.</div>
+ <div class="card"><div class="section-title">🎤 Speaking</div>
+ ${phraseBank.map((p,i)=>p.area==='Speaking'?`<div class="phrase"><div class="phrase-top"><span class="badge">${esc(p.group)}</span><button class="copybtn" onclick="copyPhrase(${i})">Kopyala</button></div><b>${esc(p.en)}</b><div class="meta">${esc(p.tr)}</div><div class="mini">${esc(p.use)}</div></div>`:'').join('')}</div>
+ <div class="card"><div class="section-title">✍️ Writing</div>
+ ${phraseBank.map((p,i)=>p.area==='Writing'?`<div class="phrase"><div class="phrase-top"><span class="badge">${esc(p.group)}</span><button class="copybtn" onclick="copyPhrase(${i})">Kopyala</button></div><b>${esc(p.en)}</b><div class="meta">${esc(p.tr)}</div><div class="mini">${esc(p.use)}</div></div>`:'').join('')}</div>`;
+}
 function stats(m){
  const due=dueWords();
  const totalCorrect=words.reduce((a,w)=>a+(w.quizCorrect||0),0);
