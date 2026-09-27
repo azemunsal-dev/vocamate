@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v15.0</title>
+<title>VocaMate v16.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -110,13 +110,18 @@ header{display:flex;justify-content:space-between;align-items:center;margin:4px 
 .home-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 0 20px}.home-topline h1{font-size:31px;line-height:1.12;margin:4px 0 7px}.home-date{font-size:14px;font-weight:750;color:#8793a9;text-transform:capitalize}.vocab-hero{background:#23406f;color:#fff;border-radius:26px;padding:22px;margin-bottom:14px;box-shadow:0 10px 28px #203b6820}.vh-head{display:flex;justify-content:space-between;gap:15px}.vh-kicker{font-size:12px;letter-spacing:1.1px;font-weight:850;opacity:.72}.vh-title{font-size:25px;font-weight:850;margin-top:4px}.vh-sub{font-size:15px;line-height:1.45;color:#dbe4f5;margin-top:6px}.vh-count{min-width:58px;height:58px;border-radius:18px;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:850}.vh-progress{height:9px;background:#ffffff2d;border-radius:10px;overflow:hidden;margin:20px 0 9px}.vh-progress span{display:block;height:100%;background:#8daaf7;border-radius:10px}.vh-bottom{display:flex;justify-content:space-between;font-size:13px;color:#dbe4f5}.vh-bottom b{color:#fff}.vh-btn{width:100%;border:0;border-radius:17px;padding:14px 16px;margin-top:15px;background:#fff;color:#23406f;font-size:16px;font-weight:850}.vh-btn span{float:right;font-size:20px}.vocab-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:23px}.vocab-stats button{border:1px solid #e8edf4;background:#fff;border-radius:18px;padding:14px 7px;text-align:center;color:#23406f}.vocab-stats b{display:block;font-size:23px}.vocab-stats span{display:block;font-size:11px;color:#7a879e;margin-top:3px;font-weight:700}.home-section{margin:0 2px 10px}.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}.home-action{border:1px solid #e7ebf2;border-radius:20px;background:#fff;padding:15px;text-align:left;min-height:104px;box-shadow:0 5px 16px #203b6808}.home-action span{display:block;font-size:22px;margin-bottom:8px}.home-action b{display:block;font-size:15px;color:#233553}.home-action small{display:block;color:#7a879e;font-size:12px;margin-top:4px}.home-action.blue{border-top:3px solid #4772e6}.home-action.purple{border-top:3px solid #7b43d7}.home-action.orange{border-top:3px solid #e4a400}.home-action.green{border-top:3px solid #19a56b}.last-word-card{background:#fff;border:1px solid #e8edf4;border-radius:24px;padding:19px;margin-bottom:14px}.last-word-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.last-word-name{font-size:28px;font-weight:850;color:#172033}.last-word-meaning{font-size:16px;font-weight:700;color:#52627b;margin:4px 0 9px}.last-review{font-size:14px;font-weight:800;color:#4772e6;text-align:right;white-space:nowrap}.last-review small{display:block;color:#8995aa;font-size:11px;font-weight:600;margin-top:3px}.toefl-home-card{display:flex;align-items:center;gap:13px;background:#eef3ff;border:1px solid #dce6ff;border-radius:22px;padding:16px;margin-bottom:10px}.toefl-home-icon{width:45px;height:45px;border-radius:15px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:23px}.toefl-home-copy{flex:1}.toefl-home-card button{border:0;background:#23406f;color:#fff;width:40px;height:40px;border-radius:14px;font-size:20px}.badge{display:inline-block;background:#eef2f8;color:#5d6b82;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:750;margin-top:2px}
 
 /* V14 bottom navigation */
-.app-bottom-nav{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(510px,calc(100vw - 28px));height:60px;background:#ffffffee;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid #e4e9f1;border-radius:20px;box-shadow:0 10px 30px #203b6820;display:flex;align-items:center;justify-content:space-between;padding:7px 9px;z-index:20}
-.app-bottom-nav button{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:#23406f;font-weight:800;border-radius:15px;height:44px;min-width:82px;padding:0 12px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:7px}
-.app-bottom-nav button:not(:disabled):active{background:#eef3ff;transform:scale(.98)}
-.app-bottom-nav button:disabled{color:#b8c0cd;opacity:.75}
-.app-bottom-nav .bottom-home{background:#f0f4ff;color:#23406f;min-width:112px}
-.app-bottom-nav .arrow{font-size:28px;line-height:1;font-weight:500}.app-bottom-nav .nav-arrow{min-width:92px}
-@media(max-width:380px){.app-bottom-nav{width:calc(100vw - 20px)}.app-bottom-nav button{min-width:70px;padding:0 8px;font-size:12px}.app-bottom-nav .bottom-home{min-width:96px}}
+.app-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:0;z-index:1000;pointer-events:none}
+.app-bottom-nav button{appearance:none;-webkit-appearance:none;position:fixed;bottom:max(82px,calc(env(safe-area-inset-bottom) + 78px));width:58px;height:58px;border:0;border-radius:50%;background:#23406f;color:#fff;box-shadow:0 8px 24px #203b6840;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;line-height:1;pointer-events:auto;transition:transform .15s,opacity .15s}
+.app-bottom-nav button:not(:disabled):active{transform:scale(.92)}
+.app-bottom-nav button:disabled{background:#dfe5ef;color:#9aa7ba;box-shadow:none;opacity:.75}
+.app-bottom-nav #bottomBack{left:16px}
+.app-bottom-nav #bottomForward{right:16px}
+.app-bottom-nav .arrow{font-size:38px;line-height:1;font-weight:500;margin-top:-3px}
+.app-bottom-nav .bottom-home{display:none}
+@media(min-width:700px){.app-bottom-nav button{bottom:24px}}
+
+
+body{padding-bottom:120px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
@@ -149,14 +154,11 @@ header{display:flex;justify-content:space-between;align-items:center;margin:4px 
 
 <!-- VocaMate app navigation -->
 <nav class="app-bottom-nav" aria-label="Sayfa navigasyonu">
-  <button id="bottomBack" class="nav-arrow" onclick="appBack()" aria-label="Geri">
-    <span class="arrow">‹</span><span>Geri</span>
+  <button id="bottomBack" onclick="appBack()" aria-label="Geri" title="Geri">
+    <span class="arrow">‹</span>
   </button>
-  <button class="bottom-home" onclick="nav('home')" aria-label="Ana sayfa">
-    <span>⌂</span><span>Ana sayfa</span>
-  </button>
-  <button id="bottomForward" class="nav-arrow" onclick="appForward()" aria-label="İleri">
-    <span>İleri</span><span class="arrow">›</span>
+  <button id="bottomForward" onclick="appForward()" aria-label="İleri" title="İleri">
+    <span class="arrow">›</span>
   </button>
 </nav>
 <script>
