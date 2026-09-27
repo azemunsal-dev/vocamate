@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v10.0</title>
+<title>VocaMate v11.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -86,22 +86,50 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .phrase{padding:16px 0;border-bottom:1px solid #e5eaf2}.phrase:last-child{border-bottom:0}.phrase-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.copybtn{border:0;background:#eef3ff;color:#23406f;border-radius:12px;padding:8px 11px;font-weight:700}.phrase b{font-size:19px;line-height:1.35}.phrase .mini{margin-top:8px}
 
 .navicon{font-size:22px}
+
+/* V11 TOEFL + left drawer */
+body{background:#f7f8fc}
+.app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 34px}
+header{display:flex;justify-content:space-between;align-items:center;margin:4px 0 24px;position:sticky;top:0;background:#f7f8fc;z-index:4;padding:6px 0}
+.header-left{display:flex;align-items:center;gap:12px}.menu-btn{width:42px;height:42px;border:0;background:#fff;border-radius:14px;box-shadow:0 5px 18px #203b6810;font-size:22px;color:#23406f;cursor:pointer}.logo{font-size:28px}.streak{padding:10px 14px;font-size:14px}
+.drawer-overlay{position:fixed;inset:0;background:#17203366;z-index:30;opacity:0;pointer-events:none;transition:.22s}.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(310px,86vw);background:#fff;z-index:31;transform:translateX(-102%);transition:.24s;box-shadow:12px 0 35px #17203322;padding:22px 16px 18px;overflow:auto}
+.drawer.open{transform:translateX(0)}.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.drawer-logo{font-size:25px;font-weight:850;color:#23406f}.drawer-close{border:0;background:#f4f6fa;border-radius:12px;width:38px;height:38px;font-size:22px}
+.drawer-section{font-size:12px;color:#8a95a8;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin:18px 10px 7px}.drawer-item{width:100%;display:flex;align-items:center;gap:12px;border:0;background:#fff;padding:13px 12px;border-radius:16px;text-align:left;color:#27344e;font-weight:750;font-size:16px;cursor:pointer}.drawer-item:hover,.drawer-item.active{background:#eef3ff;color:#23406f}.drawer-icon{width:28px;text-align:center;font-size:21px}.drawer-divider{height:1px;background:#edf0f5;margin:12px 8px}
+.toefl-hero{background:linear-gradient(135deg,#dff4ff,#edf4ff);border-radius:24px;padding:18px 18px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px;overflow:hidden}.toefl-hero h2{margin:0;font-size:22px}.toefl-hero p{margin:6px 0 0;color:#52627c;font-size:14px;line-height:1.4}.hero-books{font-size:52px;min-width:70px;text-align:center}
+.toefl-score{background:#fff;border-radius:22px;padding:16px 17px;margin-bottom:18px;box-shadow:0 7px 24px #203b6810;display:flex;align-items:center;justify-content:space-between}.score-label{font-size:13px;color:#75829a}.score-value{font-size:27px;font-weight:850;color:#23406f}.score-date{font-size:12px;color:#75829a;margin-top:2px}
+.toefl-grid{display:grid;gap:14px}.skill-card{border-radius:23px;padding:17px;background:#fff;box-shadow:0 7px 24px #203b6810;border:1px solid #edf0f5}.skill-card.reading{background:#fff0f4}.skill-card.listening{background:#eafbf4}.skill-card.speaking{background:#f2ebff}.skill-card.writing{background:#fff8df}.skill-top{display:flex;align-items:center;gap:11px}.skill-icon{width:45px;height:45px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:25px}.skill-card h3{margin:0;font-size:19px}.skill-card p{margin:4px 0 0;color:#68758c;font-size:13px}.skill-meta{display:flex;justify-content:space-between;align-items:center;margin:14px 0 10px;font-size:12px;color:#59667e}.skill-progress{height:8px;background:#ffffffb5;border-radius:8px;overflow:hidden}.skill-progress span{display:block;height:100%;border-radius:8px;background:#23406f}.skill-actions{display:flex;gap:8px;margin-top:14px}.skill-actions button{flex:1;border:0;border-radius:14px;padding:11px 7px;font-weight:800;background:#fff;color:#23406f}.skill-actions .go{background:#23406f;color:#fff}
+.format-card{background:#fff;border-radius:22px;padding:17px;margin-top:16px;box-shadow:0 7px 24px #203b6810}.format-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.format-title b{font-size:18px}.format-row{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #edf0f5}.format-row:last-child{border-bottom:0}.format-ico{width:27px}.format-row strong{font-size:14px}.format-row span{display:block;color:#71809a;font-size:12px;margin-top:2px}
+.practice-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}.back-btn{border:0;background:#fff;border-radius:12px;width:40px;height:40px;font-size:21px;color:#23406f;box-shadow:0 4px 15px #203b6810}.practice-title{font-size:23px;font-weight:850}.practice-sub{color:#71809a;font-size:13px}.practice-box{background:#fff;border-radius:22px;padding:18px;box-shadow:0 7px 24px #203b6810;margin-bottom:14px}.practice-pill{display:inline-block;padding:7px 10px;border-radius:11px;background:#eef3ff;color:#23406f;font-size:12px;font-weight:800}.question-text{font-size:18px;font-weight:750;line-height:1.55;margin:15px 0}.answer-list{display:grid;gap:9px}.answer-option{border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:13px;text-align:left;font-size:15px}.answer-option.selected{background:#eaf8f1;border-color:#8bc9aa}.practice-note{background:#f7f9fc;border-radius:15px;padding:13px;color:#5d6b83;font-size:13px;line-height:1.45}.record-button{width:108px;height:108px;border-radius:50%;border:8px solid #eee5ff;background:#8a4de8;color:#fff;font-size:38px;display:block;margin:25px auto 14px}.email-editor{min-height:190px;border:1px solid #dfe5ef;border-radius:16px;padding:14px;color:#71809a}.word-count{text-align:right;color:#8a95a8;font-size:12px;margin-top:7px}
+@media(max-width:380px){.toefl-hero{padding:15px}.hero-books{font-size:44px;min-width:58px}.skill-card{padding:15px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
 <div class="app">
-<header><div class="logo">VocaMate</div><div class="streak">🔥 <span id="streak">1</span> gün</div></header>
+<header><div class="header-left"><button class="menu-btn" onclick="openDrawer()">☰</button><div class="logo">VocaMate</div></div><div class="streak">🔥 <span id="streak">1</span> gün</div></header>
 <main id="main"></main>
 </div>
-<nav class="nav"><div class="navin">
-<button data-page="home" class="active"><span class="navicon">🏠</span>Ana sayfa</button>
-<button data-page="add"><span class="navicon">＋</span>Kelime ekle</button>
-<button data-page="quiz"><span class="navicon">🎯</span>Quiz</button>
-<button data-page="reading"><span class="navicon">📖</span>Reading</button>
-<button data-page="patterns"><span class="navicon">💬</span>Kalıplar</button>
-<button data-page="stats"><span class="navicon">📊</span>İlerleme</button>
-</div></nav>
+<div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+<aside id="drawer" class="drawer" aria-label="Ana menü">
+  <div class="drawer-head"><div class="drawer-logo">VocaMate</div><button class="drawer-close" onclick="closeDrawer()">×</button></div>
+  <div class="drawer-section">Ana Menü</div>
+  <button class="drawer-item" data-page="home" onclick="nav('home')"><span class="drawer-icon">🏠</span>Ana sayfa</button>
+  <button class="drawer-item" data-page="toefl" onclick="nav('toefl')"><span class="drawer-icon">🎓</span>TOEFL iBT</button>
+  <div class="drawer-divider"></div>
+  <div class="drawer-section">Kelime & Çalışma</div>
+  <button class="drawer-item" data-page="add" onclick="nav('add')"><span class="drawer-icon">＋</span>Kelime ekle</button>
+  <button class="drawer-item" data-page="quiz" onclick="nav('quiz')"><span class="drawer-icon">🎯</span>Quiz</button>
+  <button class="drawer-item" data-page="reading" onclick="nav('reading')"><span class="drawer-icon">📖</span>Reading Lab</button>
+  <button class="drawer-item" data-page="patterns" onclick="nav('patterns')"><span class="drawer-icon">💬</span>TOEFL Kalıpları</button>
+  <button class="drawer-item" data-page="stats" onclick="nav('stats')"><span class="drawer-icon">📊</span>İlerleme</button>
+  <div class="drawer-divider"></div>
+  <div class="drawer-section">TOEFL Bölümleri</div>
+  <button class="drawer-item" onclick="toeflPractice('reading')"><span class="drawer-icon">📕</span>Reading</button>
+  <button class="drawer-item" onclick="toeflPractice('listening')"><span class="drawer-icon">🎧</span>Listening</button>
+  <button class="drawer-item" onclick="toeflPractice('speaking')"><span class="drawer-icon">🎤</span>Speaking</button>
+  <button class="drawer-item" onclick="toeflPractice('writing')"><span class="drawer-icon">✍️</span>Writing</button>
+</aside>
 <div id="toast" class="toast hidden"></div>
 <script>
 const KEY='vocamate_words_v32', TARGET=20;
@@ -173,17 +201,47 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');setTimeout(()=>e.classList.add('hidden'),2200)}
 function today(){return new Date().toISOString().slice(0,10)}
 function dueWords(){return words.filter(w=>!w.nextReview||new Date(w.nextReview)<=new Date())}
-function nav(page){currentPage=page;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));render()}
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>nav(b.dataset.page));
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open')}
+function nav(page){currentPage=page;closeDrawer();document.querySelectorAll('.drawer-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));render()}
+
 
 function render(){
  const m=document.getElementById('main');
  if(currentPage==='home')home(m);
+ if(currentPage==='toefl')toefl(m);
  if(currentPage==='add')add(m);
  if(currentPage==='quiz')quiz(m);
  if(currentPage==='reading')reading(m);
  if(currentPage==='patterns')patterns(m);
  if(currentPage==='stats')stats(m);
+}
+
+const toeflData={
+ reading:{name:'Reading',icon:'📖',cls:'reading',desc:'Metinleri anla, analiz et ve soruları çöz.',time:'≈ 27 dakika',questions:'35–48 soru',score:'1–6',progress:68,color:'#e63d73'},
+ listening:{name:'Listening',icon:'🎧',cls:'listening',desc:'Konuşmaları dinle, not al ve soruları çöz.',time:'≈ 18–27 dakika',questions:'35–45 soru',score:'1–6',progress:52,color:'#19a56b'},
+ speaking:{name:'Speaking',icon:'🎤',cls:'speaking',desc:'Net ve akıcı konuş.',time:'≈ 8 dakika',questions:'11 soru',score:'1–6',progress:45,color:'#7b43d7'},
+ writing:{name:'Writing',icon:'✍️',cls:'writing',desc:'Açık, düzenli ve etkili yaz.',time:'≈ 23 dakika',questions:'12 soru',score:'1–6',progress:60,color:'#e4a400'}
+};
+function toefl(m){
+ const cards=Object.entries(toeflData).map(([key,d])=>`<div class="skill-card ${d.cls}"><div class="skill-top"><div class="skill-icon">${d.icon}</div><div><h3>${d.name}</h3><p>${d.desc}</p></div></div><div class="skill-meta"><span>${d.progress}% tamamlandı</span><span>${d.time}</span></div><div class="skill-progress"><span style="width:${d.progress}%;background:${d.color}"></span></div><div class="skill-actions"><button onclick="toeflPractice('${key}')">Çalışmaya Başla →</button><button class="go" onclick="toeflPractice('${key}')">Pratik</button></div></div>`).join('');
+ m.innerHTML=`<div class="toefl-hero"><div><h2>TOEFL iBT<br><span style="font-size:16px">New Format (2026)</span></h2><p>Akıllı pratik, gerçek sınav mantığı ve kişisel ilerleme.</p></div><div class="hero-books">📚</div></div>
+ <div class="toefl-score"><div><div class="score-label">Hedef Skor</div><div class="score-value">95+</div><div class="score-date">Kasım 2026</div></div><div style="text-align:right"><div class="score-label">Genel ilerleme</div><div class="score-value">${Math.round(Object.values(toeflData).reduce((a,x)=>a+x.progress,0)/4)}%</div></div></div>
+ <div class="toefl-grid">${cards}</div>
+ <div class="format-card"><div class="format-title"><b>Sınav Formatı (2026)</b><span class="badge">Adaptif Test</span></div>
+ <div class="format-row"><div class="format-ico">📖</div><div><strong>Reading</strong><span>Complete the Words · Read in Daily Life · Read an Academic Passage</span></div></div>
+ <div class="format-row"><div class="format-ico">🎧</div><div><strong>Listening</strong><span>Listen and Choose a Response · Conversation · Announcement · Academic Talk</span></div></div>
+ <div class="format-row"><div class="format-ico">🎤</div><div><strong>Speaking</strong><span>Listen and Repeat · Take an Interview</span></div></div>
+ <div class="format-row"><div class="format-ico">✍️</div><div><strong>Writing</strong><span>Build a Sentence · Write an Email · Academic Discussion</span></div></div></div>
+ <div class="card"><div class="section-title">🎯 Hızlı çalışma</div><div class="meta">Bugün bir bölüm seç ve kısa bir pratik turu tamamla.</div><div class="btnrow" style="margin-top:14px;margin-bottom:0"><button class="btn primary" onclick="toeflPractice('reading')">Reading</button><button class="btn secondary" onclick="toeflPractice('listening')">Listening</button></div><div class="btnrow" style="margin-top:10px;margin-bottom:0"><button class="btn secondary" onclick="toeflPractice('speaking')">Speaking</button><button class="btn secondary" onclick="toeflPractice('writing')">Writing</button></div></div>`;
+}
+function toeflPractice(type){closeDrawer();currentPage='toefl';const m=document.getElementById('main');const d=toeflData[type];
+ let content='';
+ if(type==='reading') content=`<div class="practice-box"><span class="practice-pill">Complete the Words</span><div class="question-text">Many cities are trying to become more environmentally ______ by investing in green transportation.</div><div class="answer-list"><button class="answer-option" onclick="this.classList.toggle('selected')">A) traditional</button><button class="answer-option selected">B) sustainable</button><button class="answer-option" onclick="this.classList.toggle('selected')">C) increase</button><button class="answer-option" onclick="this.classList.toggle('selected')">D) pollution</button></div><div class="practice-note" style="margin-top:14px">💡 İpucu: Cümlenin anlamına ve kelimenin türüne dikkat et.</div></div>`;
+ if(type==='listening') content=`<div class="practice-box"><span class="practice-pill">Conversation</span><div style="text-align:center;padding:18px 0"><button class="record-button" style="width:72px;height:72px;border:5px solid #d9f4e8;background:#19a56b;font-size:27px" onclick="toast('▶️ Dinleme başlatıldı')">▶</button><div class="meta">0:00 / 0:28</div></div><div class="question-text">What does the woman suggest?</div><div class="answer-list"><button class="answer-option" onclick="this.classList.toggle('selected')">A) Meet at the library</button><button class="answer-option selected">B) Join the science club</button><button class="answer-option" onclick="this.classList.toggle('selected')">C) Change the meeting time</button><button class="answer-option" onclick="this.classList.toggle('selected')">D) Go to the cafeteria</button></div></div>`;
+ if(type==='speaking') content=`<div class="practice-box"><span class="practice-pill">Listen and Repeat · 1/7</span><div class="question-text">Listen to the sentence and repeat it exactly as you hear it.</div><div style="text-align:center"><button class="record-button" onclick="toast('🎙️ Kayıt başlatılıyor...')">🎤</button><div class="meta">Konuşmak için dokun</div></div><div class="practice-note" style="margin-top:15px">VocaMate burada telaffuz, akıcılık ve kelime kullanımını ayrı ayrı değerlendirecek şekilde geliştirilecek.</div></div>`;
+ if(type==='writing') content=`<div class="practice-box"><span class="practice-pill">Write an Email</span><div class="question-text">You are a student and you need to change the date of a group meeting. Write an email to your group partners. Explain why you need to change the date and suggest a new time.</div><div class="email-editor" contenteditable="true">E-postanı buraya yaz...</div><div class="word-count">0 / 120 words</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="toast('✍️ Cevabın kaydedildi')">Cevabı Kaydet</button></div>`;
+ m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">${d.icon} ${d.name} Practice</div><div class="practice-sub">TOEFL iBT New Format (2026)</div></div></div>${content}<div class="practice-box"><div class="section-title">📊 Bu bölüm</div><div class="progressline"><span>İlerleme</span><b>%${d.progress}</b></div><div class="skill-progress" style="margin-top:8px;background:#e9edf4"><span style="width:${d.progress}%;background:${d.color}"></span></div></div>`;
 }
 
 function home(m){
