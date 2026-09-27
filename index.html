@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v18.0</title>
+<title>VocaMate v19.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -124,6 +124,7 @@ body{padding-bottom:110px}
 
 body{padding-bottom:120px}
 .word-profile{background:#fff;border:1px solid #e7ebf2;border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 7px 20px #203b6808}.profile-word{font-size:34px;font-weight:900;color:#172033;display:flex;align-items:center;gap:8px}.profile-meta{color:#71809a;margin-top:4px;font-size:14px}.profile-meta span{margin:0 5px;color:#b2bccb}.profile-grid{display:grid;gap:10px;margin-top:16px}.profile-box{background:#f7f9fc;border-radius:17px;padding:14px;color:#24334d;line-height:1.5}.profile-box.highlight{background:#eef3ff}.profile-label{font-size:12px;font-weight:850;color:#6f7e96;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}.profile-box input{width:100%;border:0;background:transparent;padding:4px 0;font-size:17px;color:#172033;outline:0}.full-select{width:100%;margin:4px 0 14px;border:1px solid #dfe5ef;background:#fff;border-radius:15px;padding:14px;font-size:16px;color:#24334d}
+.library-hero{background:#23406f;color:#fff;border-radius:24px;padding:20px;margin:14px 0 16px}.library-hero .eyebrow{font-size:12px;letter-spacing:1.5px;font-weight:850;opacity:.78}.library-hero h2{font-size:28px;margin:6px 0}.library-hero p{margin:0;color:#dfe8fa;line-height:1.45}.library-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.library-stat{background:#ffffff18;border:1px solid #ffffff18;border-radius:16px;padding:12px}.library-stat strong{display:block;font-size:24px}.library-stat span{font-size:12px;color:#dbe5f7}.library-filters{display:flex;gap:8px;overflow:auto;padding:2px 0 5px}.library-filters::-webkit-scrollbar{display:none}.library-filter{white-space:nowrap;border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:9px 12px;font-weight:750;color:#51627f}.library-filter.active{background:#edf2ff;border-color:#91a8e7;color:#23406f}.library-word{display:flex;gap:12px;align-items:center;padding:15px 2px;border-bottom:1px solid #edf0f5;cursor:pointer}.library-word:last-child{border-bottom:0}.library-word-main{flex:1;min-width:0}.library-word-name{font-size:21px;font-weight:850}.library-word-meaning{color:#71809a;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.library-word-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}.dot-green{background:#39a66d}.dot-yellow{background:#d9a52e}.dot-red{background:#c95a5a}.library-arrow{font-size:26px;color:#9aa7ba}.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-actions .btn{width:100%}.review-banner{background:#fff7e6;color:#8a6411;border-radius:16px;padding:13px 15px;font-weight:750}.source-pill{background:#f0f4ff;color:#23406f;border-radius:12px;padding:7px 10px;font-size:13px;font-weight:750;display:inline-block}.
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
@@ -141,6 +142,7 @@ body{padding-bottom:120px}
   <div class="drawer-divider"></div>
   <div class="drawer-section">Kelime & Çalışma</div>
   <button class="drawer-item" data-page="add" onclick="nav('add')"><span class="drawer-icon">＋</span>Kelime ekle</button>
+  <button class="drawer-item" data-page="stats" onclick="nav('stats')"><span class="drawer-icon">📚</span>Kelime hazinem</button>
   <button class="drawer-item" data-page="quiz" onclick="nav('quiz')"><span class="drawer-icon">🎯</span>Quiz</button>
   <button class="drawer-item" data-page="reading" onclick="nav('reading')"><span class="drawer-icon">📖</span>Reading Lab</button>
   <button class="drawer-item" data-page="patterns" onclick="nav('patterns')"><span class="drawer-icon">💬</span>TOEFL Kalıpları</button>
@@ -268,6 +270,7 @@ function render(){
  if(currentPage==='reading')reading(m);
  if(currentPage==='patterns')patterns(m);
  if(currentPage==='stats')stats(m);
+  if(currentPage==='wordDetail')wordDetail(m);
   if(currentPage==='review')showReview(0);
   syncDrawer(); updateBottomNav();
 }
@@ -765,26 +768,51 @@ function patterns(m){
 let vocabFilter='all', vocabSearch='';
 function setVocabFilter(f){vocabFilter=f;stats(document.getElementById('main'))}
 function filterWords(){vocabSearch=(document.getElementById('vocabSearch')?.value||'').trim().toLowerCase();stats(document.getElementById('main'))}
-function stats(m){
- const cats={}; words.forEach(w=>cats[w.category||'TOEFL Academic']=(cats[w.category||'TOEFL Academic']||0)+1);
- let list=words.slice().reverse().filter(w=>{
-   const q=!vocabSearch||w.word.toLowerCase().includes(vocabSearch)||(w.meaning||'').toLowerCase().includes(vocabSearch);
-   let f=true;
-   if(vocabFilter==='due')f=dueWords().some(d=>d.word===w.word);
-   if(vocabFilter==='strong')f=w.reviewLevel==='Güçlü';
-   if(vocabFilter==='toefl')f=(w.category||'')==='TOEFL Academic';
-   return q&&f;
- });
- const chips=[['all','Tümü'],['due','Tekrar zamanı'],['strong','Güçlü'],['toefl','TOEFL']];
- m.innerHTML=`<h1>Kelime hazinem</h1><div class="sub">Kelimelerini ara, filtrele ve tekrar durumunu takip et.</div>
- <div class="stats"><div class="stat"><strong>${words.length}</strong><span>Toplam</span></div><div class="stat"><strong>${dueWords().length}</strong><span>Tekrar</span></div><div class="stat"><strong>${words.filter(w=>w.reviewLevel==='Güçlü').length}</strong><span>Güçlü</span></div><div class="stat"><strong>${reviewedTodayCount()}</strong><span>Bugün çalışılan</span></div></div>
- <div class="card" style="margin-top:18px"><div class="vocab-search"><input id="vocabSearch" value="${esc(vocabSearch)}" placeholder="🔎 Kelime veya anlam ara..." oninput="filterWords()"></div><div class="filter-row">${chips.map(([k,l])=>`<button class="filter-chip ${vocabFilter===k?'active':''}" onclick="setVocabFilter('${k}')">${l}</button>`).join('')}</div></div>
- <div class="vocab-summary"><span>${list.length} kelime gösteriliyor</span><span>${Object.entries(cats).map(([k,v])=>`${esc(k)} ${v}`).join(' · ')}</span></div>
- <div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const level=w.reviewLevel||'Öğreniliyor';const due=(!w.nextReview||new Date(w.nextReview)<=new Date());return `<div class="word-list-card"><div class="listitem"><div style="flex:1"><div><b style="font-size:21px">${esc(w.word)}</b> <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta" style="font-size:15px;margin-top:3px">${esc(w.meaning||'Anlam eklenmedi')}</div><div style="margin-top:8px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span>${due?'<span class="badge" style="background:#fff4dc;color:#8a6411">Tekrar zamanı</span>':''}</div>${w.userExample?`<div class="example" style="margin-top:9px;font-size:15px"><b>✍️</b> ${esc(w.userExample)}</div>`:''}</div><div class="word-actions"><button class="editbtn" onclick="editWord('${encodeURIComponent(w.word)}')">Düzenle</button><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div></div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.</div>'}</div>
- <button class="btn primary" style="width:100%;margin-top:12px" onclick="nav('add')">＋ Yeni kelime ekle</button>`;
+function wordStatus(w){
+  if(w.reviewLevel==='Güçlü')return {label:'Güçlü',cls:'green'};
+  if(w.reviewLevel==='Unutuldu')return {label:'Unutuldu',cls:'red'};
+  if(w.reviewLevel==='Zorlanıyorum')return {label:'Zorlanıyorum',cls:'yellow'};
+  return {label:'Öğreniliyor',cls:'yellow'};
 }
+function filterMatch(w){
+  if(vocabFilter==='all')return true;
+  if(vocabFilter==='due')return !w.nextReview||new Date(w.nextReview)<=new Date();
+  if(vocabFilter==='strong')return w.reviewLevel==='Güçlü';
+  if(vocabFilter==='toefl')return (w.category||'')==='TOEFL Academic'||w.sourceContext==='TOEFL';
+  if(vocabFilter.startsWith('source:'))return (w.sourceContext||'')===vocabFilter.slice(7);
+  if(vocabFilter==='general')return ['General English','Daily English'].includes(w.category||'');
+  return true;
+}
+function stats(m){
+  const due=dueWords(), strong=words.filter(w=>w.reviewLevel==='Güçlü'), learned=words.filter(w=>(w.repetitions||0)>0), forgotten=words.filter(w=>w.reviewLevel==='Unutuldu');
+  let list=words.slice().reverse().filter(w=>{
+    const q=!vocabSearch||w.word.toLowerCase().includes(vocabSearch)||(w.meaning||'').toLowerCase().includes(vocabSearch)||(w.definition||'').toLowerCase().includes(vocabSearch);
+    return q&&filterMatch(w);
+  });
+  const chips=[['all','Tümü'],['due','🔁 Tekrar'],['strong','🟢 Güçlü'],['toefl','🎓 TOEFL'],['source:Reading','📖 Reading'],['source:Listening','🎧 Listening'],['source:Speaking','🎤 Speaking'],['source:Writing','✍️ Writing'],['general','🌎 Genel']];
+  m.innerHTML=`<h1>📚 Kelime hazinem</h1><div class="sub">Kelime öğrenme merkezinin tamamı burada. Ara, filtrele, kelimeye dokun ve detaylarını gör.</div>
+  <div class="library-hero"><div class="eyebrow">VOCABULARY LIBRARY</div><h2>${words.length} kelime</h2><p>${due.length?`Bugün ${due.length} kelime tekrar bekliyor.`:'Bugün tekrar bekleyen kelime yok. Yeni kelimeler ekleyebilirsin.'}</p><div class="library-stats"><div class="library-stat"><strong>${due.length}</strong><span>Tekrar</span></div><div class="library-stat"><strong>${strong.length}</strong><span>Güçlü</span></div><div class="library-stat"><strong>${learned.length}</strong><span>Çalışılmış</span></div></div></div>
+  <div class="card"><label style="margin-top:0">🔎 Kelime ara</label><input id="vocabSearch" value="${esc(vocabSearch)}" placeholder="Kelime, anlam veya tanım..." oninput="filterWords()"><div class="library-filters" style="margin-top:12px">${chips.map(([k,l])=>`<button class="library-filter ${vocabFilter===k?'active':''}" onclick="setVocabFilter('${k}')">${l}</button>`).join('')}</div></div>
+  <div class="vocab-summary"><span><b>${list.length}</b> kelime gösteriliyor</span><span>${forgotten.length} unutuldu</span></div>
+  <div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const st=wordStatus(w), dueNow=!w.nextReview||new Date(w.nextReview)<=new Date(); const source=w.sourceContext||w.category||'General English'; return `<div class="library-word" onclick="openWordDetail('${encodeURIComponent(w.word)}')"><div class="library-word-main"><div class="library-word-name"><span class="status-dot dot-${st.cls}"></span>${esc(w.word)} <button class="speak" onclick="event.stopPropagation();speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="library-word-meaning">${esc(w.meaning||'Anlam eklenmedi')}</div><div class="library-word-meta"><span class="source-pill">${esc(source)}</span><span class="badge">${esc(w.difficulty||'Orta')}</span><span class="badge">${esc(st.label)}</span>${dueNow?'<span class="badge" style="background:#fff4dc;color:#8a6411">Tekrar zamanı</span>':''}</div></div><div class="library-arrow">›</div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.<br><br>＋ Yeni bir kelime ekleyelim.</div>'}</div>
+  <button class="btn primary" style="width:100%;margin-top:12px" onclick="nav('add')">＋ Yeni kelime ekle</button>`;
+}
+function openWordDetail(encoded){const word=decodeURIComponent(encoded);if(!words.some(w=>w.word===word))return;pushPage('wordDetail');window._detailWord=word;render();}
+function wordDetail(m){
+ const w=words.find(x=>x.word===window._detailWord); if(!w){nav('stats');return;}
+ const st=wordStatus(w), dueNow=!w.nextReview||new Date(w.nextReview)<=new Date();
+ const next=w.nextReview?new Date(w.nextReview).toLocaleDateString('tr-TR',{day:'2-digit',month:'long'}):'İlk tekrar';
+ const source=w.sourceContext||w.category||'General English';
+ m.innerHTML=`<button class="btn secondary" style="margin-bottom:12px" onclick="nav('stats')">‹ Kelime hazineme dön</button><h1>${esc(w.word)}</h1><div class="sub">Kelime detayları ve öğrenme durumu</div>
+ <div class="word-profile"><div class="profile-word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="profile-meta">${esc(w.phonetic||'Telaffuz yok')} <span>•</span> ${esc(w.type||'word')}</div><div style="margin-top:12px"><span class="source-pill">${esc(source)}</span> <span class="badge">${esc(w.category||'General English')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(st.label)}</span></div></div>
+ ${dueNow?'<div class="review-banner">🔔 Bu kelime bugün tekrar bekliyor.</div>':`<div class="info">🔁 Sonraki tekrar: <b>${next}</b></div>`}
+ <div class="profile-grid"><div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><div style="font-size:20px;font-weight:800">${esc(w.meaning||'Anlam eklenmedi')}</div></div><div class="profile-box"><div class="profile-label">📖 İngilizce tanım</div><div>${esc(w.definition||'Tanım bulunamadı.')}</div></div>${w.example?`<div class="profile-box"><div class="profile-label">📘 Örnek cümle</div><div>${esc(w.example)}</div></div>`:''}${w.userExample?`<div class="profile-box"><div class="profile-label">✍️ Benim cümlem</div><div>${esc(w.userExample)}</div></div>`:''}${w.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(w.synonyms)}</div></div>`:''}${w.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(w.antonyms)}</div></div>`:''}${w.note?`<div class="profile-box"><div class="profile-label">📝 Notum</div><div>${esc(w.note)}</div></div>`:''}</div>
+ <div class="stats" style="margin-top:14px"><div class="stat"><strong>${w.reviewCount||0}</strong><span>Tekrar sayısı</span></div><div class="stat"><strong>${w.quizCorrect||0}</strong><span>Quiz doğru</span></div><div class="stat"><strong>${w.repetitions||0}</strong><span>Başarılı tekrar</span></div><div class="stat"><strong>${w.interval||0} gün</strong><span>Aralık</span></div></div>
+ <div class="detail-actions" style="margin-top:14px"><button class="btn primary" onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Şimdi tekrar et</button><button class="btn secondary" onclick="editWord('${encodeURIComponent(w.word)}')">✏️ Düzenle</button></div><button class="delete" style="width:100%;margin-top:10px;padding:14px" onclick="deleteWord('${encodeURIComponent(w.word)}')">🗑️ Kelimeyi sil</button>`;
+}
+function startSingleReview(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;w.nextReview=new Date().toISOString();save();nav('review');}
 function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;pushPage('add');render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
-function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');render()}
+function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');if(currentPage==='wordDetail')nav('stats');else render()}
 render();
 updateBottomNav();
 </script>
