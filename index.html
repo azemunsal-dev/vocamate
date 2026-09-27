@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v13.0</title>
+<title>VocaMate v14.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -92,7 +92,7 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 
 /* V12 TOEFL + left drawer + vocabulary center */
 body{background:#f7f8fc}
-.app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 34px}
+.app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 96px}
 header{display:flex;justify-content:space-between;align-items:center;margin:4px 0 24px;position:sticky;top:0;background:#f7f8fc;z-index:4;padding:6px 0}
 .header-left{display:flex;align-items:center;gap:12px}.menu-btn{width:42px;height:42px;border:0;background:#fff;border-radius:14px;box-shadow:0 5px 18px #203b6810;font-size:22px;color:#23406f;cursor:pointer}.logo{font-size:28px}.streak{padding:10px 14px;font-size:14px}
 .drawer-overlay{position:fixed;inset:0;background:#17203366;z-index:30;opacity:0;pointer-events:none;transition:.22s}.drawer-overlay.open{opacity:1;pointer-events:auto}
@@ -106,8 +106,17 @@ header{display:flex;justify-content:space-between;align-items:center;margin:4px 
 .practice-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}.back-btn{border:0;background:#fff;border-radius:12px;width:40px;height:40px;font-size:21px;color:#23406f;box-shadow:0 4px 15px #203b6810}.practice-title{font-size:23px;font-weight:850}.practice-sub{color:#71809a;font-size:13px}.practice-box{background:#fff;border-radius:22px;padding:18px;box-shadow:0 7px 24px #203b6810;margin-bottom:14px}.practice-pill{display:inline-block;padding:7px 10px;border-radius:11px;background:#eef3ff;color:#23406f;font-size:12px;font-weight:800}.question-text{font-size:18px;font-weight:750;line-height:1.55;margin:15px 0}.answer-list{display:grid;gap:9px}.answer-option{border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:13px;text-align:left;font-size:15px}.answer-option.selected{background:#eaf8f1;border-color:#8bc9aa}.practice-note{background:#f7f9fc;border-radius:15px;padding:13px;color:#5d6b83;font-size:13px;line-height:1.45}.record-button{width:108px;height:108px;border-radius:50%;border:8px solid #eee5ff;background:#8a4de8;color:#fff;font-size:38px;display:block;margin:25px auto 14px}.email-editor{min-height:190px;border:1px solid #dfe5ef;border-radius:16px;padding:14px;color:#71809a}.word-count{text-align:right;color:#8a95a8;font-size:12px;margin-top:7px}
 @media(max-width:380px){.toefl-hero{padding:15px}.hero-books{font-size:44px;min-width:58px}.skill-card{padding:15px}}
 
-/* V13 home dashboard */
+/* V13 home dashboard + V14 app navigation */
 .home-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 0 20px}.home-topline h1{font-size:31px;line-height:1.12;margin:4px 0 7px}.home-date{font-size:14px;font-weight:750;color:#8793a9;text-transform:capitalize}.vocab-hero{background:#23406f;color:#fff;border-radius:26px;padding:22px;margin-bottom:14px;box-shadow:0 10px 28px #203b6820}.vh-head{display:flex;justify-content:space-between;gap:15px}.vh-kicker{font-size:12px;letter-spacing:1.1px;font-weight:850;opacity:.72}.vh-title{font-size:25px;font-weight:850;margin-top:4px}.vh-sub{font-size:15px;line-height:1.45;color:#dbe4f5;margin-top:6px}.vh-count{min-width:58px;height:58px;border-radius:18px;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:850}.vh-progress{height:9px;background:#ffffff2d;border-radius:10px;overflow:hidden;margin:20px 0 9px}.vh-progress span{display:block;height:100%;background:#8daaf7;border-radius:10px}.vh-bottom{display:flex;justify-content:space-between;font-size:13px;color:#dbe4f5}.vh-bottom b{color:#fff}.vh-btn{width:100%;border:0;border-radius:17px;padding:14px 16px;margin-top:15px;background:#fff;color:#23406f;font-size:16px;font-weight:850}.vh-btn span{float:right;font-size:20px}.vocab-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:23px}.vocab-stats button{border:1px solid #e8edf4;background:#fff;border-radius:18px;padding:14px 7px;text-align:center;color:#23406f}.vocab-stats b{display:block;font-size:23px}.vocab-stats span{display:block;font-size:11px;color:#7a879e;margin-top:3px;font-weight:700}.home-section{margin:0 2px 10px}.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}.home-action{border:1px solid #e7ebf2;border-radius:20px;background:#fff;padding:15px;text-align:left;min-height:104px;box-shadow:0 5px 16px #203b6808}.home-action span{display:block;font-size:22px;margin-bottom:8px}.home-action b{display:block;font-size:15px;color:#233553}.home-action small{display:block;color:#7a879e;font-size:12px;margin-top:4px}.home-action.blue{border-top:3px solid #4772e6}.home-action.purple{border-top:3px solid #7b43d7}.home-action.orange{border-top:3px solid #e4a400}.home-action.green{border-top:3px solid #19a56b}.last-word-card{background:#fff;border:1px solid #e8edf4;border-radius:24px;padding:19px;margin-bottom:14px}.last-word-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.last-word-name{font-size:28px;font-weight:850;color:#172033}.last-word-meaning{font-size:16px;font-weight:700;color:#52627b;margin:4px 0 9px}.last-review{font-size:14px;font-weight:800;color:#4772e6;text-align:right;white-space:nowrap}.last-review small{display:block;color:#8995aa;font-size:11px;font-weight:600;margin-top:3px}.toefl-home-card{display:flex;align-items:center;gap:13px;background:#eef3ff;border:1px solid #dce6ff;border-radius:22px;padding:16px;margin-bottom:10px}.toefl-home-icon{width:45px;height:45px;border-radius:15px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:23px}.toefl-home-copy{flex:1}.toefl-home-card button{border:0;background:#23406f;color:#fff;width:40px;height:40px;border-radius:14px;font-size:20px}.badge{display:inline-block;background:#eef2f8;color:#5d6b82;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:750;margin-top:2px}
+
+/* V14 bottom navigation */
+.app-bottom-nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(510px,calc(100vw - 28px));height:58px;background:#ffffffee;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid #e4e9f1;border-radius:20px;box-shadow:0 10px 30px #203b6820;display:flex;align-items:center;justify-content:space-between;padding:7px 9px;z-index:20}
+.app-bottom-nav button{border:0;background:transparent;color:#23406f;font-weight:800;border-radius:15px;height:44px;min-width:82px;padding:0 12px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:7px}
+.app-bottom-nav button:not(:disabled):active{background:#eef3ff;transform:scale(.98)}
+.app-bottom-nav button:disabled{color:#b8c0cd;opacity:.75}
+.app-bottom-nav .bottom-home{background:#f0f4ff;color:#23406f;min-width:112px}
+.app-bottom-nav .arrow{font-size:24px;line-height:1}
+@media(max-width:380px){.app-bottom-nav{width:calc(100vw - 20px)}.app-bottom-nav button{min-width:70px;padding:0 8px;font-size:12px}.app-bottom-nav .bottom-home{min-width:96px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
@@ -141,6 +150,7 @@ header{display:flex;justify-content:space-between;align-items:center;margin:4px 
 const KEY='vocamate_words_v32', TARGET=20;
 let words=JSON.parse(localStorage.getItem(KEY)||'[]');
 let currentPage='home', quizIndex=0;
+let appHistory=['home'], appHistoryIndex=0, historyBusy=false;
 
 const fallback={
  significant:{type:'adjective',phonetic:'/sɪɡˈnɪfɪkənt/',definition:'important or notable; having a clear or meaningful effect',meaning:'önemli, kayda değer, anlamlı',example:'The study found a significant difference between the two groups.',synonyms:'important, notable, considerable',antonyms:'insignificant, minor'},
@@ -209,7 +219,27 @@ function today(){return new Date().toISOString().slice(0,10)}
 function dueWords(){return words.filter(w=>!w.nextReview||new Date(w.nextReview)<=new Date())}
 function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open')}
 function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open')}
-function nav(page){currentPage=page;closeDrawer();document.querySelectorAll('.drawer-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));render()}
+function updateBottomNav(){
+ const back=document.getElementById('bottomBack'), fwd=document.getElementById('bottomForward');
+ if(back)back.disabled=appHistoryIndex<=0;
+ if(fwd)fwd.disabled=appHistoryIndex>=appHistory.length-1;
+}
+function syncDrawer(){document.querySelectorAll('.drawer-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage))}
+function pushPage(page){
+ if(historyBusy){currentPage=page;return}
+ if(appHistory[appHistoryIndex]===page)return;
+ appHistory=appHistory.slice(0,appHistoryIndex+1);
+ appHistory.push(page); appHistoryIndex=appHistory.length-1; currentPage=page;
+}
+function nav(page){pushPage(page);closeDrawer();syncDrawer();render();updateBottomNav()}
+function appBack(){
+ if(appHistoryIndex<=0)return;
+ appHistoryIndex--; currentPage=appHistory[appHistoryIndex]; closeDrawer(); syncDrawer(); render(); updateBottomNav();
+}
+function appForward(){
+ if(appHistoryIndex>=appHistory.length-1)return;
+ appHistoryIndex++; currentPage=appHistory[appHistoryIndex]; closeDrawer(); syncDrawer(); render(); updateBottomNav();
+}
 
 
 function render(){
@@ -221,6 +251,8 @@ function render(){
  if(currentPage==='reading')reading(m);
  if(currentPage==='patterns')patterns(m);
  if(currentPage==='stats')stats(m);
+  if(currentPage==='review')showReview(0);
+  syncDrawer(); updateBottomNav();
 }
 
 const toeflData={
@@ -241,7 +273,7 @@ function toefl(m){
  <div class="format-row"><div class="format-ico">✍️</div><div><strong>Writing</strong><span>Build a Sentence · Write an Email · Academic Discussion</span></div></div></div>
  <div class="card"><div class="section-title">🎯 Hızlı çalışma</div><div class="meta">Bugün bir bölüm seç ve kısa bir pratik turu tamamla.</div><div class="btnrow" style="margin-top:14px;margin-bottom:0"><button class="btn primary" onclick="toeflPractice('reading')">Reading</button><button class="btn secondary" onclick="toeflPractice('listening')">Listening</button></div><div class="btnrow" style="margin-top:10px;margin-bottom:0"><button class="btn secondary" onclick="toeflPractice('speaking')">Speaking</button><button class="btn secondary" onclick="toeflPractice('writing')">Writing</button></div></div>`;
 }
-function toeflPractice(type){closeDrawer();currentPage='toefl';const m=document.getElementById('main');const d=toeflData[type];
+function toeflPractice(type){closeDrawer();pushPage('toefl');const m=document.getElementById('main');const d=toeflData[type];
  let content='';
  if(type==='reading') content=`<div class="practice-box"><span class="practice-pill">Complete the Words</span><div class="question-text">Many cities are trying to become more environmentally ______ by investing in green transportation.</div><div class="answer-list"><button class="answer-option" onclick="this.classList.toggle('selected')">A) traditional</button><button class="answer-option selected">B) sustainable</button><button class="answer-option" onclick="this.classList.toggle('selected')">C) increase</button><button class="answer-option" onclick="this.classList.toggle('selected')">D) pollution</button></div><div class="practice-note" style="margin-top:14px">💡 İpucu: Cümlenin anlamına ve kelimenin türüne dikkat et.</div></div>`;
  if(type==='listening') content=`<div class="practice-box"><span class="practice-pill">Conversation</span><div style="text-align:center;padding:18px 0"><button class="record-button" style="width:72px;height:72px;border:5px solid #d9f4e8;background:#19a56b;font-size:27px" onclick="toast('▶️ Dinleme başlatıldı')">▶</button><div class="meta">0:00 / 0:28</div></div><div class="question-text">What does the woman suggest?</div><div class="answer-list"><button class="answer-option" onclick="this.classList.toggle('selected')">A) Meet at the library</button><button class="answer-option selected">B) Join the science club</button><button class="answer-option" onclick="this.classList.toggle('selected')">C) Change the meeting time</button><button class="answer-option" onclick="this.classList.toggle('selected')">D) Go to the cafeteria</button></div></div>`;
@@ -344,7 +376,7 @@ function startLearning(){currentPage='review';showReview(0)}
 function startReview(){currentPage='review';showReview(0)}
 function showReview(i){
  const due=dueWords().sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0));
- if(!due.length){currentPage='home';render();toast('🎉 Bugünlük tekrarın tamam!');return}
+ if(!due.length){nav('home');toast('🎉 Bugünlük tekrarın tamam!');return}
  const pos=i%due.length, w=due[pos],m=document.getElementById('main');
  const dueNow=due.length;
  const intervalText=w.interval?`${w.interval} gün`:'İlk tekrar';
@@ -722,9 +754,10 @@ function stats(m){
  <div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const level=w.reviewLevel||'Öğreniliyor';const due=(!w.nextReview||new Date(w.nextReview)<=new Date());return `<div class="word-list-card"><div class="listitem"><div style="flex:1"><div><b style="font-size:21px">${esc(w.word)}</b> <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta" style="font-size:15px;margin-top:3px">${esc(w.meaning||'Anlam eklenmedi')}</div><div style="margin-top:8px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span>${due?'<span class="badge" style="background:#fff4dc;color:#8a6411">Tekrar zamanı</span>':''}</div>${w.userExample?`<div class="example" style="margin-top:9px;font-size:15px"><b>✍️</b> ${esc(w.userExample)}</div>`:''}</div><div class="word-actions"><button class="editbtn" onclick="editWord('${encodeURIComponent(w.word)}')">Düzenle</button><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div></div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.</div>'}</div>
  <button class="btn primary" style="width:100%;margin-top:12px" onclick="nav('add')">＋ Yeni kelime ekle</button>`;
 }
-function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;currentPage='add';render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
+function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;pushPage('add');render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');render()}
 render();
+updateBottomNav();
 </script>
 </body>
 </html>
