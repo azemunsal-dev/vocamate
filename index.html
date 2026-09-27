@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v11.0</title>
+<title>VocaMate v12.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -54,6 +54,9 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .selectrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .badge{display:inline-block;background:#f0f3f8;color:#5e6c84;padding:7px 10px;border-radius:12px;font-size:13px;font-weight:750}
 .speak{margin-left:7px;border:0;background:#edf2ff;color:#4772e6;border-radius:12px;padding:7px 10px;font-weight:800}
+
+/* V12 home + vocabulary command center */
+.home-greeting{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.home-greeting h1{font-size:34px;margin:0 0 5px}.home-date{color:#7a879d;font-size:14px;font-weight:700}.home-focus{background:linear-gradient(135deg,#294776,#3f63a2);color:#fff;border-radius:26px;padding:22px;margin-bottom:16px;box-shadow:0 10px 30px #203b6818}.focus-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.focus-kicker{font-size:13px;opacity:.75;font-weight:800;text-transform:uppercase;letter-spacing:.7px}.focus-title{font-size:25px;font-weight:850;margin-top:5px}.focus-sub{font-size:15px;opacity:.84;margin-top:5px}.focus-number{font-size:28px;font-weight:850}.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px}.home-stat{background:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 7px 22px #203b6810}.home-stat b{font-size:25px;display:block;color:#23406f}.home-stat span{font-size:12px;color:#7a879d;font-weight:700}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick-card{border:1px solid #e6ebf3;background:#fff;border-radius:20px;padding:16px;text-align:left;cursor:pointer}.quick-card .qicon{font-size:24px}.quick-card b{display:block;margin-top:8px;font-size:16px;color:#243552}.quick-card span{display:block;margin-top:3px;color:#7a879d;font-size:13px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section-head button{border:0;background:none;color:#4772e6;font-weight:800}.word-mini{display:flex;justify-content:space-between;align-items:center;gap:12px}.word-mini .wname{font-size:24px;font-weight:850;color:#1d2a40}.word-mini .wmeaning{color:#687892;margin-top:3px}.vocab-toolbar{display:grid;grid-template-columns:1fr auto;gap:9px;margin-bottom:12px}.filter-row{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.filter-chip{white-space:nowrap;border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:9px 12px;font-weight:750;color:#51627f}.filter-chip.active{background:#edf2ff;border-color:#91a8e7;color:#23406f}.vocab-search{margin-bottom:12px}.vocab-summary{display:flex;justify-content:space-between;color:#71809a;font-size:14px;margin-bottom:4px}.word-actions{display:flex;gap:7px}.editbtn{border:0;background:#eef3ff;color:#23406f;border-radius:11px;padding:8px 10px;font-weight:750}.word-list-card{background:#fff;border-radius:22px;padding:15px;margin-bottom:10px;box-shadow:0 6px 22px #203b6810}.word-list-card .listitem{padding:6px 0;border:0;align-items:flex-start}.home-divider{height:1px;background:#edf0f5;margin:4px 0 18px}
 @media(max-width:380px){.word{font-size:40px}h1{font-size:34px}.btn{font-size:16px}}
 
 .review-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
@@ -87,7 +90,7 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 
 .navicon{font-size:22px}
 
-/* V11 TOEFL + left drawer */
+/* V12 TOEFL + left drawer + vocabulary center */
 body{background:#f7f8fc}
 .app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 34px}
 header{display:flex;justify-content:space-between;align-items:center;margin:4px 0 24px;position:sticky;top:0;background:#f7f8fc;z-index:4;padding:6px 0}
@@ -244,17 +247,17 @@ function toeflPractice(type){closeDrawer();currentPage='toefl';const m=document.
  m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">${d.icon} ${d.name} Practice</div><div class="practice-sub">TOEFL iBT New Format (2026)</div></div></div>${content}<div class="practice-box"><div class="section-title">📊 Bu bölüm</div><div class="progressline"><span>İlerleme</span><b>%${d.progress}</b></div><div class="skill-progress" style="margin-top:8px;background:#e9edf4"><span style="width:${d.progress}%;background:${d.color}"></span></div></div>`;
 }
 
+function todayLabel(){return new Intl.DateTimeFormat('tr-TR',{weekday:'long',day:'numeric',month:'long'}).format(new Date())}
+function reviewedTodayCount(){const t=today();return words.filter(w=>w.lastReviewed&&w.lastReviewed.slice(0,10)===t).length}
 function home(m){
- const addedToday=words.filter(w=>w.added===today()).length, due=dueWords();
- const pct=Math.min(100,addedToday/TARGET*100);
- m.innerHTML=`<h1>Bugünkü çalışma</h1><div class="sub">Kısa çalış, sık tekrar et.</div>
- <div class="card goal"><div class="goalrow"><span>Günlük hedef</span><span>${addedToday} / ${TARGET}</span></div>
- <div class="bar"><div class="fill" style="width:${pct}%"></div></div><div>${Math.max(0,TARGET-addedToday)} kelime daha</div></div>
- <div class="btnrow"><button class="btn primary" onclick="startLearning()">▶ Öğren</button><button class="btn secondary" onclick="startReview()">↻ Tekrar et</button></div><div class="card" style="margin-top:18px"><span class="pill">🎯 TOEFL Sprint</span><h2 style="margin:10px 0 6px">10 soruluk kelime antrenmanı</h2><div class="meta">Anlam ve İngilizce modlarında hızlı bir TOEFL kelime turu.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="startToeflSprint()">Sprinti başlat →</button></div><div class="card"><span class="pill">💬 TOEFL Kalıpları</span><h2 style="margin:10px 0 6px">Speaking & Writing ifadeleri</h2><div class="meta">However, in conclusion, for example ve TOEFL cevaplarında işine yarayacak genel kalıpları konu başlıklarına göre çalış.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="nav('patterns')">Kalıpları aç →</button></div><div class="card"><span class="pill">📖 Reading Lab</span><h2 style="margin:10px 0 6px">Reading ekran görüntüsünden kelime çıkar</h2><div class="meta">Bilmediğin kelimeleri seç, VocaMate listene ekle ve tekrar planına dahil et.</div><button class="btn secondary" style="width:100%;margin-top:14px" onclick="nav('reading')">Reading'i aç →</button></div>
- <div class="card"><span class="pill">🧠 Akıllı tekrar</span><h2 style="margin-bottom:8px">${due.length?due.length+' kelime tekrar bekliyor':'Bugün tekrar bekleyen kelime yok'}</h2>
- <div class="meta">${due.length?'Unutmaya başlamadan önce tekrar edelim.':'Yeni kelime ekleyebilir veya quiz yapabilirsin.'}</div>
- ${due.length?`<button class="btn primary" style="width:100%;margin-top:18px" onclick="startReview()">Tekrara başla →</button>`:`<div class="next-review">🎯 Harika! Bir sonraki tekrarlar zamanı geldiğinde burada görünecek.</div>`}</div>
- ${words.length?wordCard(words[words.length-1]):sampleCard()}`;
+ const due=dueWords(), reviewed=reviewedTodayCount(), total=words.length, strong=words.filter(w=>w.reviewLevel==='Güçlü').length;
+ const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null;
+ m.innerHTML=`<div class="home-greeting"><div><div class="home-date">${todayLabel()}</div><h1>Bugün ne çalışıyoruz?</h1><div class="sub" style="margin:0;font-size:17px">Kısa çalış, sık tekrar et.</div></div><div class="streak">🔥 1 gün</div></div>
+ <div class="home-focus"><div class="focus-top"><div><div class="focus-kicker">Kelime odağın</div><div class="focus-title">Akıllı tekrar</div><div class="focus-sub">${due.length?due.length+' kelime bugün seni bekliyor.':'Bugün tekrar bekleyen kelime yok.'}</div></div><div class="focus-number">${due.length}</div></div><div class="bar"><div class="fill" style="width:${goalPct}%"></div></div><div style="font-size:14px;opacity:.9">Bugünkü çalışma: ${reviewed} / ${goal}</div><button class="btn" style="width:100%;margin-top:14px;background:#fff;color:#23406f" onclick="${due.length?'startReview()':'nav(\'add\')'}">${due.length?'▶ Tekrara başla':'＋ İlk kelimeni ekle'}</button></div>
+ <div class="home-stats"><div class="home-stat"><b>${total}</b><span>Toplam kelime</span></div><div class="home-stat"><b>${due.length}</b><span>Tekrar zamanı</span></div><div class="home-stat"><b>${strong}</b><span>Güçlü kelime</span></div></div>
+ <div class="card"><div class="section-head"><div class="section-title">⚡ Hızlı işlemler</div></div><div class="quick-grid"><button class="quick-card" onclick="nav('add')"><div class="qicon">＋</div><b>Kelime ekle</b><span>Yeni kelimeyi hazırla</span></button><button class="quick-card" onclick="nav('stats')"><div class="qicon">📚</div><b>Kelime hazinem</b><span>${total} kelimeni yönet</span></button><button class="quick-card" onclick="nav('quiz')"><div class="qicon">🎯</div><b>Kelime Quiz</b><span>Hızlı test yap</span></button><button class="quick-card" onclick="startToeflSprint()"><div class="qicon">🚀</div><b>TOEFL Sprint</b><span>10 soruluk tur</span></button></div></div>
+ ${last?`<div class="card"><div class="section-head"><div class="section-title">🆕 Son öğrendiğin kelime</div><button onclick="nav('stats')">Tümünü gör →</button></div><div class="word-mini"><div><div class="wname">${esc(last.word)} <button class="speak" onclick="speakWord(${JSON.stringify(last.word)})">🔊</button></div><div class="wmeaning">${esc(last.meaning||'Anlam eklenmedi')}</div><div style="margin-top:8px"><span class="badge">${esc(last.category||'TOEFL Academic')}</span> <span class="badge">${esc(last.difficulty||'Orta')}</span></div></div><div style="text-align:right;color:#71809a;font-size:13px">${intervalLabel(last.interval||0)}<br><span>tekrar aralığı</span></div></div></div>`:''}
+ <div class="card"><div class="section-head"><div class="section-title">🎓 TOEFL çalışma alanı</div><button onclick="nav('toefl')">Aç →</button></div><div class="meta">Reading, Listening, Speaking ve Writing çalışmalarını kelime hazinenle birlikte ilerlet.</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="nav('toefl')">TOEFL iBT'ye geç →</button></div>`;
 }
 function sampleCard(){return `<div class="card"><span class="pill">Örnek TOEFL kelimesi</span><div class="word">mitigate</div><div class="meta">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <span class="tag">mitigate</span> the effects of climate change.</div></div>`}
 function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</span><div class="word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div><div style="margin-top:10px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span></div><div class="meaning">${esc(w.meaning||'Türkçe anlam eklenmedi')}</div><div class="example">${esc(w.example||w.definition||'')}</div>
@@ -673,38 +676,28 @@ function patterns(m){
  <div class="card"><div class="section-title">✍️ Writing</div>
  ${phraseBank.map((p,i)=>p.area==='Writing'?`<div class="phrase"><div class="phrase-top"><span class="badge">${esc(p.group)}</span><button class="copybtn" onclick="copyPhrase(${i})">Kopyala</button></div><b>${esc(p.en)}</b><div class="meta">${esc(p.tr)}</div><div class="mini">${esc(p.use)}</div></div>`:'').join('')}</div>`;
 }
+let vocabFilter='all', vocabSearch='';
+function setVocabFilter(f){vocabFilter=f;stats(document.getElementById('main'))}
+function filterWords(){vocabSearch=(document.getElementById('vocabSearch')?.value||'').trim().toLowerCase();stats(document.getElementById('main'))}
 function stats(m){
- const due=dueWords();
- const totalCorrect=words.reduce((a,w)=>a+(w.quizCorrect||0),0);
- const totalWrong=words.reduce((a,w)=>a+(w.quizWrong||0),0);
- const accuracy=(totalCorrect+totalWrong)?Math.round(totalCorrect/(totalCorrect+totalWrong)*100):0;
- const cats={};
- let strong=0,learning=0,hard=0,forgot=0;
- words.forEach(w=>{
-   cats[w.category||'TOEFL Academic']=(cats[w.category||'TOEFL Academic']||0)+1;
-   if(w.reviewLevel==='Güçlü')strong++;
-   else if(w.reviewLevel==='Zorlanıyorum')hard++;
-   else if(w.reviewLevel==='Unutuldu')forgot++;
-   else learning++;
+ const cats={}; words.forEach(w=>cats[w.category||'TOEFL Academic']=(cats[w.category||'TOEFL Academic']||0)+1);
+ let list=words.slice().reverse().filter(w=>{
+   const q=!vocabSearch||w.word.toLowerCase().includes(vocabSearch)||(w.meaning||'').toLowerCase().includes(vocabSearch);
+   let f=true;
+   if(vocabFilter==='due')f=dueWords().some(d=>d.word===w.word);
+   if(vocabFilter==='strong')f=w.reviewLevel==='Güçlü';
+   if(vocabFilter==='toefl')f=(w.category||'')==='TOEFL Academic';
+   return q&&f;
  });
- m.innerHTML=`<h1>İlerleme</h1><div class="sub">Kelime hazineni takip et.</div>
- <div class="stats"><div class="stat"><strong>${words.length}</strong>Toplam kelime</div><div class="stat"><strong>${due.length}</strong>Tekrar bekleyen</div><div class="stat"><strong>${accuracy}%</strong>Quiz başarısı</div><div class="stat"><strong>${totalCorrect}</strong>Doğru cevap</div></div>
- <div class="card" style="margin-top:18px"><div class="section-title">🧠 Kelime hafıza durumu</div>
- <div class="level-grid"><div class="level"><b>${strong}</b><span>💪 Güçlü</span></div><div class="level"><b>${learning}</b><span>📖 Öğreniliyor</span></div><div class="level"><b>${hard}</b><span>🤔 Zorlanıyorum</span></div><div class="level"><b>${forgot}</b><span>🔁 Yeniden öğren</span></div></div>
- </div>
- <div class="card"><div class="section-title">📅 Tekrar planı</div>
- <div class="meta">${due.length?`Bugün ${due.length} kelimeyi tekrar etmen gerekiyor.`:'Bugün tekrar bekleyen kelime yok.'}</div>
- ${due.length?`<button class="btn primary" style="width:100%;margin-top:16px" onclick="startReview()">Tekrara başla →</button>`:''}
- </div>
- <div class="card"><div class="section-title">Kategoriler</div>
- ${Object.keys(cats).length?Object.entries(cats).map(([k,v])=>`<div class="progressline"><span>${esc(k)}</span><b>${v}</b></div>`).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>
- <div class="card"><h2>Kelime listem</h2>${words.length?words.slice().reverse().map(w=>{
-   const next=w.nextReview&&new Date(w.nextReview)>new Date()?`📅 ${new Date(w.nextReview).toLocaleDateString('tr-TR')}`:'🔔 Şimdi';
-   const level=w.reviewLevel||'Öğreniliyor';
-   return `<div class="listitem"><div><b>${esc(w.word)}</b><button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button><div class="meta">${esc(w.meaning||'')}</div>${w.example?`<div class="example" style="margin-top:10px"><b>📘</b> ${esc(w.example)}</div>`:''}${w.userExample?`<div class="example" style="margin-top:8px;background:#eef8f3"><b>✍️ Benim cümlem:</b> ${esc(w.userExample)}</div>`:''}<div><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span></div><div class="progressline"><span>Tekrar</span><span>${next}</span></div></div><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div>`;
- }).join(''):'<div class="empty">Henüz kelime eklemedin.</div>'}</div>`;
+ const chips=[['all','Tümü'],['due','Tekrar zamanı'],['strong','Güçlü'],['toefl','TOEFL']];
+ m.innerHTML=`<h1>Kelime hazinem</h1><div class="sub">Kelimelerini ara, filtrele ve tekrar durumunu takip et.</div>
+ <div class="stats"><div class="stat"><strong>${words.length}</strong><span>Toplam</span></div><div class="stat"><strong>${dueWords().length}</strong><span>Tekrar</span></div><div class="stat"><strong>${words.filter(w=>w.reviewLevel==='Güçlü').length}</strong><span>Güçlü</span></div><div class="stat"><strong>${reviewedTodayCount()}</strong><span>Bugün çalışılan</span></div></div>
+ <div class="card" style="margin-top:18px"><div class="vocab-search"><input id="vocabSearch" value="${esc(vocabSearch)}" placeholder="🔎 Kelime veya anlam ara..." oninput="filterWords()"></div><div class="filter-row">${chips.map(([k,l])=>`<button class="filter-chip ${vocabFilter===k?'active':''}" onclick="setVocabFilter('${k}')">${l}</button>`).join('')}</div></div>
+ <div class="vocab-summary"><span>${list.length} kelime gösteriliyor</span><span>${Object.entries(cats).map(([k,v])=>`${esc(k)} ${v}`).join(' · ')}</span></div>
+ <div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const level=w.reviewLevel||'Öğreniliyor';const due=(!w.nextReview||new Date(w.nextReview)<=new Date());return `<div class="word-list-card"><div class="listitem"><div style="flex:1"><div><b style="font-size:21px">${esc(w.word)}</b> <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta" style="font-size:15px;margin-top:3px">${esc(w.meaning||'Anlam eklenmedi')}</div><div style="margin-top:8px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(level)}</span>${due?'<span class="badge" style="background:#fff4dc;color:#8a6411">Tekrar zamanı</span>':''}</div>${w.userExample?`<div class="example" style="margin-top:9px;font-size:15px"><b>✍️</b> ${esc(w.userExample)}</div>`:''}</div><div class="word-actions"><button class="editbtn" onclick="editWord('${encodeURIComponent(w.word)}')">Düzenle</button><button class="delete" onclick="deleteWord('${encodeURIComponent(w.word)}')">Sil</button></div></div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.</div>'}</div>
+ <button class="btn primary" style="width:100%;margin-top:12px" onclick="nav('add')">＋ Yeni kelime ekle</button>`;
 }
-
+function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;currentPage='add';render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');render()}
 render();
 </script>
