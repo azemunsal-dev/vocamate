@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v19.0</title>
+<title>VocaMate v20.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -167,7 +167,29 @@ body{padding-bottom:120px}
 </nav>
 <script>
 const KEY='vocamate_words_v32', TARGET=20;
-let words=JSON.parse(localStorage.getItem(KEY)||'[]');
+// V20: kelime verilerini eski sürümlerden koru; boşsa daha önce kullandığımız temel kelimeleri geri getir.
+function loadWordsSafely(){
+  const keys=['vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
+  const merged=[]; const seen=new Set();
+  for(const k of keys){
+    try{
+      const arr=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(arr)) arr.forEach(w=>{
+        const word=String(w.word||'').trim().toLowerCase();
+        if(word && !seen.has(word)){seen.add(word); merged.push(w)}
+      });
+    }catch(e){}
+  }
+  if(!merged.length){
+    const starter=['significant','substantial','mitigate'];
+    starter.forEach(word=>{
+      const d=fallback[word];
+      if(d) merged.push({word, ...d, category:word==='mitigate'?'TOEFL Academic':'TOEFL Academic', difficulty:'Orta', source:'TOEFL', status:'Yeni', reviewLevel:'Öğreniliyor', nextReview:null, reviewCount:0, correctCount:0, createdAt:new Date().toISOString(), lastStudied:null, personalSentence:'', note:''});
+    });
+  }
+  return merged;
+}
+let words=loadWordsSafely();
 let currentPage='home', quizIndex=0;
 let appHistory=['home'], appHistoryIndex=0, historyBusy=false;
 
