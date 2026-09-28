@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v28.0</title>
+<title>VocaMate v29.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -455,6 +455,42 @@ function sampleCard(){return `<div class="card"><span class="pill">Örnek TOEFL 
 function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</span><div class="word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div><div style="margin-top:10px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span></div><div class="meaning">${esc(w.meaning||'Türkçe anlam eklenmedi')}</div><div class="example">${esc(w.example||w.definition||'')}</div>
 <div class="progressline"><span>Tekrar aralığı</span><b>${intervalLabel(w.interval||0)}</b></div></div>`}
 
+
+/* V29 general-English fallback dictionary: used when an external dictionary is unavailable. */
+const generalFallback={
+ beautiful:{type:'adjective',phonetic:'/ˈbjuːtɪfəl/',definition:'pleasing to the senses or to the mind; attractive and lovely',meaning:'güzel, hoş, güzel görünümlü',example:'She lives in a beautiful house near the coast.',synonyms:'attractive, lovely, gorgeous',antonyms:'ugly, unattractive'},
+ important:{type:'adjective',phonetic:'/ɪmˈpɔːrtənt/',definition:'having great value, influence, or effect',meaning:'önemli',example:'It is important to understand the main idea.',synonyms:'significant, essential, crucial',antonyms:'unimportant, insignificant'},
+ difficult:{type:'adjective',phonetic:'/ˈdɪfɪkəlt/',definition:'not easy to do, understand, or deal with',meaning:'zor, güç',example:'The assignment was difficult but useful.',synonyms:'hard, challenging, demanding',antonyms:'easy, simple'},
+ easy:{type:'adjective',phonetic:'/ˈiːzi/',definition:'not difficult; requiring little effort',meaning:'kolay',example:'The instructions are easy to follow.',synonyms:'simple, effortless, straightforward',antonyms:'difficult, hard'},
+ useful:{type:'adjective',phonetic:'/ˈjuːsfəl/',definition:'helpful or practical for a particular purpose',meaning:'yararlı, kullanışlı',example:'This guide is useful for English learners.',synonyms:'helpful, practical, beneficial',antonyms:'useless, impractical'},
+ necessary:{type:'adjective',phonetic:'/ˈnesəseri/',definition:'needed or required for a particular purpose',meaning:'gerekli, zorunlu',example:'Regular practice is necessary for progress.',synonyms:'essential, required, needed',antonyms:'unnecessary, optional'},
+ successful:{type:'adjective',phonetic:'/səkˈsesfəl/',definition:'achieving the desired result or purpose',meaning:'başarılı',example:'The project was successful because the team planned carefully.',synonyms:'effective, accomplished, prosperous',antonyms:'unsuccessful, failed'},
+ effective:{type:'adjective',phonetic:'/ɪˈfektɪv/',definition:'producing the intended result',meaning:'etkili, işe yarayan',example:'This is an effective way to learn new words.',synonyms:'efficient, successful, powerful',antonyms:'ineffective, useless'},
+ possible:{type:'adjective',phonetic:'/ˈpɑːsəbəl/',definition:'able to happen or be done',meaning:'mümkün, olası',example:'It is possible to improve with regular practice.',synonyms:'feasible, achievable, attainable',antonyms:'impossible, unlikely'},
+ available:{type:'adjective',phonetic:'/əˈveɪləbəl/',definition:'able to be used, obtained, or reached',meaning:'mevcut, kullanılabilir, uygun',example:'The report is available online.',synonyms:'accessible, obtainable, ready',antonyms:'unavailable, inaccessible'},
+ different:{type:'adjective',phonetic:'/ˈdɪfrənt/',definition:'not the same as another person or thing',meaning:'farklı',example:'People have different ways of learning.',synonyms:'distinct, unlike, separate',antonyms:'similar, same, identical'},
+ similar:{type:'adjective',phonetic:'/ˈsɪmələr/',definition:'almost the same in appearance, character, or quality',meaning:'benzer',example:'The two studies produced similar results.',synonyms:'alike, comparable, resembling',antonyms:'different, dissimilar'},
+ benefit:{type:'noun',phonetic:'/ˈbenɪfɪt/',definition:'an advantage or helpful result',meaning:'fayda, yarar, avantaj',example:'One benefit of reading is a larger vocabulary.',synonyms:'advantage, gain, value',antonyms:'disadvantage, drawback'},
+ challenge:{type:'noun',phonetic:'/ˈtʃælɪndʒ/',definition:'a difficult task or situation that requires effort',meaning:'zorluk, meydan okuma',example:'Time management is a common challenge for students.',synonyms:'difficulty, obstacle, problem',antonyms:'advantage, ease'},
+ opportunity:{type:'noun',phonetic:'/ˌɑːpərˈtuːnəti/',definition:'a favorable chance to do or achieve something',meaning:'fırsat, olanak',example:'The course provides an opportunity to practice speaking.',synonyms:'chance, possibility, opening',antonyms:'obstacle, disadvantage'},
+ solution:{type:'noun',phonetic:'/səˈluːʃən/',definition:'a way of solving a problem or dealing with a difficult situation',meaning:'çözüm',example:'We need a practical solution to the problem.',synonyms:'answer, remedy, resolution',antonyms:'problem, complication'},
+ reason:{type:'noun',phonetic:'/ˈriːzən/',definition:'a cause or explanation for an action, event, or situation',meaning:'neden, sebep, gerekçe',example:'There are several reasons for this change.',synonyms:'cause, explanation, motive',antonyms:''},
+ result:{type:'noun',phonetic:'/rɪˈzʌlt/',definition:'something that happens because of an action or event',meaning:'sonuç, netice',example:'The results showed a clear improvement.',synonyms:'outcome, consequence, effect',antonyms:'cause'},
+ explain:{type:'verb',phonetic:'/ɪkˈspleɪn/',definition:'to make an idea or situation clear by describing it',meaning:'açıklamak, izah etmek',example:'The professor explained the concept clearly.',synonyms:'clarify, describe, illustrate',antonyms:'confuse, obscure'},
+ improve:{type:'verb',phonetic:'/ɪmˈpruːv/',definition:'to make or become better',meaning:'geliştirmek, iyileşmek',example:'Daily practice can improve your speaking skills.',synonyms:'enhance, develop, strengthen',antonyms:'worsen, deteriorate'},
+ achieve:{type:'verb',phonetic:'/əˈtʃiːv/',definition:'to successfully reach a goal or desired result',meaning:'başarmak, elde etmek',example:'She worked hard to achieve her goal.',synonyms:'accomplish, attain, reach',antonyms:'fail, lose'},
+ require:{type:'verb',phonetic:'/rɪˈkwaɪər/',definition:'to need something or make something necessary',meaning:'gerektirmek, ihtiyaç duymak',example:'The task requires careful planning.',synonyms:'need, demand, involve',antonyms:'waive'},
+ provide:{type:'verb',phonetic:'/prəˈvaɪd/',definition:'to give or supply something that is needed',meaning:'sağlamak, sunmak',example:'The course provides useful practice.',synonyms:'supply, offer, give',antonyms:'withhold, take'},
+ include:{type:'verb',phonetic:'/ɪnˈkluːd/',definition:'to contain something as part of a whole',meaning:'içermek, dahil etmek',example:'The price includes breakfast.',synonyms:'contain, involve, incorporate',antonyms:'exclude, omit'},
+ avoid:{type:'verb',phonetic:'/əˈvɔɪd/',definition:'to stay away from someone or something or prevent something from happening',meaning:'kaçınmak, uzak durmak, önlemek',example:'Try to avoid common grammar mistakes.',synonyms:'prevent, evade, escape',antonyms:'face, approach'},
+ understand:{type:'verb',phonetic:'/ˌʌndərˈstænd/',definition:'to know the meaning or nature of something',meaning:'anlamak, kavramak',example:'I understand the main point of the lecture.',synonyms:'comprehend, grasp, realize',antonyms:'misunderstand, confuse'},
+ communicate:{type:'verb',phonetic:'/kəˈmjuːnɪkeɪt/',definition:'to share information, ideas, or feelings with someone',meaning:'iletişim kurmak, aktarmak',example:'Clear language helps people communicate effectively.',synonyms:'convey, express, interact',antonyms:'conceal, withhold'},
+ environment:{type:'noun',phonetic:'/ɪnˈvaɪrənmənt/',definition:'the natural world and the conditions in which people or things exist',meaning:'çevre, ortam',example:'We should protect the natural environment.',synonyms:'surroundings, habitat, setting',antonyms:''},
+ experience:{type:'noun',phonetic:'/ɪkˈspɪriəns/',definition:'knowledge or skill gained by doing or seeing something',meaning:'deneyim, tecrübe',example:'Work experience can help students find jobs.',synonyms:'knowledge, practice, exposure',antonyms:'inexperience'},
+ knowledge:{type:'noun',phonetic:'/ˈnɑːlɪdʒ/',definition:'information, understanding, or skill gained through learning or experience',meaning:'bilgi, birikim',example:'Reading increases knowledge and vocabulary.',synonyms:'understanding, awareness, expertise',antonyms:'ignorance'},
+ relationship:{type:'noun',phonetic:'/rɪˈleɪʃənʃɪp/',definition:'the way in which two or more people or things are connected',meaning:'ilişki, bağlantı',example:'Trust is important in any relationship.',synonyms:'connection, association, link',antonyms:''}
+};
+
 function add(m){
  m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimeleri yanında günlük ve genel İngilizce kelimeleri de ekleyebilirsin.</div>
  <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
@@ -538,6 +574,20 @@ async function prepareWord(){
    }
   }
  }
+ // İkinci çevrimiçi katman: DictionaryAPI cevap vermezse Datamuse tanım/telaffuz sağlayabilir.
+ if(!data){
+  const dm=await fetchJson('https://api.datamuse.com/words?sp='+encodeURIComponent(word)+'&md=dpr&max=1');
+  const item=Array.isArray(dm)?dm[0]:null;
+  if(item){
+   const tags=item.tags||[];
+   const pos=tags.find(t=>/^(n|v|adj|adv|pron|prep|conj|interj)$/.test(t));
+   data={type:pos==='adj'?'adjective':pos==='adv'?'adverb':pos==='v'?'verb':pos==='n'?'noun':'word',phonetic:item.tags?.find(t=>/^\/.+\/$/.test(t))||'',definition:item.defs?.[0]||'',meaning:'',example:'',synonyms:'',antonyms:''};
+   source='🌐 Alternatif İngilizce sözlükten bulundu';
+   const rel=await enrichRelations(word); data.synonyms=rel.synonyms; data.antonyms=rel.antonyms;
+  }
+ }
+ // Yerel genel İngilizce sözlüğü: internet sözlükleri erişilemese bile yaygın kelimeler eksiksiz hazırlanır.
+ if(!data && generalFallback[word]){ data={...generalFallback[word]}; source='📚 Genel İngilizce sözlüğünden bulundu'; }
  // Sözlük bulunamasa bile İngilizce kelimeyi tamamen kaybetme: çeviri ile devam et.
  if(!data){
   const autoMeaning=await translateWordToTurkish(word);
@@ -568,13 +618,13 @@ async function prepareWord(){
  result.innerHTML=`<div class="info">${source} ${data.meaning?'• 🇹🇷 Türkçe anlam otomatik bulundu.':'• Türkçe anlamı aşağıdan ekleyebilirsin.'}</div>
  <div class="word-profile">
    <div class="profile-word">${esc(word)} <button class="speak" onclick="speakWord(${JSON.stringify(word)})">🔊</button></div>
-   <div class="profile-meta">${esc(data.phonetic||'Telaffuz bulunamadı')} <span>•</span> ${esc(data.type||'word')}</div>
+   <div class="profile-meta">${esc(data.phonetic||'Telaffuz otomatik alınamadı; 🔊 ile tarayıcı seslendirmesini kullanabilirsin.')} <span>•</span> ${esc(data.type||'word')}</div>
    <div class="profile-grid">
-     <div class="profile-box"><div class="profile-label">📖 Tanım</div><div>${esc(data.definition||'Tanım bulunamadı; kelime yine de kaydedilebilir.')}</div></div>
+     <div class="profile-box"><div class="profile-label">📖 Tanım</div><div>${esc(data.definition||'Bu kelime için tanım otomatik alınamadı. Kelime yine de kaydedilebilir.')}</div></div>
      <div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Türkçe anlam"></div>
    </div>
-   <div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms||'Bulunamadı')}</div></div>
-   <div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms||'Bulunamadı')}</div></div>
+   <div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms||'Bu kelime için otomatik eş anlamlı bulunamadı.')}</div></div>
+   <div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms||'Bu kelime için otomatik zıt anlamlı bulunamadı.')}</div></div>
  </div>
  <div class="selectrow"><div><label>Kategori</label><select id="category"><option ${suggestedCategory==='TOEFL Academic'?'selected':''}>TOEFL Academic</option><option ${suggestedCategory==='General English'?'selected':''}>General English</option><option ${suggestedCategory==='Daily English'?'selected':''}>Daily English</option><option ${suggestedCategory==='Business'?'selected':''}>Business</option><option ${suggestedCategory==='Banking'?'selected':''}>Banking</option></select></div>
  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
