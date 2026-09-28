@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#23406f">
+<title>VocaMate v31.0</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+.app{max-width:540px;margin:auto;min-height:100vh;padding:20px 18px 96px}
+header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 28px}
+.logo{font-size:34px;font-weight:800;color:#23406f}.streak{background:#fff;border-radius:30px;padding:13px 20px;font-weight:750;box-shadow:0 5px 18px #0000000c}
+h1{font-size:40px;line-height:1.08;margin:0 0 10px}.sub{font-size:20px;color:#71809a;margin-bottom:25px}
+.card{background:#fff;border-radius:28px;padding:25px;margin-bottom:18px;box-shadow:0 8px 28px #203b6810}
+.goal{background:#23406f;color:#fff}.goalrow{display:flex;justify-content:space-between;font-size:21px;font-weight:750}
+.bar{height:11px;background:#ffffff36;border-radius:10px;margin:22px 0 12px;overflow:hidden}.fill{height:100%;background:#6d92ed;border-radius:10px}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.btn{border:0;border-radius:20px;padding:17px 12px;font-size:18px;font-weight:750;cursor:pointer}.primary{background:#4772e6;color:#fff}.secondary{background:#fff;color:#23406f;border:1px solid #edf0f5}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e9f0;z-index:5}
+.navin{max-width:540px;width:100%;margin:auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.nav button{border:0;background:none;padding:9px 3px 11px;color:#75829a;font-size:12px;font-weight:700}
+.nav button.active{color:#23406f}.navicon{font-size:19px;display:block;margin-bottom:2px}
+.word{font-size:46px;font-weight:800;margin:12px 0 5px}.pill{display:inline-block;background:#edf2ff;color:#4772e6;padding:9px 15px;border-radius:16px;font-weight:750}
+.meta{color:#71809a;font-size:18px}.meaning{font-size:24px;font-weight:750;margin:22px 0}
+.example{background:#f5f7fb;border-radius:20px;padding:18px;font-size:18px;line-height:1.5}.tag{color:#4772e6;font-weight:800}
+input,textarea,select{width:100%;border:1px solid #d9e0eb;border-radius:18px;padding:16px;font-size:18px;background:#fff;color:#172033}
+textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;margin:16px 0 8px}
+.searchrow{display:grid;grid-template-columns:1fr auto;gap:10px}.searchrow .btn{padding:15px 18px}
+.info{background:#eef3ff;color:#4772e6;border-radius:18px;padding:14px;font-size:16px;margin-top:12px}
+.success{background:#eaf8f1;color:#287957}.error{background:#fff0f0;color:#a44343}
+.hidden{display:none!important}.resultgrid{display:grid;gap:10px;margin-top:18px}
+.mini{background:#f7f8fb;border-radius:18px;padding:15px}.mini b{display:block;margin-bottom:5px}
+.listitem{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:16px 0;border-bottom:1px solid #edf0f5}
+.listitem:last-child{border-bottom:0}.delete{border:0;background:#fff0f0;color:#a44343;border-radius:12px;padding:9px 11px}
+.empty{text-align:center;color:#71809a;padding:25px}.quizq{font-size:30px;font-weight:800}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stat{background:#f5f7fb;border-radius:20px;padding:20px}.stat strong{font-size:30px;display:block}
+.review-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}
+.review-actions button{border:0;border-radius:17px;padding:15px 6px;font-weight:750;font-size:14px}
+.again{background:#fff0f0;color:#a44343}.hard{background:#fff6df;color:#8a6411}.good{background:#eaf8f1;color:#287957}
+.due{background:#fff7e6;color:#8a6411;border-radius:14px;padding:10px 13px;font-weight:700;display:inline-block}
+.progressline{display:flex;justify-content:space-between;color:#71809a;font-size:15px;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#172033;color:#fff;padding:12px 18px;border-radius:15px;z-index:10;font-weight:650}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mode{border:1px solid #dfe5ef;background:#f7f9fc;border-radius:18px;padding:14px;text-align:left;font-weight:750;color:#23406f}
+.mode.active{background:#edf2ff;border-color:#4772e6}
+.choice-grid{display:grid;gap:10px;margin-top:16px}
+.choice{border:1px solid #dfe5ef;background:#fff;border-radius:17px;padding:15px;text-align:left;font-size:17px;font-weight:700;color:#172033}
+.choice.correct{background:#eaf8f1;border-color:#77c7a3;color:#287957}
+.choice.wrong{background:#fff0f0;border-color:#e2a0a0;color:#a44343}
+.small{font-size:14px;color:#71809a}
+.section-title{font-size:20px;font-weight:800;margin:0 0 10px}
+.selectrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.badge{display:inline-block;background:#f0f3f8;color:#5e6c84;padding:7px 10px;border-radius:12px;font-size:13px;font-weight:750}
+.speak{margin-left:7px;border:0;background:#edf2ff;color:#4772e6;border-radius:12px;padding:7px 10px;font-weight:800}
+
+/* V27 Vocabulary Core */
+.home-greeting{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.home-greeting h1{font-size:34px;margin:0 0 5px}.home-date{color:#7a879d;font-size:14px;font-weight:700}.home-focus{background:linear-gradient(135deg,#294776,#3f63a2);color:#fff;border-radius:26px;padding:22px;margin-bottom:16px;box-shadow:0 10px 30px #203b6818}.focus-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.focus-kicker{font-size:13px;opacity:.75;font-weight:800;text-transform:uppercase;letter-spacing:.7px}.focus-title{font-size:25px;font-weight:850;margin-top:5px}.focus-sub{font-size:15px;opacity:.84;margin-top:5px}.focus-number{font-size:28px;font-weight:850}.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px}.home-stat{background:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 7px 22px #203b6810}.home-stat b{font-size:25px;display:block;color:#23406f}.home-stat span{font-size:12px;color:#7a879d;font-weight:700}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick-card{border:1px solid #e6ebf3;background:#fff;border-radius:20px;padding:16px;text-align:left;cursor:pointer}.quick-card .qicon{font-size:24px}.quick-card b{display:block;margin-top:8px;font-size:16px;color:#243552}.quick-card span{display:block;margin-top:3px;color:#7a879d;font-size:13px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section-head button{border:0;background:none;color:#4772e6;font-weight:800}.word-mini{display:flex;justify-content:space-between;align-items:center;gap:12px}.word-mini .wname{font-size:24px;font-weight:850;color:#1d2a40}.word-mini .wmeaning{color:#687892;margin-top:3px}.vocab-toolbar{display:grid;grid-template-columns:1fr auto;gap:9px;margin-bottom:12px}.filter-row{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.filter-chip{white-space:nowrap;border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:9px 12px;font-weight:750;color:#51627f}.filter-chip.active{background:#edf2ff;border-color:#91a8e7;color:#23406f}.vocab-search{margin-bottom:12px}.vocab-summary{display:flex;justify-content:space-between;color:#71809a;font-size:14px;margin-bottom:4px}.word-actions{display:flex;gap:7px}.editbtn{border:0;background:#eef3ff;color:#23406f;border-radius:11px;padding:8px 10px;font-weight:750}.word-list-card{background:#fff;border-radius:22px;padding:15px;margin-bottom:10px;box-shadow:0 6px 22px #203b6810}.word-list-card .listitem{padding:6px 0;border:0;align-items:flex-start}.home-divider{height:1px;background:#edf0f5;margin:4px 0 18px}
+@media(max-width:380px){.word{font-size:40px}h1{font-size:34px}.btn{font-size:16px}}
+
+.review-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.review-actions button{border:0;border-radius:18px;padding:15px 7px;font-size:14px;font-weight:800;cursor:pointer}
+.review-actions .again{background:#fff0f0;color:#b33a3a}.review-actions .hard{background:#fff7e8;color:#9b6a12}.review-actions .good{background:#edf9f2;color:#287b52}
+.review-progress{height:9px;background:#e9edf4;border-radius:9px;overflow:hidden;margin:14px 0 6px}.review-progress>div{height:100%;background:#4772e6;border-radius:9px}
+.level-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.level{background:#f7f9fd;border-radius:18px;padding:15px}.level b{display:block;font-size:24px;margin-bottom:3px}.level span{color:#71809a;font-size:14px}
+.next-review{background:#f7f9ff;border-radius:18px;padding:15px;margin-top:14px;color:#51627f}
+
+.quiz-tools{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.smallbtn{border:1px solid #dce3ef;background:#fff;border-radius:14px;padding:10px 13px;font-weight:700;color:#23406f}
+.smallbtn.active{background:#eaf0ff;border-color:#8da8e8}
+.sprint-result{text-align:center;padding:35px 24px}
+.bigscore{font-size:64px;font-weight:850;color:#23406f}
+
+.reading-text{font-size:19px;line-height:1.8;background:#f7f9fc;border-radius:18px;padding:18px}
+.reading-word{border:0;background:transparent;padding:2px 3px;border-radius:7px;color:#172033;font:inherit;cursor:pointer}
+.reading-word.candidate{background:#eef3ff;color:#23406f;font-weight:650}
+.reading-word.selected{background:#d9f4e8;color:#176b4a;font-weight:800}
+.candidate-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.candidate-chip{border:0;border-radius:18px;padding:9px 13px;background:#eef3ff;color:#23406f;font-weight:700}
+.candidate-chip.chosen{background:#d9f4e8;color:#176b4a}
+.reading-form{padding:16px 0;border-bottom:1px solid #e5eaf2}
+.reading-form:last-child{border-bottom:0}
+.reading-form label{display:block;margin-top:10px;font-weight:700;font-size:14px}
+.reading-form input,.reading-form select{width:100%;padding:13px;border:1px solid #dbe2ee;border-radius:14px;margin-top:6px;font-size:16px;background:#fff}
+
+.navin{grid-template-columns:repeat(6,1fr)}
+.nav button{font-size:12px}
+.phrase{padding:16px 0;border-bottom:1px solid #e5eaf2}.phrase:last-child{border-bottom:0}.phrase-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.copybtn{border:0;background:#eef3ff;color:#23406f;border-radius:12px;padding:8px 11px;font-weight:700}.phrase b{font-size:19px;line-height:1.35}.phrase .mini{margin-top:8px}
+
+.navicon{font-size:22px}
+
+/* V12 TOEFL + left drawer + vocabulary center */
+body{background:#f7f8fc}
+.app{max-width:540px;margin:auto;min-height:100vh;padding:18px 16px 96px}
+header{display:flex;justify-content:space-between;align-items:center;margin:4px 0 24px;position:sticky;top:0;background:#f7f8fc;z-index:4;padding:6px 0}
+.header-left{display:flex;align-items:center;gap:12px}.menu-btn{width:42px;height:42px;border:0;background:#fff;border-radius:14px;box-shadow:0 5px 18px #203b6810;font-size:22px;color:#23406f;cursor:pointer}.logo{font-size:28px}.streak{padding:10px 14px;font-size:14px}
+.drawer-overlay{position:fixed;inset:0;background:#17203366;z-index:30;opacity:0;pointer-events:none;transition:.22s}.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(310px,86vw);background:#fff;z-index:31;transform:translateX(-102%);transition:.24s;box-shadow:12px 0 35px #17203322;padding:22px 16px 18px;overflow:auto}
+.drawer.open{transform:translateX(0)}.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}.drawer-logo{font-size:25px;font-weight:850;color:#23406f}.drawer-close{border:0;background:#f4f6fa;border-radius:12px;width:38px;height:38px;font-size:22px}
+.drawer-section{font-size:12px;color:#8a95a8;font-weight:800;text-transform:uppercase;letter-spacing:.7px;margin:18px 10px 7px}.drawer-item{width:100%;display:flex;align-items:center;gap:12px;border:0;background:#fff;padding:13px 12px;border-radius:16px;text-align:left;color:#27344e;font-weight:750;font-size:16px;cursor:pointer}.drawer-item:hover,.drawer-item.active{background:#eef3ff;color:#23406f}.drawer-icon{width:28px;text-align:center;font-size:21px}.drawer-divider{height:1px;background:#edf0f5;margin:12px 8px}
+.toefl-hero{background:linear-gradient(135deg,#dff4ff,#edf4ff);border-radius:24px;padding:18px 18px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px;overflow:hidden}.toefl-hero h2{margin:0;font-size:22px}.toefl-hero p{margin:6px 0 0;color:#52627c;font-size:14px;line-height:1.4}.hero-books{font-size:52px;min-width:70px;text-align:center}
+.toefl-score{background:#fff;border-radius:22px;padding:16px 17px;margin-bottom:18px;box-shadow:0 7px 24px #203b6810;display:flex;align-items:center;justify-content:space-between}.score-label{font-size:13px;color:#75829a}.score-value{font-size:27px;font-weight:850;color:#23406f}.score-date{font-size:12px;color:#75829a;margin-top:2px}
+.toefl-grid{display:grid;gap:14px}.skill-card{border-radius:23px;padding:17px;background:#fff;box-shadow:0 7px 24px #203b6810;border:1px solid #edf0f5}.skill-card.reading{background:#fff0f4}.skill-card.listening{background:#eafbf4}.skill-card.speaking{background:#f2ebff}.skill-card.writing{background:#fff8df}.skill-top{display:flex;align-items:center;gap:11px}.skill-icon{width:45px;height:45px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:25px}.skill-card h3{margin:0;font-size:19px}.skill-card p{margin:4px 0 0;color:#68758c;font-size:13px}.skill-meta{display:flex;justify-content:space-between;align-items:center;margin:14px 0 10px;font-size:12px;color:#59667e}.skill-progress{height:8px;background:#ffffffb5;border-radius:8px;overflow:hidden}.skill-progress span{display:block;height:100%;border-radius:8px;background:#23406f}.skill-actions{display:flex;gap:8px;margin-top:14px}.skill-actions button{flex:1;border:0;border-radius:14px;padding:11px 7px;font-weight:800;background:#fff;color:#23406f}.skill-actions .go{background:#23406f;color:#fff}
+.format-card{background:#fff;border-radius:22px;padding:17px;margin-top:16px;box-shadow:0 7px 24px #203b6810}.format-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.format-title b{font-size:18px}.format-row{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #edf0f5}.format-row:last-child{border-bottom:0}.format-ico{width:27px}.format-row strong{font-size:14px}.format-row span{display:block;color:#71809a;font-size:12px;margin-top:2px}
+.practice-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}.back-btn{border:0;background:#fff;border-radius:12px;width:40px;height:40px;font-size:21px;color:#23406f;box-shadow:0 4px 15px #203b6810}.practice-title{font-size:23px;font-weight:850}.practice-sub{color:#71809a;font-size:13px}.practice-box{background:#fff;border-radius:22px;padding:18px;box-shadow:0 7px 24px #203b6810;margin-bottom:14px}.practice-pill{display:inline-block;padding:7px 10px;border-radius:11px;background:#eef3ff;color:#23406f;font-size:12px;font-weight:800}.question-text{font-size:18px;font-weight:750;line-height:1.55;margin:15px 0}.answer-list{display:grid;gap:9px}.answer-option{border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:13px;text-align:left;font-size:15px}.answer-option.selected{background:#eaf8f1;border-color:#8bc9aa}.practice-note{background:#f7f9fc;border-radius:15px;padding:13px;color:#5d6b83;font-size:13px;line-height:1.45}.record-button{width:108px;height:108px;border-radius:50%;border:8px solid #eee5ff;background:#8a4de8;color:#fff;font-size:38px;display:block;margin:25px auto 14px}.email-editor{min-height:190px;border:1px solid #dfe5ef;border-radius:16px;padding:14px;color:#71809a}.word-count{text-align:right;color:#8a95a8;font-size:12px;margin-top:7px}
+@media(max-width:380px){.toefl-hero{padding:15px}.hero-books{font-size:44px;min-width:58px}.skill-card{padding:15px}}
+
+/* V13 home dashboard + V14 app navigation */
+.home-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 0 20px}.home-topline h1{font-size:31px;line-height:1.12;margin:4px 0 7px}.home-date{font-size:14px;font-weight:750;color:#8793a9;text-transform:capitalize}.vocab-hero{background:#23406f;color:#fff;border-radius:26px;padding:22px;margin-bottom:14px;box-shadow:0 10px 28px #203b6820}.vh-head{display:flex;justify-content:space-between;gap:15px}.vh-kicker{font-size:12px;letter-spacing:1.1px;font-weight:850;opacity:.72}.vh-title{font-size:25px;font-weight:850;margin-top:4px}.vh-sub{font-size:15px;line-height:1.45;color:#dbe4f5;margin-top:6px}.vh-count{min-width:58px;height:58px;border-radius:18px;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:850}.vh-progress{height:9px;background:#ffffff2d;border-radius:10px;overflow:hidden;margin:20px 0 9px}.vh-progress span{display:block;height:100%;background:#8daaf7;border-radius:10px}.vh-bottom{display:flex;justify-content:space-between;font-size:13px;color:#dbe4f5}.vh-bottom b{color:#fff}.vh-btn{width:100%;border:0;border-radius:17px;padding:14px 16px;margin-top:15px;background:#fff;color:#23406f;font-size:16px;font-weight:850}.vh-btn span{float:right;font-size:20px}.vocab-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:23px}.vocab-stats button{border:1px solid #e8edf4;background:#fff;border-radius:18px;padding:14px 7px;text-align:center;color:#23406f}.vocab-stats b{display:block;font-size:23px}.vocab-stats span{display:block;font-size:11px;color:#7a879e;margin-top:3px;font-weight:700}.home-section{margin:0 2px 10px}.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}.home-action{border:1px solid #e7ebf2;border-radius:20px;background:#fff;padding:15px;text-align:left;min-height:104px;box-shadow:0 5px 16px #203b6808}.home-action span{display:block;font-size:22px;margin-bottom:8px}.home-action b{display:block;font-size:15px;color:#233553}.home-action small{display:block;color:#7a879e;font-size:12px;margin-top:4px}.home-action.blue{border-top:3px solid #4772e6}.home-action.purple{border-top:3px solid #7b43d7}.home-action.orange{border-top:3px solid #e4a400}.home-action.green{border-top:3px solid #19a56b}.last-word-card{background:#fff;border:1px solid #e8edf4;border-radius:24px;padding:19px;margin-bottom:14px}.last-word-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.last-word-name{font-size:28px;font-weight:850;color:#172033}.last-word-meaning{font-size:16px;font-weight:700;color:#52627b;margin:4px 0 9px}.last-review{font-size:14px;font-weight:800;color:#4772e6;text-align:right;white-space:nowrap}.last-review small{display:block;color:#8995aa;font-size:11px;font-weight:600;margin-top:3px}.toefl-home-card{display:flex;align-items:center;gap:13px;background:#eef3ff;border:1px solid #dce6ff;border-radius:22px;padding:16px;margin-bottom:10px}.toefl-home-icon{width:45px;height:45px;border-radius:15px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:23px}.toefl-home-copy{flex:1}.toefl-home-card button{border:0;background:#23406f;color:#fff;width:40px;height:40px;border-radius:14px;font-size:20px}.badge{display:inline-block;background:#eef2f8;color:#5d6b82;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:750;margin-top:2px}
+
+/* V14 bottom navigation */
+.app-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:0;z-index:1000;pointer-events:none}
+.app-bottom-nav button{appearance:none;-webkit-appearance:none;position:fixed;bottom:82px;width:54px;height:54px;border:0;border-radius:50%;background:#23406f;color:#fff;box-shadow:0 8px 24px #203b6840;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;line-height:1;pointer-events:auto;transition:transform .15s,opacity .15s}
+.app-bottom-nav button:not(:disabled):active{transform:scale(.92)}
+.app-bottom-nav button:disabled{background:#dfe5ef;color:#9aa7ba;box-shadow:none;opacity:.75}
+.app-bottom-nav #bottomBack{left:18px}
+.app-bottom-nav #bottomForward{right:18px}
+.app-bottom-nav .arrow{font-size:38px;line-height:1;font-weight:500;margin-top:-3px}
+.app-bottom-nav .bottom-home{display:none}
+body{padding-bottom:110px}
+@media(min-width:700px){.app-bottom-nav button{bottom:24px}}
+
+
+body{padding-bottom:180px}
+.word-profile{background:#fff;border:1px solid #e7ebf2;border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 7px 20px #203b6808}.profile-word{font-size:34px;font-weight:900;color:#172033;display:flex;align-items:center;gap:8px}.profile-meta{color:#71809a;margin-top:4px;font-size:14px}.profile-meta span{margin:0 5px;color:#b2bccb}.profile-grid{display:grid;gap:10px;margin-top:16px}.profile-box{background:#f7f9fc;border-radius:17px;padding:14px;color:#24334d;line-height:1.5}.profile-box.highlight{background:#eef3ff}.profile-label{font-size:12px;font-weight:850;color:#6f7e96;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}.profile-box input{width:100%;border:0;background:transparent;padding:4px 0;font-size:17px;color:#172033;outline:0}.full-select{width:100%;margin:4px 0 14px;border:1px solid #dfe5ef;background:#fff;border-radius:15px;padding:14px;font-size:16px;color:#24334d}
+.library-hero{background:#23406f;color:#fff;border-radius:24px;padding:20px;margin:14px 0 16px}.library-hero .eyebrow{font-size:12px;letter-spacing:1.5px;font-weight:850;opacity:.78}.library-hero h2{font-size:28px;margin:6px 0}.library-hero p{margin:0;color:#dfe8fa;line-height:1.45}.library-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.library-stat{background:#ffffff18;border:1px solid #ffffff18;border-radius:16px;padding:12px}.library-stat strong{display:block;font-size:24px}.library-stat span{font-size:12px;color:#dbe5f7}.library-filters{display:flex;gap:8px;overflow:auto;padding:2px 0 5px}.library-filters::-webkit-scrollbar{display:none}.library-filter{white-space:nowrap;border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:9px 12px;font-weight:750;color:#51627f}.library-filter.active{background:#edf2ff;border-color:#91a8e7;color:#23406f}.library-word{display:flex;gap:12px;align-items:center;padding:15px 2px;border-bottom:1px solid #edf0f5;cursor:pointer}.library-word:last-child{border-bottom:0}.library-word-main{flex:1;min-width:0}.library-word-name{font-size:21px;font-weight:850}.library-word-meaning{color:#71809a;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.library-word-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}.dot-green{background:#39a66d}.dot-yellow{background:#d9a52e}.dot-red{background:#c95a5a}.library-arrow{font-size:26px;color:#9aa7ba}.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-actions .btn{width:100%}.review-banner{background:#fff7e6;color:#8a6411;border-radius:16px;padding:13px 15px;font-weight:750}.source-pill{background:#f0f4ff;color:#23406f;border-radius:12px;padding:7px 10px;font-size:13px;font-weight:750;display:inline-block}.
+
+/* V22 Vocabulary Focus */
+.active-learning{background:#fff;border:1px solid #e7ebf2;border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 7px 20px #203b6808}
+.active-learning h3{margin:0 0 5px;font-size:19px;color:#233553}.active-learning p{margin:0;color:#71809a;font-size:13px;line-height:1.45}
+.sentence-box{width:100%;min-height:110px;border:1px solid #dfe5ef;border-radius:16px;padding:14px;font-size:16px;line-height:1.5;color:#172033;resize:vertical;box-sizing:border-box;background:#fff}
+.sentence-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.sentence-feedback{margin-top:10px;padding:12px 13px;border-radius:14px;background:#f7f9fc;color:#465873;font-size:13px;line-height:1.5}.feedback-good{background:#eaf8f1;color:#176b4a}.feedback-warn{background:#fff7e6;color:#8a6411}
+.toefl-use{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.use-card{background:#f7f9fc;border-radius:16px;padding:13px}.use-card b{display:block;color:#23406f;font-size:13px;margin-bottom:5px}.use-card span{font-size:13px;line-height:1.45;color:#455873}
+.pronounce-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.mini-action{border:1px solid #dfe5ef;background:#fff;border-radius:13px;padding:10px 12px;color:#23406f;font-weight:800}
+/* V22 Vocabulary Focus */
+.v22-focus{background:linear-gradient(135deg,#eef4ff,#f7f9ff);border:1px solid #dbe5fa;border-radius:24px;padding:18px;margin-top:14px}
+.v22-focus-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}.v22-focus-icon{width:42px;height:42px;border-radius:14px;background:#23406f;color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px}.v22-focus h3{margin:0;font-size:20px;color:#233553}.v22-focus p{margin:4px 0 12px;color:#71809a;font-size:13px;line-height:1.45}.v22-prompt{background:#fff;border-radius:17px;padding:13px;color:#2b3b56;font-size:14px;line-height:1.5;border:1px solid #e2e8f2}.v22-prompt b{color:#4772e6}.v22-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.v22-row button{border:0;border-radius:14px;padding:11px;font-weight:800;cursor:pointer}.v22-row .listen{background:#fff;color:#23406f;border:1px solid #dfe5ef}.v22-row .practice{background:#4772e6;color:#fff}
+.v22-saved{margin-top:10px;background:#eaf8f1;color:#176b4a;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45}
+
+@media(max-width:380px){.toefl-use{grid-template-columns:1fr}.sentence-actions{grid-template-columns:1fr}}
+
+
+/* V25 AI Sentence Coach */
+.ai-coach-btn{width:100%;margin-top:9px;border:1px solid #cfdcf7;background:#eef3ff;color:#23406f;border-radius:14px;padding:12px;font-weight:850;font-size:14px;cursor:pointer}
+.ai-coach-box{margin-top:10px;background:linear-gradient(135deg,#f1f5ff,#ffffff);border:1px solid #d8e2f7;border-radius:16px;padding:13px;color:#263a5b;font-size:13px;line-height:1.55}
+.ai-coach-box h4{margin:0 0 8px;font-size:15px;color:#23406f}
+.ai-coach-grid{display:grid;gap:8px}.ai-coach-item{background:#fff;border-radius:12px;padding:10px;border:1px solid #e2e8f2}.ai-coach-item b{display:block;margin-bottom:3px;color:#5a6b86}
+.ai-loading{display:flex;align-items:center;gap:8px;color:#4772e6;font-weight:800}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#4772e6;animation:aiPulse 1s infinite alternate}@keyframes aiPulse{to{opacity:.25;transform:scale(.7)}}
+
+
+/* V25.1 AI Sentence Coach visibility */
+.ai-coach-btn-main{display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;background:#23406f;color:#fff;border:0;box-shadow:0 5px 14px rgba(35,64,111,.14)}
+.ai-coach-btn-main span{font-size:11px;font-weight:700;opacity:.82}
+
+/* V25 Vocabulary Mastery + AI Sentence Coach */
+.mastery-card{background:linear-gradient(135deg,#f4f7ff,#ffffff);border:1px solid #dfe7f8;border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 7px 20px #203b6808}.mastery-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.mastery-title{font-size:20px;font-weight:900;color:#233553}.mastery-sub{font-size:13px;color:#71809a;line-height:1.4;margin-top:3px}.mastery-level{background:#23406f;color:#fff;border-radius:15px;padding:9px 11px;font-weight:850;white-space:nowrap}.mastery-bar{height:10px;background:#e6ebf4;border-radius:10px;overflow:hidden;margin:14px 0 13px}.mastery-bar span{display:block;height:100%;background:#4772e6;border-radius:10px}.mastery-stages{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.mastery-stage{font-size:10px;color:#8793a9;text-align:center;line-height:1.25}.mastery-dot{width:25px;height:25px;border-radius:50%;background:#e5eaf2;color:#7d899e;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-weight:900}.mastery-stage.done .mastery-dot{background:#287957;color:#fff}.mastery-stage.current .mastery-dot{background:#4772e6;color:#fff;box-shadow:0 0 0 4px #e6edff}.feedback-list{margin:8px 0 0;padding-left:18px}.feedback-list li{margin:4px 0}.feedback-score{display:inline-block;background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:4px 8px;font-weight:850;color:#23406f;margin-bottom:6px}.active-tip{background:#fff;border:1px dashed #b9c8e6;border-radius:14px;padding:10px 12px;color:#52627c;font-size:12px;line-height:1.45;margin-top:9px}
+
+/* V23 Vocabulary Learning Path */
+.v23-path{background:#fff;border:1px solid #e4e9f2;border-radius:24px;padding:18px;margin-top:14px;box-shadow:0 7px 20px #203b6808}
+.v23-path-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.v23-path h3{margin:0;color:#233553;font-size:20px}.v23-path p{margin:4px 0 0;color:#71809a;font-size:13px;line-height:1.4}
+.v23-score{background:#eef3ff;color:#23406f;border-radius:15px;padding:9px 11px;font-weight:850;white-space:nowrap}
+.v23-progress{height:9px;background:#e9edf4;border-radius:9px;overflow:hidden;margin:14px 0 12px}.v23-progress span{display:block;height:100%;background:#4772e6;border-radius:9px}
+.v23-steps{display:grid;gap:8px}
+.v23-step{display:flex;align-items:center;gap:10px;background:#f7f9fc;border-radius:16px;padding:11px 12px}
+.v23-step.done{background:#eaf8f1}.v23-step .vicon{width:30px;height:30px;border-radius:10px;background:#e7ebf2;color:#7a879d;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex:none}
+.v23-step.done .vicon{background:#287957;color:#fff}
+.v23-step b{display:block;font-size:14px;color:#233553}.v23-step span{display:block;color:#71809a;font-size:12px;margin-top:2px}
+.v23-step button{margin-left:auto;border:1px solid #dfe5ef;background:#fff;border-radius:11px;padding:7px 9px;color:#23406f;font-weight:800;font-size:12px}
+.v23-mission{background:linear-gradient(135deg,#23406f,#365a93);color:#fff;border-radius:22px;padding:18px;margin-top:14px}
+.v23-mission .kicker{font-size:11px;letter-spacing:1.2px;font-weight:850;opacity:.72}.v23-mission h3{margin:5px 0;font-size:20px}.v23-mission p{margin:0;color:#e2e9f7;font-size:13px;line-height:1.45}.v23-mission button{margin-top:12px;border:0;background:#fff;color:#23406f;border-radius:14px;padding:11px 14px;font-weight:850}
+.v23-note{background:#fff7e6;color:#8a6411;border-radius:15px;padding:11px 13px;font-size:13px;line-height:1.45;margin-top:10px}
+@media(max-width:380px){.v23-path{padding:15px}.v23-step button{padding:6px 7px}}
+
+
+/* V26 TOEFL practice engine */
+.practice-shell{background:#fff;border:1px solid #e5eaf2;border-radius:26px;padding:18px;box-shadow:0 7px 24px #203b6810;margin-bottom:14px}
+.practice-kicker{display:inline-block;background:#eef3ff;color:#23406f;border-radius:12px;padding:7px 10px;font-size:12px;font-weight:850;margin-bottom:10px}
+.practice-q{font-size:20px;line-height:1.5;font-weight:800;color:#1e2b43;margin:6px 0 16px}
+.practice-context{background:#f7f9fc;border-radius:18px;padding:15px;line-height:1.65;color:#42536e;margin-bottom:14px}
+.practice-options{display:grid;gap:9px}.practice-option{width:100%;text-align:left;border:1px solid #dfe5ef;background:#fff;border-radius:15px;padding:13px 14px;color:#293852;font-size:15px;font-weight:700}.practice-option.selected{background:#eef3ff;border-color:#4772e6;color:#23406f}.practice-option.correct{background:#eaf8f1;border-color:#2ca36d;color:#176b49}.practice-option.wrong{background:#fff0f0;border-color:#d85a5a;color:#9b3030}.practice-feedback{border-radius:16px;padding:13px 14px;margin-top:12px;font-weight:700;line-height:1.5}.practice-feedback.good{background:#eaf8f1;color:#176b49}.practice-feedback.bad{background:#fff0f0;color:#9b3030}.practice-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:15px}.practice-progress{height:8px;background:#e9edf4;border-radius:8px;overflow:hidden;flex:1}.practice-progress span{display:block;height:100%;background:#4772e6;border-radius:8px}.practice-counter{font-size:13px;color:#74829a;font-weight:800;white-space:nowrap}.listen-card{background:#eef9f4;border:1px solid #d7f0e4;border-radius:20px;padding:18px;text-align:center}.listen-play{width:72px;height:72px;border:0;border-radius:50%;background:#19a56b;color:#fff;font-size:28px;box-shadow:0 8px 22px #19a56b35}.record-card{background:#f4f0ff;border:1px solid #e5dcff;border-radius:20px;padding:18px;text-align:center}.record-timer{font-size:28px;font-weight:850;color:#5d36a8;margin:8px}.record-btn{width:68px;height:68px;border:0;border-radius:50%;background:#7b43d7;color:#fff;font-size:25px}.record-btn.recording{background:#d94d66}.writing-box{width:100%;min-height:190px;border:1px solid #dfe5ef;border-radius:18px;padding:15px;font-size:16px;line-height:1.6;outline:none;color:#263650;background:#fff}.writing-box:focus{border-color:#4772e6;box-shadow:0 0 0 3px #4772e618}.word-counter{display:flex;justify-content:space-between;color:#7a879d;font-size:12px;font-weight:750;margin-top:7px}.task-tabs{display:flex;gap:7px;overflow:auto;margin:0 0 12px}.task-tab{white-space:nowrap;border:1px solid #dfe5ef;background:#fff;border-radius:13px;padding:9px 12px;font-weight:800;color:#62718a}.task-tab.active{background:#23406f;color:#fff;border-color:#23406f}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+<div class="app">
+<header><div class="header-left"><button class="menu-btn" onclick="openDrawer()">☰</button><div class="logo">VocaMate</div></div><div class="streak">🔥 <span id="streak">1</span> gün</div></header>
+<main id="main"></main>
+</div>
+<div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+<aside id="drawer" class="drawer" aria-label="Ana menü">
+  <div class="drawer-head"><div class="drawer-logo">VocaMate</div><button class="drawer-close" onclick="closeDrawer()">×</button></div>
+  <div class="drawer-section">Ana Menü</div>
+  <button class="drawer-item" data-page="home" onclick="nav('home')"><span class="drawer-icon">🏠</span>Ana sayfa</button>
+  <button class="drawer-item" data-page="toefl" onclick="nav('toefl')"><span class="drawer-icon">🎓</span>TOEFL iBT</button>
+  <div class="drawer-divider"></div>
+  <div class="drawer-section">Kelime & Çalışma</div>
+  <button class="drawer-item" data-page="add" onclick="nav('add')"><span class="drawer-icon">＋</span>Kelime ekle</button>
+  <button class="drawer-item" data-page="stats" onclick="nav('stats')"><span class="drawer-icon">📚</span>Kelime hazinem</button>
+  <button class="drawer-item" data-page="quiz" onclick="nav('quiz')"><span class="drawer-icon">🎯</span>Quiz</button>
+  <button class="drawer-item" data-page="reading" onclick="nav('reading')"><span class="drawer-icon">📖</span>Reading Lab</button>
+  <button class="drawer-item" data-page="patterns" onclick="nav('patterns')"><span class="drawer-icon">💬</span>TOEFL Kalıpları</button>
+  <button class="drawer-item" data-page="stats" onclick="nav('stats')"><span class="drawer-icon">📊</span>İlerleme</button>
+  <div class="drawer-divider"></div>
+  <div class="drawer-section">TOEFL Bölümleri</div>
+  <button class="drawer-item" onclick="toeflPractice('reading')"><span class="drawer-icon">📕</span>Reading</button>
+  <button class="drawer-item" onclick="toeflPractice('listening')"><span class="drawer-icon">🎧</span>Listening</button>
+  <button class="drawer-item" onclick="toeflPractice('speaking')"><span class="drawer-icon">🎤</span>Speaking</button>
+  <button class="drawer-item" onclick="toeflPractice('writing')"><span class="drawer-icon">✍️</span>Writing</button>
+</aside>
+<div id="toast" class="toast hidden"></div>
+
+<!-- VocaMate app navigation -->
+<nav class="app-bottom-nav" aria-label="Sayfa navigasyonu">
+  <button id="bottomBack" onclick="appBack()" aria-label="Geri" title="Geri">
+    <span class="arrow">‹</span>
+  </button>
+  <button id="bottomForward" onclick="appForward()" aria-label="İleri" title="İleri">
+    <span class="arrow">›</span>
+  </button>
+</nav>
+<script>
+const KEY='vocamate_words_v32', TARGET=20;
+// V20: kelime verilerini eski sürümlerden koru; boşsa daha önce kullandığımız temel kelimeleri geri getir.
+function loadWordsSafely(){
+  const keys=['vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
+  const merged=[]; const seen=new Set();
+  for(const k of keys){
+    try{
+      const arr=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(arr)) arr.forEach(w=>{
+        const word=String(w.word||'').trim().toLowerCase();
+        if(word && !seen.has(word)){seen.add(word); merged.push(w)}
+      });
+    }catch(e){}
+  }
+  if(!merged.length){
+    const starter=['significant','substantial','mitigate'];
+    starter.forEach(word=>{
+      const d=fallback[word];
+      if(d) merged.push({word, ...d, category:word==='mitigate'?'TOEFL Academic':'TOEFL Academic', difficulty:'Orta', source:'TOEFL', status:'Yeni', reviewLevel:'Öğreniliyor', nextReview:null, reviewCount:0, correctCount:0, createdAt:new Date().toISOString(), lastStudied:null, personalSentence:'', note:''});
+    });
+  }
+  return merged;
+}
+let words=loadWordsSafely();
+let currentPage='home', quizIndex=0;
+let appHistory=['home'], appHistoryIndex=0, historyBusy=false;
+
+const fallback={
+ significant:{type:'adjective',phonetic:'/sɪɡˈnɪfɪkənt/',definition:'important or notable; having a clear or meaningful effect',meaning:'önemli, kayda değer, anlamlı',example:'The study found a significant difference between the two groups.',synonyms:'important, notable, considerable',antonyms:'insignificant, minor'},
+ substantial:{type:'adjective',phonetic:'/səˈstænʃəl/',definition:'of considerable importance, size, or worth',meaning:'önemli, kayda değer; büyük miktarda',example:'The project requires a substantial amount of time.',synonyms:'considerable, significant',antonyms:'insignificant, minor'},
+ mitigate:{type:'verb',phonetic:'/ˈmɪtɪɡeɪt/',definition:'to make something less severe, harmful, or painful',meaning:'hafifletmek, azaltmak',example:'Governments should take measures to mitigate the effects of climate change.',synonyms:'alleviate, reduce',antonyms:'aggravate, intensify'},
+ allocate:{type:'verb',phonetic:'/ˈæləkeɪt/',definition:'to give or distribute something for a particular purpose',meaning:'tahsis etmek, ayırmak',example:'The university allocated more funds to research.',synonyms:'assign, distribute',antonyms:'withhold'},
+ inevitable:{type:'adjective',phonetic:'/ɪnˈevɪtəbəl/',definition:'certain to happen and impossible to avoid',meaning:'kaçınılmaz',example:'Some changes are inevitable.',synonyms:'unavoidable, certain',antonyms:'avoidable, uncertain'},
+ enhance:{type:'verb',phonetic:'/ɪnˈhæns/',definition:'to improve the quality, value, or effectiveness of something',meaning:'geliştirmek, artırmak',example:'The new system will enhance customer experience.',synonyms:'improve, strengthen',antonyms:'weaken, reduce'},
+ abundant:{type:'adjective',phonetic:'/əˈbʌndənt/',definition:'existing or available in large quantities',meaning:'bol, çok miktarda',example:'The region has abundant natural resources.',synonyms:'plentiful, ample',antonyms:'scarce'},
+ acquire:{type:'verb',phonetic:'/əˈkwaɪər/',definition:'to get or obtain something',meaning:'edinmek, elde etmek',example:'Students acquire new skills through practice.',synonyms:'obtain, gain',antonyms:'lose'},
+ adapt:{type:'verb',phonetic:'/əˈdæpt/',definition:'to change in order to suit a new situation',meaning:'uyum sağlamak, adapte olmak',example:'Animals adapt to changes in their environment.',synonyms:'adjust, modify',antonyms:'resist'},
+ adjacent:{type:'adjective',phonetic:'/əˈdʒeɪsənt/',definition:'next to or near something else',meaning:'bitişik, komşu',example:'The laboratory is adjacent to the main building.',synonyms:'neighboring, adjoining',antonyms:'distant'},
+ advocate:{type:'verb',phonetic:'/ˈædvəkeɪt/',definition:'to publicly support an idea or policy',meaning:'savunmak, desteklemek',example:'Many scientists advocate stronger environmental policies.',synonyms:'support, promote',antonyms:'oppose'},
+ assess:{type:'verb',phonetic:'/əˈses/',definition:'to evaluate or estimate the nature, quality, or value of something',meaning:'değerlendirmek',example:'Researchers assessed the impact of the program.',synonyms:'evaluate, examine',antonyms:'ignore'},
+ coherent:{type:'adjective',phonetic:'/koʊˈhɪrənt/',definition:'logical, consistent, and easy to understand',meaning:'tutarlı, anlaşılır',example:'The essay presents a coherent argument.',synonyms:'logical, consistent',antonyms:'incoherent, confusing'},
+ controversial:{type:'adjective',phonetic:'/ˌkɑːntrəˈvɜːrʃəl/',definition:'causing disagreement or strong public discussion',meaning:'tartışmalı',example:'The proposal remains controversial.',synonyms:'debatable, disputed',antonyms:'uncontroversial'},
+ decline:{type:'verb',phonetic:'/dɪˈklaɪn/',definition:'to become smaller, weaker, or less',meaning:'azalmak, düşüş göstermek',example:'The population began to decline.',synonyms:'decrease, diminish',antonyms:'increase, rise'},
+ demonstrate:{type:'verb',phonetic:'/ˈdemənstreɪt/',definition:'to show clearly by evidence or example',meaning:'göstermek, kanıtlamak',example:'The experiment demonstrates the importance of sleep.',synonyms:'show, illustrate',antonyms:'conceal'},
+ derive:{type:'verb',phonetic:'/dɪˈraɪv/',definition:'to get something from a particular source',meaning:'elde etmek, türetmek',example:'Many medicines are derived from plants.',synonyms:'obtain, originate',antonyms:'lose'},
+ diminish:{type:'verb',phonetic:'/dɪˈmɪnɪʃ/',definition:'to become or make something smaller or less important',meaning:'azalmak, azaltmak',example:'The effect of the treatment diminished over time.',synonyms:'decrease, reduce',antonyms:'increase'},
+ empirical:{type:'adjective',phonetic:'/ɪmˈpɪrɪkəl/',definition:'based on observation or experiment rather than theory',meaning:'deneysel, gözleme dayalı',example:'The theory is supported by empirical evidence.',synonyms:'observational, experimental',antonyms:'theoretical'},
+ facilitate:{type:'verb',phonetic:'/fəˈsɪləteɪt/',definition:'to make an action or process easier',meaning:'kolaylaştırmak',example:'Technology can facilitate communication.',synonyms:'enable, assist',antonyms:'hinder, obstruct'},
+ fluctuate:{type:'verb',phonetic:'/ˈflʌktʃueɪt/',definition:'to change frequently in amount or level',meaning:'dalgalanmak, değişkenlik göstermek',example:'Prices fluctuate throughout the year.',synonyms:'vary, change',antonyms:'stabilize'},
+ fundamental:{type:'adjective',phonetic:'/ˌfʌndəˈmentəl/',definition:'basic and essential to a system or idea',meaning:'temel, esas',example:'Trust is fundamental to a successful relationship.',synonyms:'basic, essential',antonyms:'secondary'},
+ hypothesis:{type:'noun',phonetic:'/haɪˈpɑːθəsɪs/',definition:'an idea or explanation that can be tested',meaning:'hipotez',example:'The researchers tested their hypothesis.',synonyms:'theory, proposition',antonyms:''},
+ imply:{type:'verb',phonetic:'/ɪmˈplaɪ/',definition:'to suggest something without saying it directly',meaning:'ima etmek, dolaylı olarak belirtmek',example:'The results imply that the method is effective.',synonyms:'suggest, indicate',antonyms:'state'},
+ implement:{type:'verb',phonetic:'/ˈɪmplɪment/',definition:'to put a plan or decision into effect',meaning:'uygulamak, hayata geçirmek',example:'The company implemented a new training program.',synonyms:'execute, apply',antonyms:'abandon'},
+ incentive:{type:'noun',phonetic:'/ɪnˈsentɪv/',definition:'something that encourages a person to do something',meaning:'teşvik, özendirici unsur',example:'Financial incentives can increase productivity.',synonyms:'motivation, encouragement',antonyms:'deterrent'},
+ incorporate:{type:'verb',phonetic:'/ɪnˈkɔːrpəreɪt/',definition:'to include something as part of a larger whole',meaning:'dahil etmek, birleştirmek',example:'The course incorporates practical exercises.',synonyms:'include, integrate',antonyms:'exclude'},
+ interpret:{type:'verb',phonetic:'/ɪnˈtɜːrprət/',definition:'to explain the meaning of information or results',meaning:'yorumlamak, açıklamak',example:'Scientists must interpret the results carefully.',synonyms:'explain, analyze',antonyms:'misinterpret'},
+ justify:{type:'verb',phonetic:'/ˈdʒʌstɪfaɪ/',definition:'to give a good reason for something',meaning:'haklı göstermek, gerekçelendirmek',example:'The evidence does not justify the conclusion.',synonyms:'defend, support',antonyms:'condemn'},
+ maintain:{type:'verb',phonetic:'/meɪnˈteɪn/',definition:'to keep something at the same level or in good condition',meaning:'sürdürmek, korumak',example:'It is important to maintain a healthy balance.',synonyms:'preserve, sustain',antonyms:'neglect'},
+ predominant:{type:'adjective',phonetic:'/prɪˈdɑːmɪnənt/',definition:'more important, common, or noticeable than others',meaning:'baskın, ağırlıklı',example:'Agriculture is the predominant industry in the region.',synonyms:'dominant, leading',antonyms:'minor'},
+ reinforce:{type:'verb',phonetic:'/ˌriːɪnˈfɔːrs/',definition:'to strengthen an idea, behavior, or structure',meaning:'güçlendirmek, pekiştirmek',example:'The findings reinforce the need for further research.',synonyms:'strengthen, support',antonyms:'weaken'},
+ relevant:{type:'adjective',phonetic:'/ˈreləvənt/',definition:'closely connected with the subject or situation',meaning:'ilgili, alakalı',example:'Please provide relevant information.',synonyms:'related, pertinent',antonyms:'irrelevant'},
+ require:{type:'verb',phonetic:'/rɪˈkwaɪər/',definition:'to need something or make something necessary',meaning:'gerektirmek, ihtiyaç duymak',example:'The task requires careful planning.',synonyms:'need, demand',antonyms:'waive'},
+ retain:{type:'verb',phonetic:'/rɪˈteɪn/',definition:'to keep something or continue to have it',meaning:'korumak, elde tutmak',example:'The brain can retain information through repetition.',synonyms:'keep, preserve',antonyms:'discard'},
+ significant:{type:'adjective',phonetic:'/sɪɡˈnɪfɪkənt/',definition:'important or notable; having a clear or meaningful effect',meaning:'önemli, kayda değer, anlamlı',example:'The study found a significant difference between the two groups.',synonyms:'important, notable, considerable',antonyms:'insignificant, minor'},
+ subsequent:{type:'adjective',phonetic:'/ˈsʌbsɪkwənt/',definition:'happening or coming after something else',meaning:'sonraki, müteakip',example:'Subsequent studies confirmed the original finding.',synonyms:'following, later',antonyms:'previous'},
+ sufficient:{type:'adjective',phonetic:'/səˈfɪʃənt/',definition:'enough for a particular purpose',meaning:'yeterli',example:'The evidence is sufficient to support the claim.',synonyms:'adequate, enough',antonyms:'insufficient'},
+ sustainable:{type:'adjective',phonetic:'/səˈsteɪnəbəl/',definition:'able to continue without causing serious long-term harm',meaning:'sürdürülebilir',example:'The city needs sustainable transport solutions.',synonyms:'viable, maintainable',antonyms:'unsustainable'},
+ valid:{type:'adjective',phonetic:'/ˈvælɪd/',definition:'based on sound reasoning or evidence',meaning:'geçerli, sağlam',example:'The researchers used a valid method.',synonyms:'sound, legitimate',antonyms:'invalid'},
+ whereas:{type:'conjunction',phonetic:'/werˈæz/',definition:'used to contrast two facts or situations',meaning:'oysa, halbuki',example:'The first group improved, whereas the second did not.',synonyms:'while, although',antonyms:''},
+ yield:{type:'verb',phonetic:'/jiːld/',definition:'to produce or provide a result',meaning:'üretmek, sonuç vermek',example:'The new method yielded better results.',synonyms:'produce, generate',antonyms:'consume'},
+  archaeology:{type:'noun',phonetic:'/ˌɑːrkiˈɑːlədʒi/',definition:'the study of human history through the recovery and analysis of material remains',meaning:'arkeoloji',example:'Archaeology helps researchers understand ancient societies.',synonyms:'archaeological study',antonyms:''},
+  recovery:{type:'noun',phonetic:'/rɪˈkʌvəri/',definition:'the process of finding, obtaining, or returning something',meaning:'bulma, geri kazanım, toparlanma',example:'The recovery of artifacts changed the interpretation of the site.',synonyms:'retrieval, restoration',antonyms:'loss'},
+  analysis:{type:'noun',phonetic:'/əˈnæləsɪs/',definition:'careful examination of something in order to understand it',meaning:'analiz, inceleme',example:'The analysis of the data revealed a clear pattern.',synonyms:'examination, evaluation',antonyms:''},
+  material:{type:'noun',phonetic:'/məˈtɪriəl/',definition:'physical matter or substances used or studied',meaning:'madde, materyal',example:'Researchers examined material remains from the site.',synonyms:'substance, matter',antonyms:''},
+  culture:{type:'noun',phonetic:'/ˈkʌltʃər/',definition:'the beliefs, customs, and practices of a society',meaning:'kültür',example:'Material culture provides evidence about ancient societies.',synonyms:'society, traditions',antonyms:''},
+  excavated:{type:'verb',phonetic:'/ˈekskəveɪtɪd/',definition:'dug up and uncovered from the ground',meaning:'kazısı yapılmış, ortaya çıkarılmış',example:'The team excavated the remains carefully.',synonyms:'uncovered, dug up',antonyms:'buried'},
+  restored:{type:'verb',phonetic:'/rɪˈstɔːrd/',definition:'repaired or returned to an earlier condition',meaning:'restore edilmiş, onarılmış',example:'The temple was restored after years of research.',synonyms:'repaired, renewed',antonyms:'damaged'},
+  antiquarian:{type:'noun',phonetic:'/ˌæntɪˈkweriən/',definition:'a person who studies or collects objects from the past',meaning:'antik dönem araştırmacısı, eski eser meraklısı',example:'The antiquarian recorded details of the site.',synonyms:'historian, collector',antonyms:''},
+  conducted:{type:'verb',phonetic:'/kənˈdʌktɪd/',definition:'carried out or organized an activity or investigation',meaning:'yürüttü, gerçekleştirdi',example:'The researchers conducted a detailed investigation.',synonyms:'carried out, performed',antonyms:''},
+  detailed:{type:'adjective',phonetic:'/ˈdiːteɪld/',definition:'containing many specific facts or pieces of information',meaning:'ayrıntılı, detaylı',example:'The report provides a detailed account of the excavation.',synonyms:'thorough, comprehensive',antonyms:'brief'},
+  investigations:{type:'noun',phonetic:'/ɪnˌvestɪˈɡeɪʃənz/',definition:'careful studies or examinations to discover facts',meaning:'araştırmalar, incelemeler',example:'The investigations produced new evidence.',synonyms:'inquiries, examinations',antonyms:''},
+  systematic:{type:'adjective',phonetic:'/ˌsɪstəˈmætɪk/',definition:'done according to a planned and organized method',meaning:'sistematik, düzenli',example:'The team used a systematic approach.',synonyms:'methodical, organized',antonyms:'random'},
+  burial:{type:'noun',phonetic:'/ˈberiəl/',definition:'the act or practice of placing a dead person in the ground',meaning:'defin, gömme',example:'The site contained evidence of ancient burial practices.',synonyms:'interment',antonyms:''},
+  discipline:{type:'noun',phonetic:'/ˈdɪsəplɪn/',definition:'a particular area of study or knowledge',meaning:'disiplin, bilim dalı',example:'Archaeology became an established academic discipline.',synonyms:'field, subject',antonyms:''},
+  recognized:{type:'adjective',phonetic:'/ˈrekəɡnaɪzd/',definition:'accepted or acknowledged as real, important, or established',meaning:'tanınmış, kabul edilmiş',example:'The field became a recognized discipline.',synonyms:'acknowledged, accepted',antonyms:'unrecognized'}
+};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(words))}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.remove('hidden');setTimeout(()=>e.classList.add('hidden'),2200)}
+function today(){return new Date().toISOString().slice(0,10)}
+function dueWords(){return words.filter(w=>!w.nextReview||new Date(w.nextReview)<=new Date())}
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open')}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open')}
+function updateBottomNav(){
+ const back=document.getElementById('bottomBack'), fwd=document.getElementById('bottomForward');
+ if(back)back.disabled=appHistoryIndex<=0;
+ if(fwd)fwd.disabled=appHistoryIndex>=appHistory.length-1;
+}
+function syncDrawer(){document.querySelectorAll('.drawer-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage))}
+function pushPage(page){
+ if(historyBusy){currentPage=page;return}
+ if(appHistory[appHistoryIndex]===page)return;
+ appHistory=appHistory.slice(0,appHistoryIndex+1);
+ appHistory.push(page); appHistoryIndex=appHistory.length-1; currentPage=page;
+}
+function nav(page){pushPage(page);closeDrawer();syncDrawer();render();updateBottomNav()}
+function appBack(){
+ if(appHistoryIndex<=0)return;
+ appHistoryIndex--; currentPage=appHistory[appHistoryIndex]; closeDrawer(); syncDrawer(); render(); updateBottomNav();
+}
+function appForward(){
+ if(appHistoryIndex>=appHistory.length-1)return;
+ appHistoryIndex++; currentPage=appHistory[appHistoryIndex]; closeDrawer(); syncDrawer(); render(); updateBottomNav();
+}
+
+
+function render(){
+ const m=document.getElementById('main');
+ if(currentPage==='home')home(m);
+ if(currentPage==='toefl')toefl(m);
+ if(currentPage==='add')add(m);
+ if(currentPage==='quiz')quiz(m);
+ if(currentPage==='reading')reading(m);
+ if(currentPage==='patterns')patterns(m);
+ if(currentPage==='stats')stats(m);
+  if(currentPage==='wordDetail')wordDetail(m);
+  if(currentPage==='review')showReview(0);
+  syncDrawer(); updateBottomNav();
+}
+
+const toeflData={
+ reading:{name:'Reading',icon:'📖',cls:'reading',desc:'Metinleri anla, analiz et ve soruları çöz.',time:'≈ 27 dakika',questions:'35–48 soru',score:'1–6',progress:68,color:'#e63d73'},
+ listening:{name:'Listening',icon:'🎧',cls:'listening',desc:'Konuşmaları dinle, not al ve soruları çöz.',time:'≈ 18–27 dakika',questions:'35–45 soru',score:'1–6',progress:52,color:'#19a56b'},
+ speaking:{name:'Speaking',icon:'🎤',cls:'speaking',desc:'Net ve akıcı konuş.',time:'≈ 8 dakika',questions:'11 soru',score:'1–6',progress:45,color:'#7b43d7'},
+ writing:{name:'Writing',icon:'✍️',cls:'writing',desc:'Açık, düzenli ve etkili yaz.',time:'≈ 23 dakika',questions:'12 soru',score:'1–6',progress:60,color:'#e4a400'}
+};
+function toefl(m){
+ const cards=Object.entries(toeflData).map(([key,d])=>`<div class="skill-card ${d.cls}"><div class="skill-top"><div class="skill-icon">${d.icon}</div><div><h3>${d.name}</h3><p>${d.desc}</p></div></div><div class="skill-meta"><span>${d.progress}% tamamlandı</span><span>${d.time}</span></div><div class="skill-progress"><span style="width:${d.progress}%;background:${d.color}"></span></div><div class="skill-actions"><button onclick="toeflPractice('${key}')">Çalışmaya Başla →</button><button class="go" onclick="toeflPractice('${key}')">Pratik</button></div></div>`).join('');
+ m.innerHTML=`<div class="toefl-hero"><div><h2>TOEFL iBT<br><span style="font-size:16px">New Format (2026)</span></h2><p>Akıllı pratik, gerçek sınav mantığı ve kişisel ilerleme.</p></div><div class="hero-books">📚</div></div>
+ <div class="toefl-score"><div><div class="score-label">Hedef Skor</div><div class="score-value">95+</div><div class="score-date">Kasım 2026</div></div><div style="text-align:right"><div class="score-label">Genel ilerleme</div><div class="score-value">${Math.round(Object.values(toeflData).reduce((a,x)=>a+x.progress,0)/4)}%</div></div></div>
+ <div class="toefl-grid">${cards}</div>
+ <div class="format-card"><div class="format-title"><b>Sınav Formatı (2026)</b><span class="badge">Adaptif Test</span></div>
+ <div class="format-row"><div class="format-ico">📖</div><div><strong>Reading</strong><span>Complete the Words · Read in Daily Life · Read an Academic Passage</span></div></div>
+ <div class="format-row"><div class="format-ico">🎧</div><div><strong>Listening</strong><span>Listen and Choose a Response · Conversation · Announcement · Academic Talk</span></div></div>
+ <div class="format-row"><div class="format-ico">🎤</div><div><strong>Speaking</strong><span>Listen and Repeat · Take an Interview</span></div></div>
+ <div class="format-row"><div class="format-ico">✍️</div><div><strong>Writing</strong><span>Build a Sentence · Write an Email · Academic Discussion</span></div></div></div>
+ <div class="card"><div class="section-title">🎯 Hızlı çalışma</div><div class="meta">Bugün bir bölüm seç ve kısa bir pratik turu tamamla.</div><div class="btnrow" style="margin-top:14px;margin-bottom:0"><button class="btn primary" onclick="toeflPractice('reading')">Reading</button><button class="btn secondary" onclick="toeflPractice('listening')">Listening</button></div><div class="btnrow" style="margin-top:10px;margin-bottom:0"><button class="btn secondary" onclick="toeflPractice('speaking')">Speaking</button><button class="btn secondary" onclick="toeflPractice('writing')">Writing</button></div></div>`;
+}
+function toeflPractice(type){
+ closeDrawer();
+ const m=document.getElementById('main');
+ const d=toeflData[type];
+ const bank={
+  reading:[
+   {task:'Complete the Words',q:'The university plans to make its campus more environmentally ______ by expanding public transportation.',opts:['traditional','sustainable','temporary','financial'],a:1,ex:'“Sustainable” means able to continue with limited harm to the environment.'},
+   {task:'Read in Daily Life',context:'Campus Notice: The science library will close at 6 p.m. on Friday because of scheduled maintenance. Students who need to study later can use the main library until midnight.',q:'Why will the science library close early?',opts:['A new course will begin','The building needs maintenance','Students requested shorter hours','The main library is closed'],a:1,ex:'The notice directly says the early closure is due to scheduled maintenance.'},
+   {task:'Read an Academic Passage',context:'Researchers studying urban trees have found that vegetation can reduce surface temperatures in densely built areas. Trees provide shade and release water vapor through a process called transpiration. As a result, streets with more tree cover may remain cooler during hot weather.',q:'What is the main idea of the passage?',opts:['Urban trees grow faster than rural trees.','Trees can help cool densely built areas.','Transpiration only occurs during hot weather.','Cities are replacing streets with parks.'],a:1,ex:'The passage focuses on how vegetation contributes to lower urban temperatures.'}
+  ],
+  listening:[
+   {task:'Listen and Choose a Response',audio:'You have a meeting with your academic advisor at two o’clock.',q:'What should you do?',opts:['Meet the advisor at 2 p.m.','Submit the assignment at 2 p.m.','Go to the library at 3 p.m.','Call the professor tomorrow.'],a:0,ex:'The speaker says the meeting is at two o’clock.'},
+   {task:'Conversation',audio:'Student: I missed the study-group meeting. Woman: That’s okay. We moved it to Thursday because the professor changed the deadline.',q:'Why was the meeting moved?',opts:['The room was unavailable','The professor changed the deadline','The students had an exam','The professor cancelled the course'],a:1,ex:'The woman explicitly connects the change to the professor’s new deadline.'},
+   {task:'Academic Talk',audio:'In many ecosystems, biodiversity can make communities more resilient to environmental change because different species respond differently to stress.',q:'What is one benefit of biodiversity mentioned by the speaker?',opts:['It increases rainfall','It makes ecosystems more resilient','It eliminates environmental stress','It reduces the number of species'],a:1,ex:'The speaker says biodiversity can make communities more resilient.'}
+  ]
+ };
+ if(type==='reading'||type==='listening'){
+  let idx=0,score=0,answered=false;
+  const renderQ=()=>{
+   const q=bank[type][idx]; answered=false;
+   m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">${d.icon} ${d.name}</div><div class="practice-sub">TOEFL iBT • 2026 practice</div></div></div>
+   <div class="practice-shell"><span class="practice-kicker">${esc(q.task)}</span>${q.context?`<div class="practice-context">${esc(q.context)}</div>`:''}${type==='listening'?`<div class="listen-card"><button class="listen-play" onclick="speakToeflAudio(${JSON.stringify(q.audio)})">▶</button><div class="meta" style="margin-top:8px">Dinlemek için dokun</div></div>`:''}<div class="practice-q">${esc(q.q)}</div><div class="practice-options">${q.opts.map((o,i)=>`<button class="practice-option" data-i="${i}" onclick="selectPracticeOption(this)">${esc(o)}</button>`).join('')}</div><div id="practiceFeedback"></div><div class="practice-footer"><div class="practice-progress"><span style="width:${Math.round((idx+1)/bank[type].length*100)}%"></span></div><div class="practice-counter">${idx+1}/${bank[type].length}</div></div><button type="button" id="practiceNext" class="btn primary" style="width:100%;margin-top:14px">Cevabı kontrol et</button></div>`;
+   const controlBtn=document.getElementById('practiceNext');
+   if(controlBtn){let busy=false;const fire=()=>{if(busy)return;busy=true;checkPracticeAnswer(type);setTimeout(()=>busy=false,400)};controlBtn.addEventListener('click',fire);controlBtn.addEventListener('touchend',e=>{e.preventDefault();fire()},{passive:false});}
+  };
+  window._toeflRun={type,idx,score,bank,renderQ}; renderQ(); return;
+ }
+ if(type==='speaking'){
+  m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">🎤 Speaking Practice</div><div class="practice-sub">Listen and Repeat + Interview</div></div></div>
+  <div class="task-tabs"><button class="task-tab active">Listen and Repeat</button><button class="task-tab">Take an Interview</button></div>
+  <div class="practice-shell"><span class="practice-kicker">Listen and Repeat</span><div class="practice-context">Listen to the sentence, then repeat it clearly and naturally.</div><div class="practice-q">Students often learn more effectively when they explain new ideas to other people.</div><div style="text-align:center;margin:15px 0"><button class="listen-play" onclick="speakToeflAudio('Students often learn more effectively when they explain new ideas to other people.')">▶</button><div class="meta" style="margin-top:8px">Önce dinle</div></div><div class="record-card"><button id="speakRecord" class="record-btn" onclick="toggleSpeakingRecord()">🎙️</button><div id="recordTimer" class="record-timer">00:00</div><div class="meta">Cevabını kaydet ve kendi telaffuzunu dinle.</div><audio id="speechPlayback" controls style="width:100%;margin-top:12px;display:none"></audio></div><div class="practice-note" style="margin-top:14px">💡 AI bağlantısı daha sonra eklendiğinde telaffuz, akıcılık ve kelime kullanımına ayrı ayrı geri bildirim verebiliriz.</div></div>`; return;
+ }
+ m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">✍️ Writing Practice</div><div class="practice-sub">New TOEFL iBT • 2026</div></div></div>
+ <div class="task-tabs"><button class="task-tab active">Build a Sentence</button><button class="task-tab">Write an Email</button><button class="task-tab">Academic Discussion</button></div>
+ <div class="practice-shell"><span class="practice-kicker">Write an Email</span><div class="practice-context">You are a student and need to change the date of a group meeting. Write an email to your group partners. Explain why you need to change the date and suggest a new time.</div><textarea id="writingAnswer" class="writing-box" placeholder="Dear ..."></textarea><div class="word-counter"><span>Öneri: açık ve doğrudan yaz.</span><span id="writingCount">0 words</span></div><button class="btn primary" style="width:100%;margin-top:14px" onclick="saveWritingPractice()">Cevabı kaydet</button><div id="writingFeedback"></div></div>`;
+ const ta=document.getElementById('writingAnswer'); if(ta)ta.addEventListener('input',()=>{const n=ta.value.trim()?ta.value.trim().split(/\s+/).length:0;document.getElementById('writingCount').textContent=n+' words';});
+}
+function selectPracticeOption(btn){document.querySelectorAll('.practice-option').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected')}
+function checkPracticeAnswer(type){try{const run=window._toeflRun;if(!run){toast('Pratik oturumu bulunamadı.');return}const selected=document.querySelector('.practice-option.selected');const box=document.getElementById('practiceFeedback');const next=document.getElementById('practiceNext');if(!selected){box.className='practice-feedback bad';box.textContent='Bir seçenek seç.';return}if(run.answered)return;run.answered=true;const chosen=Number(selected.dataset.i),q=run.bank[run.idx];document.querySelectorAll('.practice-option').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('correct');if(i===chosen&&chosen!==q.a)b.classList.add('wrong')});if(chosen===q.a){run.score++;box.className='practice-feedback good';box.innerHTML='✅ Doğru! '+esc(q.ex)}else{box.className='practice-feedback bad';box.innerHTML='❌ Bu kez olmadı. Doğru cevap: <b>'+esc(q.opts[q.a])+'</b><br>'+esc(q.ex)}if(run.idx<run.bank.length-1){next.textContent='Sonraki soru →';next.onclick=()=>{run.idx++;run.renderQ()}}else{next.textContent='Sonucu gör';next.onclick=()=>showToeflResult(run.type,run.score,run.bank.length)}}catch(e){const box=document.getElementById('practiceFeedback');if(box){box.className='practice-feedback bad';box.textContent='Kontrol sırasında bir hata oluştu. Lütfen tekrar deneyin.'}console.error(e)}}
+function showToeflResult(type,score,total){const d=toeflData[type],pct=Math.round(score/total*100);const m=document.getElementById('main');m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">${d.icon} ${d.name} Sonuç</div><div class="practice-sub">Mini practice tamamlandı</div></div></div><div class="practice-shell" style="text-align:center"><div style="font-size:48px;font-weight:900;color:#23406f">${score}/${total}</div><div class="meta">${pct}% doğru</div><div class="practice-feedback ${pct>=70?'good':'bad'}" style="text-align:left;margin-top:18px">${pct>=70?'🎉 Güzel başlangıç.':'💡 Bu bölümde biraz daha pratik yapalım.'} Sonraki turda farklı görev türleri ekleyebiliriz.</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="toeflPractice('${type}')">Tekrar çöz</button><button class="btn secondary" style="width:100%;margin-top:9px" onclick="nav('toefl')">TOEFL ana sayfası</button></div>`}
+function speakToeflAudio(text){if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;speechSynthesis.speak(u)}else toast('Tarayıcı ses özelliğini desteklemiyor.')}
+let speakingRecorder=null,speakingChunks=[],speakingStarted=0,speakingTimer=null;
+async function toggleSpeakingRecord(){const btn=document.getElementById('speakRecord'),timer=document.getElementById('recordTimer'),audio=document.getElementById('speechPlayback');if(!speakingRecorder){try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});speakingChunks=[];speakingRecorder=new MediaRecorder(stream);speakingRecorder.ondataavailable=e=>speakingChunks.push(e.data);speakingRecorder.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(speakingChunks,{type:'audio/webm'});audio.src=URL.createObjectURL(blob);audio.style.display='block';clearInterval(speakingTimer);btn.textContent='🎙️';btn.classList.remove('recording');speakingRecorder=null};speakingRecorder.start();speakingStarted=Date.now();btn.textContent='⏹';btn.classList.add('recording');speakingTimer=setInterval(()=>{const s=Math.floor((Date.now()-speakingStarted)/1000);timer.textContent=`00:${String(Math.min(59,s)).padStart(2,'0')}`},250)}catch(e){toast('Mikrofon izni gerekli.')}}else speakingRecorder.stop()}
+function saveWritingPractice(){const ta=document.getElementById('writingAnswer'),box=document.getElementById('writingFeedback');if(!ta||!box)return;const t=ta.value.trim(),n=t?t.split(/\s+/).length:0;if(!t){box.className='practice-feedback bad';box.textContent='Önce cevabını yaz.';return}const checks=[];if(n>=40)checks.push('Uzunluk iyi bir başlangıç.');else checks.push('Cevabını biraz daha geliştir.');if(/dear|hello/i.test(t))checks.push('E-posta açılışı var.');if(/because|since|as/i.test(t))checks.push('Neden belirten bir ifade kullandın.');if(/suggest|could|would|available/i.test(t))checks.push('Yeni zaman için öneri/uygunluk dili kullanılmış.');box.className='practice-feedback good';box.innerHTML='💾 Cevabın kaydedildi.<ul>'+checks.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><div class="active-tip">🤖 AI daha sonra eklendiğinde grammar, doğallık ve TOEFL odaklı geri bildirim verebilir.</div>'}
+
+function todayLabel(){return new Intl.DateTimeFormat('tr-TR',{weekday:'long',day:'numeric',month:'long'}).format(new Date())}
+function reviewedTodayCount(){const t=today();return words.filter(w=>w.lastReviewed&&w.lastReviewed.slice(0,10)===t).length}
+function home(m){
+ const due=dueWords(), reviewed=reviewedTodayCount(), total=words.length, strong=words.filter(w=>w.reviewLevel==='Güçlü').length;
+ const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null;
+ m.innerHTML=`
+ <div class="home-topline"><div><div class="home-date">${todayLabel()}</div><h1>Bugün ne çalışalım?</h1><div class="sub" style="margin:0;font-size:16px">Kelime hazineni büyüt, öğrendiklerini unutma.</div></div><div class="streak">🔥 1 gün</div></div>
+ 
+ <div class="vocab-hero">
+   <div class="vh-head"><div><div class="vh-kicker">VOCABULARY ODAĞI</div><div class="vh-title">Akıllı tekrar</div><div class="vh-sub">${due.length?`Bugün tekrar etmen gereken <b>${due.length} kelime</b> var.`:'Bugün tekrar bekleyen kelimen yok. 🎉'}</div></div><div class="vh-count">${due.length}</div></div>
+   <div class="vh-progress"><span style="width:${goalPct}%"></span></div>
+   <div class="vh-bottom"><span>Bugünkü çalışma</span><b>${reviewed} / ${goal}</b></div>
+   <button class="vh-btn" onclick="${due.length?'startReview()':'nav(\'add\')'}">${due.length?'▶ Tekrara başla':'＋ İlk kelimeni ekle'} <span>→</span></button>
+ </div>
+ 
+ <div class="vocab-next-card" style="background:#fff;border:1px solid #e4eaf3;border-radius:22px;padding:16px;margin:0 0 14px;display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div style="font-size:13px;color:#7a879d;font-weight:800">BUGÜNÜN KELİME PLANI</div><div style="font-size:20px;font-weight:850;color:#23406f;margin-top:3px">${Math.min(due.length,TARGET)} kelime tekrar</div><div style="font-size:13px;color:#71809a;margin-top:3px">Hedef ${TARGET} kelime • Kalan ${Math.max(0,TARGET-reviewedTodayCount())}</div></div><button class="btn primary" style="margin:0;padding:11px 14px" onclick="startReview()">▶ Başla</button></div>
+ <div class="vocab-stats">
+   <button onclick="nav('stats')"><b>${total}</b><span>Toplam kelime</span></button>
+   <button onclick="startReview()"><b>${due.length}</b><span>Tekrar zamanı</span></button>
+   <button onclick="nav('stats')"><b>${strong}</b><span>Güçlü kelime</span></button>
+ </div>
+ 
+ <div class="section-head home-section"><div><div class="section-title">⚡ Hızlı erişim</div><div class="meta">Vocabulary çalışmaların</div></div></div>
+ <div class="home-actions">
+   <button class="home-action blue" onclick="nav('add')"><span>＋</span><b>Kelime ekle</b><small>Yeni kelime oluştur</small></button>
+   <button class="home-action purple" onclick="nav('stats')"><span>📚</span><b>Kelime hazinem</b><small>${total} kelimeni yönet</small></button>
+   <button class="home-action orange" onclick="nav('quiz')"><span>🎯</span><b>Kelime Quiz</b><small>Hızlı test yap</small></button>
+   <button class="home-action green" onclick="startToeflSprint()"><span>🚀</span><b>TOEFL Sprint</b><small>10 soruluk tur</small></button>
+ </div>
+ 
+ ${last?`<div class="last-word-card"><div class="section-head"><div><div class="section-title">🆕 Son öğrendiğin kelime</div><div class="meta">Kelime hazinene en son eklediğin</div></div><button onclick="nav('stats')">Tümünü gör →</button></div><div class="last-word-row"><div><div class="last-word-name">${esc(last.word)} <button class="speak" onclick="speakWord(${JSON.stringify(last.word)})">🔊</button></div><div class="last-word-meaning">${esc(last.meaning||'Anlam eklenmedi')}</div><span class="badge">${esc(last.category||'General English')}</span> <span class="badge">${esc(last.difficulty||'Orta')}</span></div><div class="last-review">${intervalLabel(last.interval||0)}<small>tekrar aralığı</small></div></div></div>`:''}
+ 
+ <div class="toefl-home-card"><div class="toefl-home-icon">🎓</div><div class="toefl-home-copy"><div class="section-title">TOEFL iBT</div><div class="meta">Vocabulary'den sonra Reading, Listening, Speaking ve Writing çalış.</div></div><button onclick="nav('toefl')">→</button></div>`;
+}
+
+function sampleCard(){return `<div class="card"><span class="pill">Örnek TOEFL kelimesi</span><div class="word">mitigate</div><div class="meta">/ˈmɪtɪɡeɪt/ • verb</div><div class="meaning">hafifletmek, azaltmak</div><div class="example">Governments should take measures to <span class="tag">mitigate</span> the effects of climate change.</div></div>`}
+function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</span><div class="word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')}</div><div style="margin-top:10px"><span class="badge">${esc(w.category||'TOEFL Academic')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span></div><div class="meaning">${esc(w.meaning||'Türkçe anlam eklenmedi')}</div><div class="example">${esc(w.example||w.definition||'')}</div>
+<div class="progressline"><span>Tekrar aralığı</span><b>${intervalLabel(w.interval||0)}</b></div></div>`}
+
+
+/* V29 general-English fallback dictionary: used when an external dictionary is unavailable. */
+const generalFallback={
+ beautiful:{type:'adjective',phonetic:'/ˈbjuːtɪfəl/',definition:'pleasing to the senses or to the mind; attractive and lovely',meaning:'güzel, hoş, güzel görünümlü',example:'She lives in a beautiful house near the coast.',synonyms:'attractive, lovely, gorgeous',antonyms:'ugly, unattractive'},
+ important:{type:'adjective',phonetic:'/ɪmˈpɔːrtənt/',definition:'having great value, influence, or effect',meaning:'önemli',example:'It is important to understand the main idea.',synonyms:'significant, essential, crucial',antonyms:'unimportant, insignificant'},
+ difficult:{type:'adjective',phonetic:'/ˈdɪfɪkəlt/',definition:'not easy to do, understand, or deal with',meaning:'zor, güç',example:'The assignment was difficult but useful.',synonyms:'hard, challenging, demanding',antonyms:'easy, simple'},
+ easy:{type:'adjective',phonetic:'/ˈiːzi/',definition:'not difficult; requiring little effort',meaning:'kolay',example:'The instructions are easy to follow.',synonyms:'simple, effortless, straightforward',antonyms:'difficult, hard'},
+ useful:{type:'adjective',phonetic:'/ˈjuːsfəl/',definition:'helpful or practical for a particular purpose',meaning:'yararlı, kullanışlı',example:'This guide is useful for English learners.',synonyms:'helpful, practical, beneficial',antonyms:'useless, impractical'},
+ necessary:{type:'adjective',phonetic:'/ˈnesəseri/',definition:'needed or required for a particular purpose',meaning:'gerekli, zorunlu',example:'Regular practice is necessary for progress.',synonyms:'essential, required, needed',antonyms:'unnecessary, optional'},
+ successful:{type:'adjective',phonetic:'/səkˈsesfəl/',definition:'achieving the desired result or purpose',meaning:'başarılı',example:'The project was successful because the team planned carefully.',synonyms:'effective, accomplished, prosperous',antonyms:'unsuccessful, failed'},
+ effective:{type:'adjective',phonetic:'/ɪˈfektɪv/',definition:'producing the intended result',meaning:'etkili, işe yarayan',example:'This is an effective way to learn new words.',synonyms:'efficient, successful, powerful',antonyms:'ineffective, useless'},
+ possible:{type:'adjective',phonetic:'/ˈpɑːsəbəl/',definition:'able to happen or be done',meaning:'mümkün, olası',example:'It is possible to improve with regular practice.',synonyms:'feasible, achievable, attainable',antonyms:'impossible, unlikely'},
+ available:{type:'adjective',phonetic:'/əˈveɪləbəl/',definition:'able to be used, obtained, or reached',meaning:'mevcut, kullanılabilir, uygun',example:'The report is available online.',synonyms:'accessible, obtainable, ready',antonyms:'unavailable, inaccessible'},
+ different:{type:'adjective',phonetic:'/ˈdɪfrənt/',definition:'not the same as another person or thing',meaning:'farklı',example:'People have different ways of learning.',synonyms:'distinct, unlike, separate',antonyms:'similar, same, identical'},
+ similar:{type:'adjective',phonetic:'/ˈsɪmələr/',definition:'almost the same in appearance, character, or quality',meaning:'benzer',example:'The two studies produced similar results.',synonyms:'alike, comparable, resembling',antonyms:'different, dissimilar'},
+ benefit:{type:'noun',phonetic:'/ˈbenɪfɪt/',definition:'an advantage or helpful result',meaning:'fayda, yarar, avantaj',example:'One benefit of reading is a larger vocabulary.',synonyms:'advantage, gain, value',antonyms:'disadvantage, drawback'},
+ challenge:{type:'noun',phonetic:'/ˈtʃælɪndʒ/',definition:'a difficult task or situation that requires effort',meaning:'zorluk, meydan okuma',example:'Time management is a common challenge for students.',synonyms:'difficulty, obstacle, problem',antonyms:'advantage, ease'},
+ opportunity:{type:'noun',phonetic:'/ˌɑːpərˈtuːnəti/',definition:'a favorable chance to do or achieve something',meaning:'fırsat, olanak',example:'The course provides an opportunity to practice speaking.',synonyms:'chance, possibility, opening',antonyms:'obstacle, disadvantage'},
+ solution:{type:'noun',phonetic:'/səˈluːʃən/',definition:'a way of solving a problem or dealing with a difficult situation',meaning:'çözüm',example:'We need a practical solution to the problem.',synonyms:'answer, remedy, resolution',antonyms:'problem, complication'},
+ reason:{type:'noun',phonetic:'/ˈriːzən/',definition:'a cause or explanation for an action, event, or situation',meaning:'neden, sebep, gerekçe',example:'There are several reasons for this change.',synonyms:'cause, explanation, motive',antonyms:''},
+ result:{type:'noun',phonetic:'/rɪˈzʌlt/',definition:'something that happens because of an action or event',meaning:'sonuç, netice',example:'The results showed a clear improvement.',synonyms:'outcome, consequence, effect',antonyms:'cause'},
+ explain:{type:'verb',phonetic:'/ɪkˈspleɪn/',definition:'to make an idea or situation clear by describing it',meaning:'açıklamak, izah etmek',example:'The professor explained the concept clearly.',synonyms:'clarify, describe, illustrate',antonyms:'confuse, obscure'},
+ improve:{type:'verb',phonetic:'/ɪmˈpruːv/',definition:'to make or become better',meaning:'geliştirmek, iyileşmek',example:'Daily practice can improve your speaking skills.',synonyms:'enhance, develop, strengthen',antonyms:'worsen, deteriorate'},
+ achieve:{type:'verb',phonetic:'/əˈtʃiːv/',definition:'to successfully reach a goal or desired result',meaning:'başarmak, elde etmek',example:'She worked hard to achieve her goal.',synonyms:'accomplish, attain, reach',antonyms:'fail, lose'},
+ require:{type:'verb',phonetic:'/rɪˈkwaɪər/',definition:'to need something or make something necessary',meaning:'gerektirmek, ihtiyaç duymak',example:'The task requires careful planning.',synonyms:'need, demand, involve',antonyms:'waive'},
+ provide:{type:'verb',phonetic:'/prəˈvaɪd/',definition:'to give or supply something that is needed',meaning:'sağlamak, sunmak',example:'The course provides useful practice.',synonyms:'supply, offer, give',antonyms:'withhold, take'},
+ include:{type:'verb',phonetic:'/ɪnˈkluːd/',definition:'to contain something as part of a whole',meaning:'içermek, dahil etmek',example:'The price includes breakfast.',synonyms:'contain, involve, incorporate',antonyms:'exclude, omit'},
+ avoid:{type:'verb',phonetic:'/əˈvɔɪd/',definition:'to stay away from someone or something or prevent something from happening',meaning:'kaçınmak, uzak durmak, önlemek',example:'Try to avoid common grammar mistakes.',synonyms:'prevent, evade, escape',antonyms:'face, approach'},
+ understand:{type:'verb',phonetic:'/ˌʌndərˈstænd/',definition:'to know the meaning or nature of something',meaning:'anlamak, kavramak',example:'I understand the main point of the lecture.',synonyms:'comprehend, grasp, realize',antonyms:'misunderstand, confuse'},
+ communicate:{type:'verb',phonetic:'/kəˈmjuːnɪkeɪt/',definition:'to share information, ideas, or feelings with someone',meaning:'iletişim kurmak, aktarmak',example:'Clear language helps people communicate effectively.',synonyms:'convey, express, interact',antonyms:'conceal, withhold'},
+ environment:{type:'noun',phonetic:'/ɪnˈvaɪrənmənt/',definition:'the natural world and the conditions in which people or things exist',meaning:'çevre, ortam',example:'We should protect the natural environment.',synonyms:'surroundings, habitat, setting',antonyms:''},
+ experience:{type:'noun',phonetic:'/ɪkˈspɪriəns/',definition:'knowledge or skill gained by doing or seeing something',meaning:'deneyim, tecrübe',example:'Work experience can help students find jobs.',synonyms:'knowledge, practice, exposure',antonyms:'inexperience'},
+ knowledge:{type:'noun',phonetic:'/ˈnɑːlɪdʒ/',definition:'information, understanding, or skill gained through learning or experience',meaning:'bilgi, birikim',example:'Reading increases knowledge and vocabulary.',synonyms:'understanding, awareness, expertise',antonyms:'ignorance'},
+ relationship:{type:'noun',phonetic:'/rɪˈleɪʃənʃɪp/',definition:'the way in which two or more people or things are connected',meaning:'ilişki, bağlantı',example:'Trust is important in any relationship.',synonyms:'connection, association, link',antonyms:''}
+};
+
+function add(m){
+ m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimeleri yanında günlük ve genel İngilizce kelimeleri de ekleyebilirsin.</div>
+ <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
+ <div class="meta" style="margin-top:12px">İngilizce kelimeleri sözlükten otomatik hazırlar. TOEFL dışındaki günlük, genel, business ve banking kelimeleri de aynı sistemle ekleyebilirsin.</div><div id="result"></div></div>
+ <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
+}
+async function translateWordToTurkish(word){
+ const q=encodeURIComponent(word);
+ // 1) Google Translate endpoint
+ try{
+  const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=${q}`;
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
+  const r=await fetch(url,{signal:controller.signal});clearTimeout(timer);
+  if(r.ok){
+   const j=await r.json();
+   const out=(j?.[0]||[]).map(x=>x?.[0]||'').join('').trim();
+   if(out)return out;
+  }
+ }catch(e){}
+ // 2) MyMemory fallback
+ try{
+  const url=`https://api.mymemory.translated.net/get?q=${q}&langpair=en|tr`;
+  const j=await fetchJson(url,7000);
+  const out=j?.responseData?.translatedText||'';
+  if(out && !/^MYMEMORY WARNING/i.test(out))return out.trim();
+ }catch(e){}
+ return '';
+}
+function guessCategory(word,definition){
+ const text=((word||'')+' '+(definition||'')).toLowerCase();
+ if(/bank|finance|loan|deposit|investment|branch|customer|account|payment|interest|credit|fund|money/.test(text))return 'Banking';
+ if(/business|company|market|sales|management|employee|project|strategy/.test(text))return 'Business';
+ if(/toefl|academic|university|research|lecture|study|science|environment|theory|evidence|analysis/.test(text))return 'TOEFL Academic';
+ return 'General English';
+}
+async function fetchJson(url, ms=6000){
+ try{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);
+  const r=await fetch(url,{signal:controller.signal}); clearTimeout(timer);
+  if(!r.ok)return null; return await r.json();
+ }catch(e){return null}
+}
+async function enrichRelations(word){
+ const syn=await fetchJson('https://api.datamuse.com/words?rel_syn='+encodeURIComponent(word)+'&max=8');
+ const ant=await fetchJson('https://api.datamuse.com/words?rel_ant='+encodeURIComponent(word)+'&max=8');
+ return {
+  synonyms:Array.isArray(syn)?syn.map(x=>x.word).filter(Boolean).join(', '):'',
+  antonyms:Array.isArray(ant)?ant.map(x=>x.word).filter(Boolean).join(', '):''
+ };
+}
+function chooseDefinition(meanings){
+ for(const m of (meanings||[])){
+  const d=(m.definitions||[])[0]; if(d?.definition)return d.definition;
+ }
+ return '';
+}
+function chooseExample(meanings){
+ for(const m of (meanings||[])){
+  const d=(m.definitions||[]).find(x=>x?.example); if(d?.example)return d.example;
+ }
+ return '';
+}
+function collectRelations(meanings, key){
+ const arr=[]; (meanings||[]).forEach(m=>(m.definitions||[]).forEach(d=>(d[key]||[]).forEach(x=>arr.push(x))));
+ return [...new Set(arr)].slice(0,8).join(', ');
+}
+async function prepareWord(){
+ const input=document.getElementById('wordInput'), result=document.getElementById('result'), word=input.value.trim().toLowerCase();
+ if(!word){toast('Önce bir İngilizce kelime yaz.');return}
+ result.innerHTML='<div class="info">🔎 Kelime bilgileri hazırlanıyor...</div>';
+ let data=null, source='';
+ // Önce VocaMate'nin doğrulanmış yerel sözlüğünü kullan. Böylece çevrimiçi
+ // sözlük eksik alan döndürse bile Türkçe anlam ve örnek cümle kaybolmaz.
+ if(fallback[word]){ data={...fallback[word]}; source='📚 VocaMate TOEFL sözlüğünden bulundu'; }
+ else if(generalFallback[word]){ data={...generalFallback[word]}; source='📚 VocaMate genel İngilizce sözlüğünden bulundu'; }
+ else{
+  const json=await fetchJson('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word));
+  if(Array.isArray(json)&&json[0]){
+   const x=json[0], ms=x.meanings||[], first=ms[0]||{};
+   const ph=x.phonetic||(x.phonetics||[]).find(p=>p.text)?.text||'';
+   data={
+    type:first.partOfSpeech||ms.find(m=>m.partOfSpeech)?.partOfSpeech||'word',
+    phonetic:ph,
+    definition:chooseDefinition(ms),
+    meaning:'',
+    example:chooseExample(ms),
+    synonyms:collectRelations(ms,'synonyms'),
+    antonyms:collectRelations(ms,'antonyms')
+   };
+   source='🌐 İngilizce sözlükten bulundu';
+   if(!data.synonyms||!data.antonyms){
+    const rel=await enrichRelations(word);
+    data.synonyms=data.synonyms||rel.synonyms;
+    data.antonyms=data.antonyms||rel.antonyms;
+   }
+  }
+ }
+ // İkinci çevrimiçi katman: DictionaryAPI cevap vermezse Datamuse tanım/telaffuz sağlayabilir.
+ if(!data){
+  const dm=await fetchJson('https://api.datamuse.com/words?sp='+encodeURIComponent(word)+'&md=dpr&max=1');
+  const item=Array.isArray(dm)?dm[0]:null;
+  if(item){
+   const tags=item.tags||[];
+   const pos=tags.find(t=>/^(n|v|adj|adv|pron|prep|conj|interj)$/.test(t));
+   data={type:pos==='adj'?'adjective':pos==='adv'?'adverb':pos==='v'?'verb':pos==='n'?'noun':'word',phonetic:item.tags?.find(t=>/^\/.+\/$/.test(t))||'',definition:item.defs?.[0]||'',meaning:'',example:'',synonyms:'',antonyms:''};
+   source='🌐 Alternatif İngilizce sözlükten bulundu';
+   const rel=await enrichRelations(word); data.synonyms=rel.synonyms; data.antonyms=rel.antonyms;
+  }
+ }
+ // Yerel genel İngilizce sözlüğü: internet sözlükleri erişilemese bile yaygın kelimeler eksiksiz hazırlanır.
+ if(!data && generalFallback[word]){ data={...generalFallback[word]}; source='📚 Genel İngilizce sözlüğünden bulundu'; }
+ // Kaynak kısmi veri döndürdüyse yerel kaliteli bilgiyle eksik alanları tamamla.
+ if(data && generalFallback[word]){
+  const local=generalFallback[word];
+  ['type','phonetic','definition','meaning','example','synonyms','antonyms'].forEach(k=>{
+   if(!data[k] || String(data[k]).trim()==='') data[k]=local[k]||'';
+  });
+  if(source) source += ' • 📚 eksik alanlar tamamlandı';
+ }
+ // Sözlük bulunamasa bile İngilizce kelimeyi tamamen kaybetme: çeviri ile devam et.
+ if(!data){
+  const autoMeaning=await translateWordToTurkish(word);
+  if(autoMeaning){
+   data={type:'word',phonetic:'',definition:'',meaning:autoMeaning,example:'',synonyms:'',antonyms:''};
+   source='🌐 Türkçe anlam otomatik bulundu';
+  }
+ }
+ if(!data){
+  result.innerHTML=`<div class="info error">Bu kelime için otomatik bilgi alınamadı. İnternet bağlantını kontrol et veya kelimeyi manuel ekle.</div>
+  <div class="card" style="margin-top:12px"><div class="mini"><b>Manuel ekleme</b> Türkçe anlamı, örnek cümleyi ve notunu ekleyerek yine de kaydedebilirsin.</div>
+  <div class="resultgrid"><div class="mini"><b>Kelime</b> ${esc(word)}</div>
+  <label>🇹🇷 Türkçe anlam *</label><input id="meaning" placeholder="Örn. önemli, anlamlı">
+  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>General English</option><option>Daily English</option><option>TOEFL Academic</option><option>Business</option><option>Banking</option></select></div>
+  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
+  <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option>General English</option><option>Daily English</option><option>TOEFL</option><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Business</option><option>Banking</option></select>
+  <label>📘 Örnek cümle</label><textarea id="example" placeholder="Kelimeyi kullanan doğal bir İngilizce cümle"></textarea>
+  <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz..."></textarea>
+  <label>📝 Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+  <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'word',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet ve öğrenmeye başla</button></div></div>`;return;
+ }
+ if(!data.meaning){
+  result.innerHTML='<div class="info">🔎 Türkçe anlam otomatik hazırlanıyor...</div>';
+  data.meaning=await translateWordToTurkish(word);
+ }
+ const suggestedCategory=guessCategory(word,data.definition||'');
+ const defaultContext=suggestedCategory==='TOEFL Academic'?'TOEFL':suggestedCategory;
+ result.innerHTML=`<div class="info">${source} ${data.meaning?'• 🇹🇷 Türkçe anlam otomatik bulundu.':'• Türkçe anlamı aşağıdan ekleyebilirsin.'}</div>
+ <div class="word-profile">
+   <div class="profile-word">${esc(word)} <button class="speak" onclick="speakWord(${JSON.stringify(word)})">🔊</button></div>
+   <div class="profile-meta">${esc(data.phonetic||'Telaffuz otomatik alınamadı; 🔊 ile tarayıcı seslendirmesini kullanabilirsin.')} <span>•</span> ${esc(data.type||'word')}</div>
+   <div class="profile-grid">
+     <div class="profile-box"><div class="profile-label">📖 Tanım</div><div>${esc(data.definition||'Bu kelime için tanım otomatik alınamadı. Kelime yine de kaydedilebilir.')}</div></div>
+     <div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Türkçe anlam"></div>
+   </div>
+   <div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms||'Bu kelime için otomatik eş anlamlı bulunamadı.')}</div></div>
+   <div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms||'Bu kelime için otomatik zıt anlamlı bulunamadı.')}</div></div>
+ </div>
+ <div class="selectrow"><div><label>Kategori</label><select id="category"><option ${suggestedCategory==='TOEFL Academic'?'selected':''}>TOEFL Academic</option><option ${suggestedCategory==='General English'?'selected':''}>General English</option><option ${suggestedCategory==='Daily English'?'selected':''}>Daily English</option><option ${suggestedCategory==='Business'?'selected':''}>Business</option><option ${suggestedCategory==='Banking'?'selected':''}>Banking</option></select></div>
+ <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
+ <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option ${defaultContext==='TOEFL'?'selected':''}>TOEFL</option><option ${defaultContext==='Reading'?'selected':''}>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option ${defaultContext==='General English'?'selected':''}>General English</option><option ${defaultContext==='Daily English'?'selected':''}>Daily English</option><option ${defaultContext==='Business'?'selected':''}>Business</option><option ${defaultContext==='Banking'?'selected':''}>Banking</option></select>
+ <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea>
+ <div class="mini">💡 Örneği yüksek sesle oku; sonra kendi cümleni kur.</div>
+ <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="I used this word because...">${esc(data.userExample||'')}</textarea>
+ <label>📝 Kendi notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+ <button class="btn primary" onclick='saveWord(${JSON.stringify({word,...data})})'>💾 Kelimeyi kaydet ve öğrenmeye başla</button></div>`;
+}
+function saveWord(data){
+ const meaning=document.getElementById('meaning').value.trim(),example=document.getElementById('example').value.trim(),userExample=document.getElementById('userExample')?.value.trim()||'',note=document.getElementById('note').value.trim();
+ const category=document.getElementById('category')?.value||'TOEFL Academic';
+ const sourceContext=document.getElementById('sourceContext')?.value||'TOEFL';
+ const difficulty=document.getElementById('difficulty')?.value||'Orta';
+ if(!meaning){toast('Türkçe anlam bulunamadı. Lütfen kısa bir anlam ekle.');return}
+ const old=words.find(w=>w.word===data.word);
+ words=words.filter(w=>w.word!==data.word);
+ words.push({...old,...data,meaning,example,userExample,note,category,difficulty,sourceContext,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+ save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
+}
+
+function startLearning(){currentPage='review';showReview(0)}
+function startReview(){currentPage='review';showReview(0)}
+function showReview(i){
+ const due=dueWords().sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0));
+ if(!due.length){nav('home');toast('🎉 Bugünlük tekrarın tamam!');return}
+ const pos=i%due.length, w=due[pos],m=document.getElementById('main');
+ const dueNow=due.length;
+ const intervalText=w.interval?`${w.interval} gün`:'İlk tekrar';
+ m.innerHTML=`<h1>Akıllı tekrar</h1><div class="sub">${pos+1} / ${dueNow} kelime • ${esc(intervalText)}</div>
+ <div class="review-progress"><div style="width:${((pos+1)/dueNow)*100}%"></div></div>
+ <div class="card"><span class="pill">Hatırlıyor musun?</span><div class="word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div>
+ <div class="meta">${esc(w.phonetic||'')} • ${esc(w.type||'')} • ${esc(w.category||'TOEFL Academic')}</div>
+ <div id="answerBox" class="hidden"><div class="meaning">${esc(w.meaning)}</div><div class="example">${esc(w.example||w.definition||'')}</div>${w.synonyms?`<div class="mini" style="margin-top:12px"><b>Synonym</b> ${esc(w.synonyms)}</div>`:''}${w.note?`<div class="mini" style="margin-top:8px"><b>Notum</b> ${esc(w.note)}</div>`:''}</div>
+ <button id="showBtn" class="btn primary" style="width:100%;margin-top:22px" onclick="revealAnswer()">Anlamı göster</button>
+ <div id="actions" class="hidden"><div class="meta" style="margin-top:18px">Ne kadar hatırladın?</div>
+ <div class="review-actions"><button class="again" onclick="rateWord('${encodeURIComponent(w.word)}','again')">😵 Unuttum<br><small>10 dk</small></button><button class="hard" onclick="rateWord('${encodeURIComponent(w.word)}','hard')">🤔 Zorlandım<br><small>1 gün</small></button><button class="good" onclick="rateWord('${encodeURIComponent(w.word)}','good')">😊 Hatırladım<br><small>sonraki</small></button></div></div></div>`;
+}
+function revealAnswer(){document.getElementById('answerBox').classList.remove('hidden');document.getElementById('showBtn').classList.add('hidden');document.getElementById('actions').classList.remove('hidden')}
+function rateWord(encoded,quality){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;
+ const now=Date.now();
+ if(quality==='again'){
+   w.repetitions=0;w.interval=0;w.reviewLevel='Unutuldu';
+   w.nextReview=new Date(now+10*60*1000).toISOString();
+ }
+ if(quality==='hard'){
+   w.repetitions=Math.max(0,w.repetitions||0);w.interval=1;w.reviewLevel='Zorlanıyorum';
+   w.nextReview=new Date(now+24*60*60*1000).toISOString();
+ }
+ if(quality==='good'){
+   w.repetitions=(w.repetitions||0)+1;
+   const levels=[1,3,7,14,30];
+   w.interval=levels[Math.min(w.repetitions-1,levels.length-1)];
+   w.reviewLevel=w.interval>=14?'Güçlü':'Öğreniliyor';
+   w.nextReview=new Date(now+w.interval*24*60*60*1000).toISOString();
+ }
+ w.lastReviewed=new Date(now).toISOString();
+ w.reviewCount=(w.reviewCount||0)+1;
+ save();showReview(0);
+}
+function intervalLabel(n){return n?`${n} gün`:'ilk tekrar'}
+
+let quizMode='meaning', quizScore=0, quizAnswered=false, quizSession=false, quizQ=0, quizTotal=10, quizCorrectSession=0;
+
+function speakWord(word){
+ const w=words.find(x=>x.word===word); if(w){w.pronunciationPracticed=true;save();}
+ if('speechSynthesis' in window){
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(word);
+  u.lang='en-US'; u.rate=.85;
+  speechSynthesis.speak(u);
+ }
+}
+
+function quiz(m){
+ if(!words.length){
+  m.innerHTML=`<h1>Quiz</h1><div class="sub">Henüz kendi kelimelerin yok.</div><div class="card empty">Önce birkaç kelime ekleyelim. 🚀</div><button class="btn primary" style="width:100%" onclick="nav('add')">＋ İlk kelimeyi ekle</button>`;
+  return;
+ }
+ const w=words[(quizIndex)%words.length];
+ const allMeanings=words.map(x=>x.meaning).filter(Boolean);
+ let choices=[w.meaning];
+ while(choices.length<4 && allMeanings.length){
+   const candidate=allMeanings[Math.floor(Math.random()*allMeanings.length)];
+   if(!choices.includes(candidate)) choices.push(candidate);
+   if(choices.length>=Math.min(4,allMeanings.length)) break;
+ }
+ choices=choices.sort(()=>Math.random()-.5);
+ quizAnswered=false;
+
+ const sessionLabel=quizSession?`TOEFL Sprint • ${quizQ+1}/${quizTotal}`:`Soru ${quizIndex+1} • Skor ${quizScore}`;
+ m.innerHTML=`<h1>Quiz</h1><div class="sub">${sessionLabel} • Skor ${quizSession?quizCorrectSession:quizScore}</div>
+ <div class="card">
+ <div class="mode-grid">
+  <button class="mode ${quizMode==='meaning'?'active':''}" onclick="setQuizMode('meaning')">🇹🇷 Anlam</button>
+  <button class="mode ${quizMode==='reverse'?'active':''}" onclick="setQuizMode('reverse')">🇬🇧 İngilizce</button>
+ </div>
+ <div class="quiz-tools">
+   <button class="smallbtn ${quizSession?'active':''}" onclick="startToeflSprint()">🎯 TOEFL Sprint</button>
+   ${quizSession?`<button class="smallbtn" onclick="endSprint()">✕ Bitir</button>`:''}
+ </div>
+ <div class="pill" style="margin-top:18px">${esc(w.category||'TOEFL Academic')} · ${esc(w.difficulty||'Orta')}</div>
+ <div class="quizq" style="margin-top:18px">${quizMode==='meaning'?esc(w.word):esc(w.meaning)}</div>
+ ${quizMode==='meaning'?`<button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊 Dinle</button>`:''}
+ <div class="choice-grid">
+ ${choices.map(c=>`<button class="choice" onclick='answerChoice(${JSON.stringify(c)},${JSON.stringify(w.meaning)})'>${esc(quizMode==='meaning'?c:reverseChoice(c))}</button>`).join('')}
+ </div>
+ <div id="quizResult"></div>
+ </div>`;
+}
+function reverseChoice(c){
+ const hit=words.find(w=>w.meaning===c);
+ return hit?hit.word:c;
+}
+function setQuizMode(mode){quizMode=mode;quiz(document.getElementById('main'))}
+function startToeflSprint(){
+ if(!words.length){toast('Önce kelime ekle.');return}
+ quizSession=true;quizQ=0;quizCorrectSession=0;quizIndex=Math.floor(Math.random()*words.length);
+ quizMode=['meaning','reverse'][Math.floor(Math.random()*2)];
+ quiz(document.getElementById('main'));
+}
+function endSprint(){
+ quizSession=false;quizQ=0;quizCorrectSession=0;quiz(document.getElementById('main'));
+}
+function answerChoice(selected,correct){
+ if(quizAnswered)return;
+ quizAnswered=true;
+ const ok=selected===correct;
+ const w=words[quizIndex%words.length];
+ if(ok){quizScore++;w.quizCorrect=(w.quizCorrect||0)+1;if(quizSession)quizCorrectSession++}
+ else{w.quizWrong=(w.quizWrong||0)+1}
+ save();
+ document.querySelectorAll('.choice').forEach(btn=>{
+   const txt=btn.textContent.trim();
+   const expected=quizMode==='meaning'?correct:reverseChoice(correct);
+   if(txt===expected)btn.classList.add('correct');
+   if(txt=== (quizMode==='meaning'?selected:reverseChoice(selected)) && !ok)btn.classList.add('wrong');
+   btn.disabled=true;
+ });
+ const resultText=ok?'✅ Doğru!':'❌ Bu sefer olmadı.';
+ const nextAction=quizSession && quizQ+1>=quizTotal
+   ? `<button class="btn primary" style="width:100%;margin-top:10px" onclick="finishSprint()">🏁 Sprint sonucunu gör</button>`
+   : `<button class="btn secondary" style="width:100%;margin-top:10px" onclick="quizIndex++;if(quizSession)quizQ++;quiz(document.getElementById('main'))">Sonraki soru →</button>`;
+ document.getElementById('quizResult').innerHTML=`<div class="info ${ok?'success':'error'}">${resultText}<br><b>${esc(w.word)}</b> → ${esc(w.meaning)}</div>${nextAction}`;
+}
+function finishSprint(){
+ const score=quizCorrectSession, total=quizTotal, pct=Math.round(score/total*100);
+ quizSession=false;
+ document.getElementById('main').innerHTML=`<h1>🎯 Sprint tamamlandı</h1><div class="sub">10 soruluk TOEFL kelime çalışması</div>
+ <div class="card sprint-result"><div class="bigscore">${pct}%</div><h2>${score} / ${total} doğru</h2>
+ <div class="meta">${pct>=80?'Çok iyi gidiyorsun!':'Bir tur daha tekrar ederek güçlendirebilirsin.'}</div>
+ <div class="btnrow" style="margin-top:20px"><button class="btn primary" onclick="startToeflSprint()">Tekrar sprint</button><button class="btn secondary" onclick="nav('stats')">İlerlemeyi gör</button></div></div>`;
+}
+
+let readingText='', readingWords=[], selectedReading=new Set(), readingFile=null;
+
+const commonWords=new Set(('the a an and or but if then than of to in on at for from by with without as is are was were be been being this that these those it its they them their there here into about after before during while which who whom what when where why how can could may might must should would will shall do does did done have has had having not no yes very more most some any each every both either neither other another such only also too so because through over under between among against per as we your our my his her their i you he she me him us'.split(/\s+/)));
+const readingNoise=new Set(('reg section question questions answer passage first second third fourth fifth page paragraph number text www com http https century king god sun moon'.split(/\s+/)));
+const academicBoost=new Set(Object.keys(fallback).concat(('archaeology recovery analysis material culture excavated restored antiquarian conducted detailed investigations systematic burial discipline recognized evidence research method theory finding findings significant substantial mitigate derive demonstrate interpret assess imply subsequent sufficient fundamental empirical'.split(/\s+/))));
+
+function normalizeToken(s){return s.toLowerCase().replace(/[^a-z'-]/g,'').trim()}
+function candidateScore(w){
+  let score=0;
+  if(academicBoost.has(w))score+=5;
+  if(fallback[w])score+=4;
+  if(w.length>=7)score+=2;
+  if(w.length>=10)score+=1;
+  return score;
+}
+function candidateReadingWords(){
+  return [...new Set(readingWords.map(normalizeToken)
+    .filter(w=>w.length>=5 && !commonWords.has(w) && !readingNoise.has(w) && !words.some(x=>x.word===w)))]
+    .filter(w=>candidateScore(w)>=5)
+    .sort((a,b)=>candidateScore(b)-candidateScore(a) || b.length-a.length || a.localeCompare(b));
+}
+
+function reading(m){
+ m.innerHTML=`<h1>📖 Reading Lab</h1><div class="sub">Reading ekran görüntünü yükle, bilmediğin kelimeleri seç ve VocaMate listene ekle.</div>
+ <div class="card">
+ <span class="pill">📷 Ekran görüntüsü</span>
+ <h2 style="margin:10px 0 6px">Reading metni yükle</h2>
+ <div class="meta">İngilizce bir PDF/soru ekran görüntüsünü fotoğraf olarak yükleyebilirsin. Metin cihazında işlenir; sonra kelimelere dokunarak seçim yaparsın.</div>
+ <input id="readingFile" type="file" accept="image/*" style="margin-top:18px;width:100%" onchange="runOCR(this.files[0])">
+ <div id="ocrStatus" class="info" style="margin-top:14px">Henüz görsel yüklenmedi.</div>
+ </div>
+ <div id="readingResult"></div>
+ ${readingText?`<button class="btn secondary" style="width:100%" onclick="resetReading()">Yeni görsel yükle</button>`:''}`;
+ if(readingText) renderReadingResult();
+}
+async function runOCR(file){
+ if(!file)return;
+ readingFile=file; readingText=''; readingWords=[]; selectedReading=new Set();
+ const status=document.getElementById('ocrStatus');
+ status.innerHTML='🔎 Görsel okunuyor...';
+ try{
+   const result=await Tesseract.recognize(file,'eng',{logger:msg=>{
+     if(msg.status==='recognizing text' && msg.progress) status.innerHTML=`🔎 Metin okunuyor... ${Math.round(msg.progress*100)}%`;
+   }});
+   readingText=result.data.text||'';
+   readingWords=(readingText.match(/[A-Za-z][A-Za-z'-]*/g)||[]);
+   status.innerHTML=`✅ Metin okundu. ${readingWords.length} kelime bulundu.`;
+   renderReadingResult();
+ }catch(e){
+   status.innerHTML='❌ Görsel okunamadı. Daha net bir ekran görüntüsü deneyebilirsin.';
+ }
+}
+function renderReadingResult(){
+ const box=document.getElementById('readingResult'); if(!box)return;
+ const candidates=candidateReadingWords();
+ const spans=(readingText.match(/\s+|[A-Za-z][A-Za-z'-]*|[^A-Za-z\s]+/g)||[]).map(token=>{
+   const n=normalizeToken(token);
+   if(!n)return esc(token);
+   const isSel=selectedReading.has(n);
+   const isCandidate=candidates.includes(n);
+   const cls=isSel?'reading-word selected':(isCandidate?'reading-word candidate':'reading-word');
+   return `<button class="${cls}" onclick="toggleReadingWord('${encodeURIComponent(n)}')" title="Kelimeyi seç">${esc(token)}</button>`;
+ }).join('');
+ box.innerHTML=`<div class="card">
+ <div class="section-title">📄 Okunan metin</div>
+ <div class="meta" style="margin-bottom:14px">Yeşil kelimeler yüksek güvenli TOEFL adaylarıdır. Metindeki diğer kelimelere de dokunarak kendin seçim yapabilirsin. VocaMate sen onaylamadan hiçbir kelimeyi listeye eklemez.</div>
+ <div class="reading-text">${spans}</div>
+ </div>
+ <div class="card"> 
+<div class="section-title">🧠 🎯 TOEFL kelime adayları</div>
+  <div class="meta">${candidates.length?`${candidates.length} yüksek güvenli TOEFL kelime adayı bulundu. Diğer kelimeleri metin üzerinde kendin seçebilirsin.`:'Yüksek güvenli TOEFL adayı bulunamadı. Metindeki kelimelere dokunarak kendin seçebilirsin.'}</div>
+  <div class="candidate-row">${candidates.slice(0,40).map(w=>`<button class="candidate-chip ${selectedReading.has(w)?'chosen':''}" onclick="toggleReadingWord('${encodeURIComponent(w)}')">${esc(w)}${fallback[w]?' •':''}</button>`).join('')}</div>
+  ${candidates.length?`<button class="btn secondary" style="width:100%;margin-top:12px" onclick="selectTopReadingCandidates()">⭐ İlk ${Math.min(10,candidates.length)} adayı seç</button>`:''}
+  </div>
+  <div class="card">
+  <div class="section-title">➕ Seçilen kelimeler</div>
+ <div class="meta">${selectedReading.size?`${selectedReading.size} kelime seçildi.`:'Metin üzerindeki kelimelere dokunarak seç.'}</div>
+ <div id="selectedWordsBox">${selectedReading.size?[...selectedReading].map(w=>`<div class="progressline"><span>${esc(w)}</span><button class="delete" onclick="toggleReadingWord('${encodeURIComponent(w)}')">Çıkar</button></div>`).join(''):'<div class="empty">Henüz kelime seçmedin.</div>'}</div>
+ ${selectedReading.size?`<button class="btn primary" style="width:100%;margin-top:16px" onclick="prepareReadingSelected()">Seçilenleri listeye hazırla →</button>`:''}
+ </div>`;
+}
+function selectTopReadingCandidates(){const candidates=candidateReadingWords().slice(0,10);candidates.forEach(w=>selectedReading.add(w));renderReadingResult();}
+
+function toggleReadingWord(encoded){
+ const w=decodeURIComponent(encoded); if(!w)return;
+ if(selectedReading.has(w))selectedReading.delete(w); else selectedReading.add(w);
+ renderReadingResult();
+}
+
+function readingSentenceFor(word){
+ const text=readingText||'';
+ const parts=text.split(/(?<=[.!?])\s+/).filter(Boolean);
+ const hit=parts.find(s=>new RegExp(`\\b${word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'i').test(s));
+ if(hit)return hit.trim();
+ const idx=readingWords.findIndex(x=>normalizeToken(x)===word);
+ if(idx<0)return '';
+ return readingWords.slice(Math.max(0,idx-6),Math.min(readingWords.length,idx+7)).join(' ');
+}
+async function translateContextToTurkish(word, sentence){
+ if(!sentence)return '';
+ try{
+   const phrase=sentence.length>500?sentence.slice(0,500):sentence;
+   const q=encodeURIComponent(phrase);
+   const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=${q}`;
+   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),7000);
+   const r=await fetch(url,{signal:controller.signal}); clearTimeout(timer);
+   if(!r.ok)return '';
+   const j=await r.json();
+   const out=(j?.[0]||[]).map(x=>x?.[0]||'').join('').trim();
+   return out;
+ }catch(e){return ''}
+}
+async function contextualMeaning(word, sentence){
+ const d=fallback[word]||{};
+ const translated=await translateContextToTurkish(word,sentence);
+ if(!translated)return d.meaning||'';
+ // Keep the concise dictionary meaning when available; otherwise use a context-aware phrase translation
+ // so the user does not have to type a Turkish meaning manually.
+ if(d.meaning)return d.meaning;
+ return translated;
+}
+async function prepareReadingSelected(){
+ const selected=[...selectedReading];
+ if(!selected.length){toast('Önce kelime seç.');return}
+ const box=document.getElementById('readingResult');
+ box.innerHTML=`<div class="card"><div class="section-title">🧠 Reading bağlamından kelime bilgileri hazırlanıyor...</div><div class="meta">VocaMate seçtiğin kelimenin geçtiği cümleyi bulup Türkçe anlamı otomatik dolduruyor. Ardından kendi örnek cümleni ekleyebilirsin.</div><div id="readingForms"><div class="info">🔎 ${selected.length} kelime hazırlanıyor...</div></div></div>`;
+ const forms=[];
+ for(let i=0;i<selected.length;i++){
+   const w=selected[i], d=fallback[w]||{}, sentence=readingSentenceFor(w);
+   const meaning=await contextualMeaning(w,sentence);
+   forms.push({w,d,sentence,meaning});
+   const formsBox=document.getElementById('readingForms');
+   if(formsBox){
+     formsBox.innerHTML=forms.map((x,j)=>`<div class="reading-form">
+       <b>${esc(x.w)}</b>
+       ${x.sentence?`<div class="mini"><b>📖 Reading'deki cümle</b>${esc(x.sentence)}</div>`:''}
+       ${x.meaning?`<div class="mini success"><b>🇹🇷 Otomatik anlam</b>${esc(x.meaning)}</div>`:'<div class="mini error">Otomatik çeviri bulunamadı. Tekrar deneyebilir veya anlamı düzenleyebilirsin.</div>'}
+       <label>Türkçe anlam</label><input id="rmeaning_${j}" value="${esc(x.meaning||'')}" placeholder="Reading bağlamındaki anlam">
+       <label>📘 VocaMate örnek cümlesi</label><textarea id="rexample_${j}" placeholder="Varsa sözlük örnek cümlesi">${esc(x.d.example||'')}</textarea>
+       <label>✍️ Kendi örnek cümlen</label><textarea id="ruserExample_${j}" placeholder="Bu kelimeyle kendi İngilizce cümleni yaz..."></textarea>
+       <label>Zorluk</label><select id="rdiff_${j}"><option>Orta</option><option>Kolay</option><option>Zor</option></select>
+     </div>`).join('');
+   }
+ }
+ const finalBox=document.getElementById('readingResult');
+ if(finalBox){
+   finalBox.innerHTML=`<div class="card"><div class="section-title">🧠 Reading'den otomatik kelime bilgileri</div>
+   <div class="meta">Anlamlar Reading cümlesinin bağlamından otomatik hazırlanır. İstersen düzenleyebilirsin. Ayrıca her kelime için kendi İngilizce örnek cümleni ekleyebilirsin.</div>
+   <div id="readingForms">${forms.map((x,j)=>`<div class="reading-form">
+     <b>${esc(x.w)}</b>
+     ${x.sentence?`<div class="mini"><b>📖 Reading'deki cümle</b>${esc(x.sentence)}</div>`:''}
+     ${x.meaning?`<div class="mini success"><b>🇹🇷 Otomatik anlam</b>${esc(x.meaning)}</div>`:'<div class="mini error">Otomatik anlam bulunamadı; alanı düzenleyebilirsin.</div>'}
+     <label>Türkçe anlam</label><input id="rmeaning_${j}" value="${esc(x.meaning||'')}" placeholder="Reading bağlamındaki anlam">
+     <label>📘 VocaMate örnek cümlesi</label><textarea id="rexample_${j}" placeholder="Varsa sözlük örnek cümlesi">${esc(x.d.example||'')}</textarea>
+     <label>✍️ Kendi örnek cümlen</label><textarea id="ruserExample_${j}" placeholder="Bu kelimeyle kendi İngilizce cümleni yaz..."></textarea>
+     <label>Zorluk</label><select id="rdiff_${j}"><option>Orta</option><option>Kolay</option><option>Zor</option></select>
+   </div>`).join('')}</div>
+   <button class="btn primary" style="width:100%;margin-top:18px" onclick="saveReadingSelected()">💾 Kelimeleri listeye ekle</button></div>`;
+ }
+}
+function saveReadingSelected(){
+ const selected=[...selectedReading];
+ let added=0;
+ selected.forEach((w,i)=>{
+   const meaning=document.getElementById(`rmeaning_${i}`)?.value.trim();
+   const example=document.getElementById(`rexample_${i}`)?.value.trim()||'';
+   const userExample=document.getElementById(`ruserExample_${i}`)?.value.trim()||'';
+   if(!meaning)return;
+   const d=fallback[w]||{};
+   const contextSentence=readingSentenceFor(w);
+   const old=words.find(x=>x.word===w);
+   words=words.filter(x=>x.word!==w);
+   words.push({word:w,type:d.type||'word',phonetic:d.phonetic||'',definition:d.definition||'',meaning,example,userExample,note:'Reading bağlamından eklendi',readingContext:contextSentence,readingSource:'Reading Lab',synonyms:d.synonyms||'',antonyms:d.antonyms||'',category:'TOEFL Academic',difficulty:document.getElementById(`rdiff_${i}`)?.value||'Orta',added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+   added++;
+ });
+ save();
+ selectedReading=new Set();
+ toast(`✅ ${added} kelime listeye eklendi`);
+ setTimeout(()=>nav('reading'),500);
+}
+function resetReading(){readingText='';readingWords=[];selectedReading=new Set();render()}
+
+
+const phraseBank = [
+ {area:'Speaking',group:'Görüş belirtme',en:'In my opinion, ...',tr:'Bence / Bana göre ...',use:'Bağımsız speaking sorularında görüşünü net başlatmak için.'},
+ {area:'Speaking',group:'Görüş belirtme',en:'Personally, I think that ...',tr:'Şahsen, ... düşünüyorum.',use:'Kişisel görüşü doğal biçimde ifade etmek için.'},
+ {area:'Speaking',group:'Neden verme',en:'There are two main reasons for my opinion.',tr:'Görüşümün iki temel nedeni var.',use:'Cevabı iki nedenle yapılandırmak için.'},
+ {area:'Speaking',group:'Neden verme',en:'The first reason is that ...',tr:'İlk neden şu ki ...',use:'İlk nedeni açıklamak için.'},
+ {area:'Speaking',group:'Neden verme',en:'Another reason is that ...',tr:'Bir diğer neden ise ...',use:'İkinci nedeni eklemek için.'},
+ {area:'Speaking',group:'Örnek verme',en:'For example, ...',tr:'Örneğin, ...',use:'Kısa ve net bir örnek vermek için.'},
+ {area:'Speaking',group:'Örnek verme',en:'For instance, ...',tr:'Örneğin, ...',use:'Örnek eklemek için alternatif ifade.'},
+ {area:'Speaking',group:'Sonuç',en:'For these reasons, I would prefer ...',tr:'Bu nedenlerle ... tercih ederim.',use:'Bağımsız speaking cevabını toparlamak için.'},
+ {area:'Speaking',group:'Açıklama',en:'What I mean is that ...',tr:'Demek istediğim şu ki ...',use:'Fikrini yeniden açıklamak veya netleştirmek için.'},
+ {area:'Speaking',group:'Karşılaştırma',en:'Compared with ..., ...',tr:'... ile karşılaştırıldığında, ...',use:'İki seçenek arasında karşılaştırma yapmak için.'},
+ {area:'Writing',group:'Giriş',en:'The topic of whether ... has been widely discussed.',tr:'... konusu geniş çapta tartışılmıştır.',use:'Bağımsız writing girişinde konuya giriş yapmak için.'},
+ {area:'Writing',group:'Görüş',en:'I believe that ...',tr:'... olduğuna inanıyorum / düşünüyorum.',use:'Tez veya ana görüşü açıkça belirtmek için.'},
+ {area:'Writing',group:'Neden',en:'One important reason is that ...',tr:'Önemli bir neden şu ki ...',use:'Paragrafın ana gerekçesini sunmak için.'},
+ {area:'Writing',group:'Ek fikir',en:'In addition, ...',tr:'Buna ek olarak, ...',use:'Yeni bir destekleyici fikir eklemek için.'},
+ {area:'Writing',group:'Karşıtlık',en:'However, ...',tr:'Ancak / Bununla birlikte, ...',use:'Karşıt veya sınırlayıcı bir fikir sunmak için.'},
+ {area:'Writing',group:'Karşıtlık',en:'On the other hand, ...',tr:'Öte yandan, ...',use:'Alternatif bakış açısına geçmek için.'},
+ {area:'Writing',group:'Karşılaştırma',en:'In contrast, ...',tr:'Buna karşılık, ...',use:'İki fikir arasındaki farkı vurgulamak için.'},
+ {area:'Writing',group:'Örnek',en:'For example, ...',tr:'Örneğin, ...',use:'İddiayı somut bir örnekle desteklemek için.'},
+ {area:'Writing',group:'Neden-sonuç',en:'As a result, ...',tr:'Sonuç olarak, ...',use:'Bir olayın sonucunu açıklamak için.'},
+ {area:'Writing',group:'Neden-sonuç',en:'Therefore, ...',tr:'Bu nedenle / Dolayısıyla, ...',use:'Mantıksal sonuç belirtmek için.'},
+ {area:'Writing',group:'Vurgu',en:'It is worth noting that ...',tr:'... olduğunu belirtmekte fayda var.',use:'Önemli bir noktayı vurgulamak için.'},
+ {area:'Writing',group:'Sonuç',en:'In conclusion, ...',tr:'Sonuç olarak, ...',use:'Sonuç paragrafını başlatmak için.'},
+ {area:'Writing',group:'Sonuç',en:'To sum up, ...',tr:'Özetlemek gerekirse, ...',use:'Kısa bir sonuç özeti için.'},
+ {area:'Writing',group:'Integrated',en:'The reading passage states that ...',tr:'Okuma metni ... olduğunu belirtmektedir.',use:'Integrated writingde reading tarafını aktarmak için.'},
+ {area:'Writing',group:'Integrated',en:'The lecturer challenges this point by arguing that ...',tr:'Öğretim görevlisi bu noktaya ... ileri sürerek karşı çıkmaktadır.',use:'Integrated writingde lecture ile reading arasındaki karşıtlığı açıklamak için.'},
+ {area:'Writing',group:'Integrated',en:'This contradicts the claim that ...',tr:'Bu, ... iddiasıyla çelişmektedir.',use:'Karşıt kanıtı açıkça belirtmek için.'},
+ {area:'Writing',group:'Integrated',en:'According to the lecture, ...',tr:'Derse göre, ...',use:'Lecture bilgisini aktarırken.'}
+];
+
+function copyPhrase(i){
+ const p=phraseBank[i];
+ navigator.clipboard?.writeText(p.en).then(()=>toast('📋 Kalıp kopyalandı')).catch(()=>toast('Kalıbı seçip kopyalayabilirsin.'));
+}
+
+function patterns(m){
+ const groups=[...new Set(phraseBank.map(p=>p.group))];
+ m.innerHTML=`<h1>💬 TOEFL kalıpları</h1>
+ <div class="sub">Speaking ve Writing cevaplarını daha düzenli kurmak için kullanabileceğin genel ifadeler.</div>
+ <div class="info">💡 Bunları ezberlemek yerine, kendi fikirlerinle tamamlayarak kullan. Kalıp tek başına yüksek skor garantisi vermez.</div>
+ <div class="card"><div class="section-title">🎤 Speaking</div>
+ ${phraseBank.map((p,i)=>p.area==='Speaking'?`<div class="phrase"><div class="phrase-top"><span class="badge">${esc(p.group)}</span><button class="copybtn" onclick="copyPhrase(${i})">Kopyala</button></div><b>${esc(p.en)}</b><div class="meta">${esc(p.tr)}</div><div class="mini">${esc(p.use)}</div></div>`:'').join('')}</div>
+ <div class="card"><div class="section-title">✍️ Writing</div>
+ ${phraseBank.map((p,i)=>p.area==='Writing'?`<div class="phrase"><div class="phrase-top"><span class="badge">${esc(p.group)}</span><button class="copybtn" onclick="copyPhrase(${i})">Kopyala</button></div><b>${esc(p.en)}</b><div class="meta">${esc(p.tr)}</div><div class="mini">${esc(p.use)}</div></div>`:'').join('')}</div>`;
+}
+let vocabFilter='all', vocabSearch='';
+function setVocabFilter(f){vocabFilter=f;stats(document.getElementById('main'))}
+function filterWords(){vocabSearch=(document.getElementById('vocabSearch')?.value||'').trim().toLowerCase();stats(document.getElementById('main'))}
+function wordStatus(w){
+  if(w.reviewLevel==='Güçlü')return {label:'Güçlü',cls:'green'};
+  if(w.reviewLevel==='Unutuldu')return {label:'Unutuldu',cls:'red'};
+  if(w.reviewLevel==='Zorlanıyorum')return {label:'Zorlanıyorum',cls:'yellow'};
+  return {label:'Öğreniliyor',cls:'yellow'};
+}
+function filterMatch(w){
+  if(vocabFilter==='all')return true;
+  if(vocabFilter==='due')return !w.nextReview||new Date(w.nextReview)<=new Date();
+  if(vocabFilter==='strong')return w.reviewLevel==='Güçlü';
+  if(vocabFilter==='toefl')return (w.category||'')==='TOEFL Academic'||w.sourceContext==='TOEFL';
+  if(vocabFilter.startsWith('source:'))return (w.sourceContext||'')===vocabFilter.slice(7);
+  if(vocabFilter==='general')return ['General English','Daily English'].includes(w.category||'');
+  return true;
+}
+function stats(m){
+  const due=dueWords(), strong=words.filter(w=>w.reviewLevel==='Güçlü'), learned=words.filter(w=>(w.repetitions||0)>0), forgotten=words.filter(w=>w.reviewLevel==='Unutuldu');
+  let list=words.slice().reverse().filter(w=>{
+    const q=!vocabSearch||w.word.toLowerCase().includes(vocabSearch)||(w.meaning||'').toLowerCase().includes(vocabSearch)||(w.definition||'').toLowerCase().includes(vocabSearch);
+    return q&&filterMatch(w);
+  });
+  const chips=[['all','Tümü'],['due','🔁 Tekrar'],['strong','🟢 Güçlü'],['toefl','🎓 TOEFL'],['source:Reading','📖 Reading'],['source:Listening','🎧 Listening'],['source:Speaking','🎤 Speaking'],['source:Writing','✍️ Writing'],['general','🌎 Genel']];
+  m.innerHTML=`<h1>📚 Kelime hazinem</h1><div class="sub">Kelime öğrenme merkezinin tamamı burada. Ara, filtrele, kelimeye dokun ve detaylarını gör.</div>
+  <div class="library-hero"><div class="eyebrow">VOCABULARY LIBRARY</div><h2>${words.length} kelime</h2><p>${due.length?`Bugün ${due.length} kelime tekrar bekliyor.`:'Bugün tekrar bekleyen kelime yok. Yeni kelimeler ekleyebilirsin.'}</p><div class="library-stats"><div class="library-stat"><strong>${due.length}</strong><span>Tekrar</span></div><div class="library-stat"><strong>${strong.length}</strong><span>Güçlü</span></div><div class="library-stat"><strong>${learned.length}</strong><span>Çalışılmış</span></div></div></div>
+  <div class="card"><label style="margin-top:0">🔎 Kelime ara</label><input id="vocabSearch" value="${esc(vocabSearch)}" placeholder="Kelime, anlam veya tanım..." oninput="filterWords()"><div class="library-filters" style="margin-top:12px">${chips.map(([k,l])=>`<button class="library-filter ${vocabFilter===k?'active':''}" onclick="setVocabFilter('${k}')">${l}</button>`).join('')}</div></div>
+  <div class="vocab-summary"><span><b>${list.length}</b> kelime gösteriliyor</span><span>${forgotten.length} unutuldu</span></div>
+  <div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const st=wordStatus(w), dueNow=!w.nextReview||new Date(w.nextReview)<=new Date(); const source=w.sourceContext||w.category||'General English'; return `<div class="library-word" onclick="openWordDetail('${encodeURIComponent(w.word)}')"><div class="library-word-main"><div class="library-word-name"><span class="status-dot dot-${st.cls}"></span>${esc(w.word)} <button class="speak" onclick="event.stopPropagation();speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="library-word-meaning">${esc(w.meaning||'Anlam eklenmedi')}</div><div class="library-word-meta"><span class="source-pill">${esc(source)}</span><span class="badge">${esc(w.difficulty||'Orta')}</span><span class="badge">${esc(st.label)}</span>${dueNow?'<span class="badge" style="background:#fff4dc;color:#8a6411">Tekrar zamanı</span>':''}</div></div><div class="library-arrow">›</div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.<br><br>＋ Yeni bir kelime ekleyelim.</div>'}</div>
+  <div class="btnrow" style="margin-top:12px"><button class="btn primary" style="flex:1" onclick="nav('add')">＋ Yeni kelime ekle</button><button class="btn secondary" style="flex:1" onclick="startReview()">🧠 Tekrar</button></div>`;
+}
+function openWordDetail(encoded){const word=decodeURIComponent(encoded);if(!words.some(w=>w.word===word))return;pushPage('wordDetail');window._detailWord=word;render();}
+function wordDetail(m){
+ const w=words.find(x=>x.word===window._detailWord); if(!w){nav('stats');return;}
+ const st=wordStatus(w), dueNow=!w.nextReview||new Date(w.nextReview)<=new Date();
+ const next=w.nextReview?new Date(w.nextReview).toLocaleDateString('tr-TR',{day:'2-digit',month:'long'}):'İlk tekrar';
+ const source=w.sourceContext||w.category||'General English';
+ const exWord=esc(w.word);
+ const saved=w.userExample?`<div class="v22-saved">✅ <b>Kayıtlı cümlen:</b> ${esc(w.userExample)}</div>`:'';
+ const speakingUse=`One substantial advantage is that this approach can improve the overall result.`.replace(/substantial/gi,w.word);
+ const writingUse=`There has been a substantial increase in the number of people using this approach.`.replace(/substantial/gi,w.word);
+
+ const sentenceDone=!!(w.userExample&&w.userExample.trim());
+ const quizDone=(w.quizCorrect||0)>0;
+ const reviewDone=(w.repetitions||0)>0;
+ const pronunciationDone=!!w.pronunciationPracticed;
+ const learnedDone=!!w.meaning;
+ const mastery=masteryInfo(w);
+ const steps=[
+   {done:learnedDone,icon:'📖',title:'Anlamı öğren',sub:'Türkçe ve İngilizce anlamı incele',action:''},
+   {done:pronunciationDone,icon:'🔊',title:'Dinle & söyle',sub:'Kelimeyi sesli olarak tekrar et',action:`<button onclick="practicePronunciation(${JSON.stringify(w.word)})">Başlat</button>`},
+   {done:sentenceDone,icon:'✍️',title:'Kendi cümleni kur',sub:sentenceDone?'Cümlen kaydedildi':'Kelimeyi kendi cümlende kullan',action:`<button onclick="document.getElementById('activeSentence')?.focus()">Yaz</button>`},
+   {done:quizDone,icon:'🎯',title:'Quizde göster',sub:quizDone?'Quizde doğru yaptın':'Kelimeyi quizde hatırla',action:`<button onclick="nav('quiz')">Quiz</button>`},
+   {done:reviewDone,icon:'🧠',title:'Tekrarla',sub:reviewDone?'En az bir başarılı tekrar var':'Spaced repetition ile pekiştir',action:`<button onclick="startSingleReview('${encodeURIComponent(w.word)}')">Tekrar</button>`}
+ ];
+ const doneCount=steps.filter(s=>s.done).length, pct=Math.round(doneCount/steps.length*100);
+ const pathHtml=steps.map(s=>`<div class="v23-step ${s.done?'done':''}"><div class="vicon">${s.done?'✓':s.icon}</div><div><b>${s.title}</b><span>${s.sub}</span></div>${s.action||''}</div>`).join('');
+ const mission=sentenceDone
+   ? `Bu kelimeyi artık pasif olarak tanımaktan çıkardın. Şimdi ${esc(w.word)} kelimesini bir TOEFL Speaking veya Writing cevabında kullan.`
+   : `Bugünün mini görevi: <b>${exWord}</b> kelimesini kullanarak en az 6 kelimelik doğal bir İngilizce cümle yaz.`;
+
+ m.innerHTML=`
+ <div class="word-profile"><div class="profile-word">${exWord} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="profile-meta">${esc(w.phonetic||'Telaffuz yok')} <span>•</span> ${esc(w.type||'word')}</div><div style="margin-top:12px"><span class="source-pill">${esc(source)}</span> <span class="badge">${esc(w.category||'General English')}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <span class="badge">${esc(st.label)}</span></div><div class="pronounce-row"><button class="mini-action" onclick="speakWord(${JSON.stringify(w.word)})">🔊 Dinle</button><button class="mini-action" onclick="practicePronunciation(${JSON.stringify(w.word)})">🎤 Kelimeyi söyle</button></div></div>
+ ${dueNow?'<div class="review-banner">🔔 Bu kelime bugün tekrar bekliyor.</div>':`<div class="info">🔁 Sonraki tekrar: <b>${next}</b></div>`}
+
+ <div class="v23-path">
+   <div class="v23-path-head"><div><h3>🧠 Kelime öğrenme yolu</h3><p>Bir kelimeyi bilmek = görmek değil, aktif kullanabilmek.</p></div><div class="v23-score">${doneCount}/5</div></div>
+   <div class="v23-progress"><span style="width:${pct}%"></span></div>
+   <div class="v23-steps">${pathHtml}</div>
+ </div>
+
+ <div class="mastery-card"><div class="mastery-head"><div><div class="mastery-title">⭐ Vocabulary Mastery</div><div class="mastery-sub">Hedef: kelimeyi sadece tanımak değil, bağımsız olarak kullanabilmek.</div></div><div class="mastery-level">${mastery.level}</div></div><div class="mastery-bar"><span style="width:${mastery.pct}%"></span></div><div class="mastery-stages">${mastery.stages.map((x,i)=>`<div class="mastery-stage ${x.done?'done':''} ${i===mastery.index?'current':''}"><div class="mastery-dot">${x.done?'✓':i+1}</div><div>${x.label}</div></div>`).join('')}</div></div>
+
+ <div class="profile-grid"><div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><div style="font-size:20px;font-weight:800">${esc(w.meaning||'Anlam eklenmedi')}</div></div><div class="profile-box"><div class="profile-label">📖 İngilizce tanım</div><div>${esc(w.definition||'Tanım bulunamadı.')}</div></div>${w.example?`<div class="profile-box"><div class="profile-label">📘 VocaMate örnek cümlesi</div><div>${esc(w.example)}</div></div>`:''}${w.readingContext?`<div class="profile-box"><div class="profile-label">📖 Reading bağlamı</div><div>${esc(w.readingContext)}</div></div>`:''}${w.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(w.synonyms)}</div></div>`:''}${w.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(w.antonyms)}</div></div>`:''}${w.note?`<div class="profile-box"><div class="profile-label">📝 Notum</div><div>${esc(w.note)}</div></div>`:''}</div>
+
+ <div class="v23-mission"><div class="kicker">BUGÜNÜN KELİME GÖREVİ</div><h3>${sentenceDone?'Bir adım daha!':'Kelimeyi aktif hale getir'}</h3><p>${mission}</p>${!sentenceDone?`<button onclick="document.getElementById('activeSentence')?.focus()">✍️ Cümlemi yaz</button>`:`<button onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Tekrar et</button>`}</div>
+
+ <div class="v22-focus"><div class="v22-focus-head"><div class="v22-focus-icon">✍️</div><div><h3>Aktif kullanım</h3><div class="small">Vocabulary'nin en önemli adımı: kelimeyi sen kullan.</div></div></div><p>${`Write one natural English sentence using <b>${exWord}</b>. Try to use the word in the same meaning shown above.`}</p><div class="v22-prompt">💡 <b>Mini görev:</b> ${w.word} kelimesini bugün bir konuşmada veya yazıda kullan.</div><textarea id="activeSentence" class="sentence-box" style="margin-top:10px" placeholder="Write your own sentence with ${exWord}...">${esc(w.userExample||'')}</textarea><button class="ai-coach-btn ai-coach-btn-main" onclick="aiCoachSentence('${encodeURIComponent(w.word)}')">🤖 AI Cümle Koçu <span>Grammar • Doğallık • Öneri</span></button><div class="v22-row"><button class="listen" onclick="saveActiveSentence('${encodeURIComponent(w.word)}')">💾 Kaydet</button><button class="practice" onclick="checkActiveSentence('${encodeURIComponent(w.word)}')">✓ Cümlemi kontrol et</button></div><div id="sentenceFeedback"></div>${saved}</div>
+
+ <div class="active-learning"><h3>🎓 TOEFL'da kullan</h3><p>Öğrendiğin kelimeyi sınavın Speaking ve Writing cevaplarına taşı.</p><div class="toefl-use"><div class="use-card"><b>🎤 Speaking</b><span>${esc(speakingUse)}</span></div><div class="use-card"><b>✍️ Writing</b><span>${esc(writingUse)}</span></div></div><button class="btn primary" style="width:100%;margin-top:10px" onclick="markToeflUse('${encodeURIComponent(w.word)}')">🎓 Bu kelimeyi TOEFL'da kullandım</button></div>
+ <div class="stats" style="margin-top:14px"><div class="stat"><strong>${w.reviewCount||0}</strong><span>Tekrar sayısı</span></div><div class="stat"><strong>${w.quizCorrect||0}</strong><span>Quiz doğru</span></div><div class="stat"><strong>${w.repetitions||0}</strong><span>Başarılı tekrar</span></div><div class="stat"><strong>${w.interval||0} gün</strong><span>Aralık</span></div></div>
+ <div class="detail-actions" style="margin-top:14px"><button class="btn primary" onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Şimdi tekrar et</button><button class="btn secondary" onclick="editWord('${encodeURIComponent(w.word)}')">✏️ Düzenle</button></div><button class="delete" style="width:100%;margin-top:10px;padding:14px" onclick="deleteWord('${encodeURIComponent(w.word)}')">🗑️ Kelimeyi sil</button>`;
+}
+function saveActiveSentence(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence');if(!w||!input)return;w.userExample=input.value.trim();save();toast('✍️ Kendi cümlen kaydedildi');}
+function masteryInfo(w){
+ const stages=[
+  {label:'Tanıyorum',done:!!w.meaning},
+  {label:'Telaffuz',done:!!w.pronunciationPracticed},
+  {label:'Cümlede',done:!!(w.userExample&&w.userExample.trim())},
+  {label:'Aktif',done:(w.activeSentenceScore||0)>=70},
+  {label:'TOEFL',done:(w.toeflUseCount||0)>0}
+ ];
+ const done=stages.filter(x=>x.done).length;
+ let level='Tanıyorum',index=0;
+ if(done>=5){level='TOEFL kullanıyorum';index=4}
+ else if(done>=4){level='Aktif kullanıyorum';index=3}
+ else if(done>=3){level='Cümlede kullanıyorum';index=2}
+ else if(done>=2){level='Tanıyorum + telaffuz';index=1}
+ const pct=Math.round(done/5*100);
+ return {level,index,pct,stages};
+}
+function checkActiveSentence(encoded){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence'),box=document.getElementById('sentenceFeedback');
+ if(!w||!input||!box)return;
+ const text=input.value.trim(), target=word.toLowerCase();
+ if(!text){box.className='sentence-feedback feedback-warn';box.innerHTML='💡 Önce kelimeyi kullanarak bir İngilizce cümle yaz.';return}
+ const hasWord=new RegExp('\\b'+target.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')+'(?:s|es|ed|ing)?\\b','i').test(text);
+ const wordsCount=text.split(/\\s+/).filter(Boolean).length;
+ const hasCapital=/^[A-Z]/.test(text);
+ const hasPunctuation=/[.!?]$/.test(text);
+ const repeatedSpaces=/\\s{2,}/.test(text);
+ const scoreParts=[]; let score=0;
+ if(hasWord){score+=45;scoreParts.push('Kelime cümlede kullanılmış.')}else scoreParts.push('Hedef kelime cümlede görünmüyor.');
+ if(wordsCount>=6){score+=20;scoreParts.push('Cümle yeterli uzunlukta.')}else scoreParts.push('Cümleyi biraz daha geliştir.');
+ if(hasCapital){score+=10;scoreParts.push('Büyük harf kullanımı uygun.')}else scoreParts.push('Cümle başında büyük harf kullan.');
+ if(hasPunctuation){score+=10;scoreParts.push('Noktalama işareti var.')}else scoreParts.push('Sonuna nokta, soru işareti veya ünlem ekle.');
+ if(!repeatedSpaces)score+=5;
+ if(/[.!?]/.test(text))score+=5;
+ if(/\b(is|are|was|were|has|have|had|can|could|will|would|do|does|did|the|a|an)\b/i.test(text))score+=5;
+ score=Math.min(100,score);
+ w.userExample=text;w.activeSentenceScore=score;w.lastActivePractice=today();save();
+ box.className=score>=70?'sentence-feedback feedback-good':'sentence-feedback feedback-warn';
+ box.innerHTML=`<span class="feedback-score">${score}/100</span><br>${score>=70?'✅ <b>Temel kullanım başarılı.</b>':'🟡 <b>Biraz daha geliştir.</b>'}<ul class="feedback-list">${scoreParts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="active-tip">🤖 Daha ayrıntılı grammar, doğallık ve alternatif cümle için <b>AI Cümle Koçu</b>nu kullan.</div>`;
+ if(currentPage==='wordDetail')setTimeout(()=>render(),900);
+}
+
+async function aiCoachSentence(encoded){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence'),box=document.getElementById('sentenceFeedback');
+ if(!w||!input||!box)return;
+ const sentence=input.value.trim();
+ if(!sentence){box.className='sentence-feedback feedback-warn';box.innerHTML='💡 Önce kendi cümleni yaz, sonra AI Cümle Koçu ile analiz edelim.';return}
+ const endpoint=localStorage.getItem('vocamate_ai_endpoint')||'';
+ if(!endpoint){
+   box.className='ai-coach-box';
+   box.innerHTML=`<h4>🤖 AI Cümle Koçu</h4><div class="ai-coach-grid"><div class="ai-coach-item"><b>Şu anki durum</b> Cümlen kaydedildi ve temel VocaMate kontrolünden geçti.</div><div class="ai-coach-item"><b>AI desteği</b> Gerçek AI analizi için VocaMate'ye güvenli bir backend bağlantısı eklememiz gerekiyor. API anahtarını uygulamanın içine koymayacağız.</div><div class="ai-coach-item"><b>Önerilen düzeltme</b> ${word==='substantial'&&/substantial time/i.test(sentence)?'“substantial amount of time” ifadesi daha doğal olabilir.':'AI bağlantısı kurulduğunda grammar, doğallık ve kelime anlamını ayrı ayrı analiz edecek.'}</div></div>`;
+   return;
+ }
+ box.className='ai-coach-box';box.innerHTML='<div class="ai-loading"><span class="ai-dot"></span> AI cümleni analiz ediyor…</div>';
+ try{
+   const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({word,meaning:w.meaning||'',definition:w.definition||'',sentence})});
+   if(!res.ok)throw new Error('AI endpoint '+res.status);
+   const data=await res.json();
+   const r=data.result||data;
+   box.innerHTML=`<h4>🤖 AI Cümle Koçu</h4><div class="ai-coach-grid"><div class="ai-coach-item"><b>Değerlendirme</b>${esc(r.evaluation||'')}</div><div class="ai-coach-item"><b>Grammar</b>${esc(r.grammar||'')}</div><div class="ai-coach-item"><b>Doğallık</b>${esc(r.naturalness||'')}</div><div class="ai-coach-item"><b>Önerilen cümle</b><strong>${esc(r.corrected_sentence||sentence)}</strong></div><div class="ai-coach-item"><b>Neden?</b>${esc(r.explanation||'')}</div><div class="ai-coach-item"><b>TOEFL önerisi</b>${esc(r.toefl_tip||'')}</div></div>`;
+   w.aiFeedback=r;w.aiCheckedAt=new Date().toISOString();w.userExample=sentence;save();
+ }catch(e){box.innerHTML='<div class="ai-coach-item"><b>⚠️ AI bağlantısı kurulamadı</b> Şimdilik temel VocaMate kontrolünü kullanabilirsin. AI bağlantısını daha sonra tekrar deneyebiliriz.</div>';}
+}
+function practicePronunciation(word){const w=words.find(x=>x.word===word);if(w){w.pronunciationPracticed=true;save();}if('SpeechRecognition' in window || 'webkitSpeechRecognition' in window){const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const heard=(e.results[0][0].transcript||'').toLowerCase();const ok=heard.includes(word.toLowerCase());toast(ok?'🎉 Kelimeyi doğru söyledin!':'🔁 Bir kez daha dene.');};r.onerror=()=>toast('🎤 Ses tanıma bu tarayıcıda kullanılamıyor.');r.start();toast('🎤 Dinliyorum...');}else{toast('🔊 Telaffuz çalışması kaydedildi. Ses tanıma bu tarayıcıda desteklenmiyor.');}if(currentPage==='wordDetail')setTimeout(()=>render(),700)}
+function markToeflUse(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.toeflUseCount=(w.toeflUseCount||0)+1;save();toast('🎓 TOEFL kullanımı kaydedildi');if(currentPage==='wordDetail')setTimeout(()=>render(),500);}
+function startSingleReview(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;w.nextReview=new Date().toISOString();save();nav('review');}
+function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;pushPage('add');render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
+function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');if(currentPage==='wordDetail')nav('stats');else render()}
+render();
+updateBottomNav();
+</script>
+</body>
+</html>
