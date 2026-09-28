@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v26.0</title>
+<title>VocaMate v26.1</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -55,7 +55,7 @@ textarea{min-height:95px;resize:vertical}label{display:block;font-weight:750;mar
 .badge{display:inline-block;background:#f0f3f8;color:#5e6c84;padding:7px 10px;border-radius:12px;font-size:13px;font-weight:750}
 .speak{margin-left:7px;border:0;background:#edf2ff;color:#4772e6;border-radius:12px;padding:7px 10px;font-weight:800}
 
-/* V12 home + vocabulary command center */
+/* V27 Vocabulary Core */
 .home-greeting{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.home-greeting h1{font-size:34px;margin:0 0 5px}.home-date{color:#7a879d;font-size:14px;font-weight:700}.home-focus{background:linear-gradient(135deg,#294776,#3f63a2);color:#fff;border-radius:26px;padding:22px;margin-bottom:16px;box-shadow:0 10px 30px #203b6818}.focus-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.focus-kicker{font-size:13px;opacity:.75;font-weight:800;text-transform:uppercase;letter-spacing:.7px}.focus-title{font-size:25px;font-weight:850;margin-top:5px}.focus-sub{font-size:15px;opacity:.84;margin-top:5px}.focus-number{font-size:28px;font-weight:850}.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 18px}.home-stat{background:#fff;border-radius:20px;padding:16px 12px;box-shadow:0 7px 22px #203b6810}.home-stat b{font-size:25px;display:block;color:#23406f}.home-stat span{font-size:12px;color:#7a879d;font-weight:700}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.quick-card{border:1px solid #e6ebf3;background:#fff;border-radius:20px;padding:16px;text-align:left;cursor:pointer}.quick-card .qicon{font-size:24px}.quick-card b{display:block;margin-top:8px;font-size:16px;color:#243552}.quick-card span{display:block;margin-top:3px;color:#7a879d;font-size:13px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section-head button{border:0;background:none;color:#4772e6;font-weight:800}.word-mini{display:flex;justify-content:space-between;align-items:center;gap:12px}.word-mini .wname{font-size:24px;font-weight:850;color:#1d2a40}.word-mini .wmeaning{color:#687892;margin-top:3px}.vocab-toolbar{display:grid;grid-template-columns:1fr auto;gap:9px;margin-bottom:12px}.filter-row{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.filter-chip{white-space:nowrap;border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:9px 12px;font-weight:750;color:#51627f}.filter-chip.active{background:#edf2ff;border-color:#91a8e7;color:#23406f}.vocab-search{margin-bottom:12px}.vocab-summary{display:flex;justify-content:space-between;color:#71809a;font-size:14px;margin-bottom:4px}.word-actions{display:flex;gap:7px}.editbtn{border:0;background:#eef3ff;color:#23406f;border-radius:11px;padding:8px 10px;font-weight:750}.word-list-card{background:#fff;border-radius:22px;padding:15px;margin-bottom:10px;box-shadow:0 6px 22px #203b6810}.word-list-card .listitem{padding:6px 0;border:0;align-items:flex-start}.home-divider{height:1px;background:#edf0f5;margin:4px 0 18px}
 @media(max-width:380px){.word{font-size:40px}h1{font-size:34px}.btn{font-size:16px}}
 
@@ -392,7 +392,9 @@ function toeflPractice(type){
   const renderQ=()=>{
    const q=bank[type][idx]; answered=false;
    m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">${d.icon} ${d.name}</div><div class="practice-sub">TOEFL iBT • 2026 practice</div></div></div>
-   <div class="practice-shell"><span class="practice-kicker">${esc(q.task)}</span>${q.context?`<div class="practice-context">${esc(q.context)}</div>`:''}${type==='listening'?`<div class="listen-card"><button class="listen-play" onclick="speakToeflAudio(${JSON.stringify(q.audio)})">▶</button><div class="meta" style="margin-top:8px">Dinlemek için dokun</div></div>`:''}<div class="practice-q">${esc(q.q)}</div><div class="practice-options">${q.opts.map((o,i)=>`<button class="practice-option" data-i="${i}" onclick="selectPracticeOption(this)">${esc(o)}</button>`).join('')}</div><div id="practiceFeedback"></div><div class="practice-footer"><div class="practice-progress"><span style="width:${Math.round((idx+1)/bank[type].length*100)}%"></span></div><div class="practice-counter">${idx+1}/${bank[type].length}</div></div><button id="practiceNext" class="btn primary" style="width:100%;margin-top:14px" onclick="checkPracticeAnswer('${type}')">Cevabı kontrol et</button></div>`;
+   <div class="practice-shell"><span class="practice-kicker">${esc(q.task)}</span>${q.context?`<div class="practice-context">${esc(q.context)}</div>`:''}${type==='listening'?`<div class="listen-card"><button class="listen-play" onclick="speakToeflAudio(${JSON.stringify(q.audio)})">▶</button><div class="meta" style="margin-top:8px">Dinlemek için dokun</div></div>`:''}<div class="practice-q">${esc(q.q)}</div><div class="practice-options">${q.opts.map((o,i)=>`<button class="practice-option" data-i="${i}" onclick="selectPracticeOption(this)">${esc(o)}</button>`).join('')}</div><div id="practiceFeedback"></div><div class="practice-footer"><div class="practice-progress"><span style="width:${Math.round((idx+1)/bank[type].length*100)}%"></span></div><div class="practice-counter">${idx+1}/${bank[type].length}</div></div><button type="button" id="practiceNext" class="btn primary" style="width:100%;margin-top:14px">Cevabı kontrol et</button></div>`;
+   const controlBtn=document.getElementById('practiceNext');
+   if(controlBtn){let busy=false;const fire=()=>{if(busy)return;busy=true;checkPracticeAnswer(type);setTimeout(()=>busy=false,400)};controlBtn.addEventListener('click',fire);controlBtn.addEventListener('touchend',e=>{e.preventDefault();fire()},{passive:false});}
   };
   window._toeflRun={type,idx,score,bank,renderQ}; renderQ(); return;
  }
@@ -407,7 +409,7 @@ function toeflPractice(type){
  const ta=document.getElementById('writingAnswer'); if(ta)ta.addEventListener('input',()=>{const n=ta.value.trim()?ta.value.trim().split(/\s+/).length:0;document.getElementById('writingCount').textContent=n+' words';});
 }
 function selectPracticeOption(btn){document.querySelectorAll('.practice-option').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected')}
-function checkPracticeAnswer(type){const run=window._toeflRun;if(!run)return;const selected=document.querySelector('.practice-option.selected');const box=document.getElementById('practiceFeedback');const next=document.getElementById('practiceNext');if(!selected){box.className='practice-feedback bad';box.textContent='Bir seçenek seç.';return}if(run.answered)return;run.answered=true;const chosen=Number(selected.dataset.i),q=run.bank[run.idx];document.querySelectorAll('.practice-option').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('correct');if(i===chosen&&chosen!==q.a)b.classList.add('wrong')});if(chosen===q.a){run.score++;box.className='practice-feedback good';box.innerHTML='✅ Doğru! '+esc(q.ex)}else{box.className='practice-feedback bad';box.innerHTML='❌ Bu kez olmadı. '+esc(q.ex)}if(run.idx<run.bank.length-1){next.textContent='Sonraki soru →';next.onclick=()=>{run.idx++;run.renderQ()}}else{next.textContent='Sonucu gör';next.onclick=()=>showToeflResult(run.type,run.score,run.bank.length)}}
+function checkPracticeAnswer(type){try{const run=window._toeflRun;if(!run){toast('Pratik oturumu bulunamadı.');return}const selected=document.querySelector('.practice-option.selected');const box=document.getElementById('practiceFeedback');const next=document.getElementById('practiceNext');if(!selected){box.className='practice-feedback bad';box.textContent='Bir seçenek seç.';return}if(run.answered)return;run.answered=true;const chosen=Number(selected.dataset.i),q=run.bank[run.idx];document.querySelectorAll('.practice-option').forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add('correct');if(i===chosen&&chosen!==q.a)b.classList.add('wrong')});if(chosen===q.a){run.score++;box.className='practice-feedback good';box.innerHTML='✅ Doğru! '+esc(q.ex)}else{box.className='practice-feedback bad';box.innerHTML='❌ Bu kez olmadı. Doğru cevap: <b>'+esc(q.opts[q.a])+'</b><br>'+esc(q.ex)}if(run.idx<run.bank.length-1){next.textContent='Sonraki soru →';next.onclick=()=>{run.idx++;run.renderQ()}}else{next.textContent='Sonucu gör';next.onclick=()=>showToeflResult(run.type,run.score,run.bank.length)}}catch(e){const box=document.getElementById('practiceFeedback');if(box){box.className='practice-feedback bad';box.textContent='Kontrol sırasında bir hata oluştu. Lütfen tekrar deneyin.'}console.error(e)}}
 function showToeflResult(type,score,total){const d=toeflData[type],pct=Math.round(score/total*100);const m=document.getElementById('main');m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('toefl')">‹</button><div><div class="practice-title">${d.icon} ${d.name} Sonuç</div><div class="practice-sub">Mini practice tamamlandı</div></div></div><div class="practice-shell" style="text-align:center"><div style="font-size:48px;font-weight:900;color:#23406f">${score}/${total}</div><div class="meta">${pct}% doğru</div><div class="practice-feedback ${pct>=70?'good':'bad'}" style="text-align:left;margin-top:18px">${pct>=70?'🎉 Güzel başlangıç.':'💡 Bu bölümde biraz daha pratik yapalım.'} Sonraki turda farklı görev türleri ekleyebiliriz.</div><button class="btn primary" style="width:100%;margin-top:14px" onclick="toeflPractice('${type}')">Tekrar çöz</button><button class="btn secondary" style="width:100%;margin-top:9px" onclick="nav('toefl')">TOEFL ana sayfası</button></div>`}
 function speakToeflAudio(text){if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=.88;speechSynthesis.speak(u)}else toast('Tarayıcı ses özelliğini desteklemiyor.')}
 let speakingRecorder=null,speakingChunks=[],speakingStarted=0,speakingTimer=null;
@@ -429,6 +431,7 @@ function home(m){
    <button class="vh-btn" onclick="${due.length?'startReview()':'nav(\'add\')'}">${due.length?'▶ Tekrara başla':'＋ İlk kelimeni ekle'} <span>→</span></button>
  </div>
  
+ <div class="vocab-next-card" style="background:#fff;border:1px solid #e4eaf3;border-radius:22px;padding:16px;margin:0 0 14px;display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div style="font-size:13px;color:#7a879d;font-weight:800">BUGÜNÜN KELİME PLANI</div><div style="font-size:20px;font-weight:850;color:#23406f;margin-top:3px">${Math.min(due.length,TARGET)} kelime tekrar</div><div style="font-size:13px;color:#71809a;margin-top:3px">Hedef ${TARGET} kelime • Kalan ${Math.max(0,TARGET-reviewedTodayCount())}</div></div><button class="btn primary" style="margin:0;padding:11px 14px" onclick="startReview()">▶ Başla</button></div>
  <div class="vocab-stats">
    <button onclick="nav('stats')"><b>${total}</b><span>Toplam kelime</span></button>
    <button onclick="startReview()"><b>${due.length}</b><span>Tekrar zamanı</span></button>
@@ -458,6 +461,24 @@ function add(m){
  <div class="meta" style="margin-top:12px">İnternet sözlüğü çalışmazsa yerleşik TOEFL sözlüğü devreye girer. Bilinmeyen kelimeleri de manuel ekleyebilirsin.</div><div id="result"></div></div>
  <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
 }
+async function translateWordToTurkish(word){
+ try{
+  const q=encodeURIComponent(word);
+  const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=${q}`;
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);
+  const r=await fetch(url,{signal:controller.signal});clearTimeout(timer);
+  if(!r.ok)return '';
+  const j=await r.json();
+  return (j?.[0]||[]).map(x=>x?.[0]||'').join('').trim();
+ }catch(e){return ''}
+}
+function guessCategory(word,definition){
+ const text=((word||'')+' '+(definition||'')).toLowerCase();
+ if(/bank|finance|loan|deposit|investment|branch|customer|account|payment|interest|credit|fund|money/.test(text))return 'Banking';
+ if(/business|company|market|sales|management|employee|project|strategy/.test(text))return 'Business';
+ if(/toefl|academic|university|research|lecture|study|science|environment|theory|evidence|analysis/.test(text))return 'TOEFL Academic';
+ return 'General English';
+}
 async function prepareWord(){
  const input=document.getElementById('wordInput'), result=document.getElementById('result'), word=input.value.trim().toLowerCase();
  if(!word){toast('Önce bir kelime yaz.');return}
@@ -483,8 +504,14 @@ async function prepareWord(){
   <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz..."></textarea>
   <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
   <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet</button></div></div>`;return}
+ if(!data.meaning){
+   result.innerHTML='<div class="info">🔎 Türkçe anlam otomatik hazırlanıyor...</div>';
+   const autoMeaning=await translateWordToTurkish(word);
+   if(autoMeaning)data.meaning=autoMeaning;
+ }
  const sourceNote=fallback[word]?'📚 Yerleşik sözlükten bulundu':'🌐 İnternet sözlüğünden bulundu';
- result.innerHTML=`<div class="info">${sourceNote}</div>
+ const suggestedCategory=guessCategory(word,data.definition||'');
+ result.innerHTML=`<div class="info">${sourceNote} ${data.meaning?'• 🇹🇷 Türkçe anlam otomatik bulundu.':'• Türkçe anlam bulunamazsa elle düzenleyebilirsin.'}</div>
  <div class="word-profile">
    <div class="profile-word">${esc(word)} <button class="speak" onclick="speakWord(${JSON.stringify(word)})">🔊</button></div>
    <div class="profile-meta">${esc(data.phonetic||'Telaffuz bulunamadı')} <span>•</span> ${esc(data.type||'word')}</div>
@@ -495,7 +522,7 @@ async function prepareWord(){
    ${data.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms)}</div></div>`:''}
    ${data.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms)}</div></div>`:''}
  </div>
- <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>General English</option><option>Daily English</option><option>Business</option><option>Banking</option></select></div>
+ <div class="selectrow"><div><label>Kategori</label><select id="category"><option ${suggestedCategory==='TOEFL Academic'?'selected':''}>TOEFL Academic</option><option ${suggestedCategory==='General English'?'selected':''}>General English</option><option ${suggestedCategory==='Daily English'?'selected':''}>Daily English</option><option ${suggestedCategory==='Business'?'selected':''}>Business</option><option ${suggestedCategory==='Banking'?'selected':''}>Banking</option></select></div>
  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
  <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option>TOEFL</option><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>General English</option><option>Business</option><option>Banking</option></select>
  <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea>
@@ -509,10 +536,10 @@ function saveWord(data){
  const category=document.getElementById('category')?.value||'TOEFL Academic';
  const sourceContext=document.getElementById('sourceContext')?.value||'TOEFL';
  const difficulty=document.getElementById('difficulty')?.value||'Orta';
- if(!meaning){toast('Türkçe anlamı yazmalısın.');return}
+ if(!meaning){toast('Türkçe anlam bulunamadı. Lütfen kısa bir anlam ekle.');return}
  const old=words.find(w=>w.word===data.word);
  words=words.filter(w=>w.word!==data.word);
- words.push({...data,meaning,example,userExample,note,category,difficulty,sourceContext,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
+ words.push({...old,...data,meaning,example,userExample,note,category,difficulty,sourceContext,added:old?.added||today(),interval:old?.interval||0,repetitions:old?.repetitions||0,nextReview:old?.nextReview||new Date().toISOString(),reviewLevel:old?.reviewLevel||'Öğreniliyor',reviewCount:old?.reviewCount||0,lastReviewed:old?.lastReviewed||'',quizCorrect:old?.quizCorrect||0,quizWrong:old?.quizWrong||0});
  save();toast('✅ Kelime kaydedildi');setTimeout(()=>nav('home'),500);
 }
 
@@ -908,7 +935,7 @@ function stats(m){
   <div class="card"><label style="margin-top:0">🔎 Kelime ara</label><input id="vocabSearch" value="${esc(vocabSearch)}" placeholder="Kelime, anlam veya tanım..." oninput="filterWords()"><div class="library-filters" style="margin-top:12px">${chips.map(([k,l])=>`<button class="library-filter ${vocabFilter===k?'active':''}" onclick="setVocabFilter('${k}')">${l}</button>`).join('')}</div></div>
   <div class="vocab-summary"><span><b>${list.length}</b> kelime gösteriliyor</span><span>${forgotten.length} unutuldu</span></div>
   <div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const st=wordStatus(w), dueNow=!w.nextReview||new Date(w.nextReview)<=new Date(); const source=w.sourceContext||w.category||'General English'; return `<div class="library-word" onclick="openWordDetail('${encodeURIComponent(w.word)}')"><div class="library-word-main"><div class="library-word-name"><span class="status-dot dot-${st.cls}"></span>${esc(w.word)} <button class="speak" onclick="event.stopPropagation();speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="library-word-meaning">${esc(w.meaning||'Anlam eklenmedi')}</div><div class="library-word-meta"><span class="source-pill">${esc(source)}</span><span class="badge">${esc(w.difficulty||'Orta')}</span><span class="badge">${esc(st.label)}</span>${dueNow?'<span class="badge" style="background:#fff4dc;color:#8a6411">Tekrar zamanı</span>':''}</div></div><div class="library-arrow">›</div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.<br><br>＋ Yeni bir kelime ekleyelim.</div>'}</div>
-  <button class="btn primary" style="width:100%;margin-top:12px" onclick="nav('add')">＋ Yeni kelime ekle</button>`;
+  <div class="btnrow" style="margin-top:12px"><button class="btn primary" style="flex:1" onclick="nav('add')">＋ Yeni kelime ekle</button><button class="btn secondary" style="flex:1" onclick="startReview()">🧠 Tekrar</button></div>`;
 }
 function openWordDetail(encoded){const word=decodeURIComponent(encoded);if(!words.some(w=>w.word===word))return;pushPage('wordDetail');window._detailWord=word;render();}
 function wordDetail(m){
