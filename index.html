@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v27.0</title>
+<title>VocaMate v28.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -458,7 +458,7 @@ function wordCard(w){return `<div class="card"><span class="pill">Son eklenen</s
 function add(m){
  m.innerHTML=`<h1>Akıllı kelime ekle</h1><div class="sub">Kelimeyi yaz, VocaMate bilgileri getirsin. TOEFL kelimeleri yanında günlük ve genel İngilizce kelimeleri de ekleyebilirsin.</div>
  <div class="card"><label>İngilizce kelime *</label><div class="searchrow"><input id="wordInput" placeholder="Örn. substantial" autocomplete="off"><button class="btn primary" onclick="prepareWord()">🤖 Hazırla</button></div>
- <div class="meta" style="margin-top:12px">İnternet sözlüğü çalışmazsa yerleşik TOEFL sözlüğü devreye girer. Bilinmeyen kelimeleri de manuel ekleyebilirsin.</div><div id="result"></div></div>
+ <div class="meta" style="margin-top:12px">İngilizce kelimeleri sözlükten otomatik hazırlar. TOEFL dışındaki günlük, genel, business ve banking kelimeleri de aynı sistemle ekleyebilirsin.</div><div id="result"></div></div>
  <button class="btn secondary" style="width:100%" onclick="nav('stats')">📚 Kelimelerimi gör</button>`;
 }
 async function translateWordToTurkish(word){
@@ -479,52 +479,106 @@ function guessCategory(word,definition){
  if(/toefl|academic|university|research|lecture|study|science|environment|theory|evidence|analysis/.test(text))return 'TOEFL Academic';
  return 'General English';
 }
+async function fetchJson(url, ms=6000){
+ try{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),ms);
+  const r=await fetch(url,{signal:controller.signal}); clearTimeout(timer);
+  if(!r.ok)return null; return await r.json();
+ }catch(e){return null}
+}
+async function enrichRelations(word){
+ const syn=await fetchJson('https://api.datamuse.com/words?rel_syn='+encodeURIComponent(word)+'&max=8');
+ const ant=await fetchJson('https://api.datamuse.com/words?rel_ant='+encodeURIComponent(word)+'&max=8');
+ return {
+  synonyms:Array.isArray(syn)?syn.map(x=>x.word).filter(Boolean).join(', '):'',
+  antonyms:Array.isArray(ant)?ant.map(x=>x.word).filter(Boolean).join(', '):''
+ };
+}
+function chooseDefinition(meanings){
+ for(const m of (meanings||[])){
+  const d=(m.definitions||[])[0]; if(d?.definition)return d.definition;
+ }
+ return '';
+}
+function chooseExample(meanings){
+ for(const m of (meanings||[])){
+  const d=(m.definitions||[]).find(x=>x?.example); if(d?.example)return d.example;
+ }
+ return '';
+}
+function collectRelations(meanings, key){
+ const arr=[]; (meanings||[]).forEach(m=>(m.definitions||[]).forEach(d=>(d[key]||[]).forEach(x=>arr.push(x))));
+ return [...new Set(arr)].slice(0,8).join(', ');
+}
 async function prepareWord(){
  const input=document.getElementById('wordInput'), result=document.getElementById('result'), word=input.value.trim().toLowerCase();
- if(!word){toast('Önce bir kelime yaz.');return}
- result.innerHTML='<div class="info">🔎 Kelime bilgileri aranıyor...</div>';
- let data=null;
- if(fallback[word])data=fallback[word];
+ if(!word){toast('Önce bir İngilizce kelime yaz.');return}
+ result.innerHTML='<div class="info">🔎 Kelime bilgileri hazırlanıyor...</div>';
+ let data=null, source='';
+ if(fallback[word]){ data={...fallback[word]}; source='📚 VocaMate sözlüğünden bulundu'; }
  else{
-  try{
-   const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),5000);
-   const r=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word),{signal:controller.signal});clearTimeout(timer);
-   if(r.ok){const json=await r.json(),x=json[0],ms=x.meanings||[],first=ms[0]||{},d=(first.definitions||[])[0]||{};
-    data={type:first.partOfSpeech||'',phonetic:x.phonetic||(x.phonetics||[]).find(p=>p.text)?.text||'',definition:d.definition||'',meaning:'',example:d.example||'',synonyms:(d.synonyms||[]).join(', '),antonyms:(d.antonyms||[]).join(', ')}}
-  }catch(e){}
+  const json=await fetchJson('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(word));
+  if(Array.isArray(json)&&json[0]){
+   const x=json[0], ms=x.meanings||[], first=ms[0]||{};
+   const ph=x.phonetic||(x.phonetics||[]).find(p=>p.text)?.text||'';
+   data={
+    type:first.partOfSpeech||ms.find(m=>m.partOfSpeech)?.partOfSpeech||'word',
+    phonetic:ph,
+    definition:chooseDefinition(ms),
+    meaning:'',
+    example:chooseExample(ms),
+    synonyms:collectRelations(ms,'synonyms'),
+    antonyms:collectRelations(ms,'antonyms')
+   };
+   source='🌐 İngilizce sözlükten bulundu';
+   if(!data.synonyms||!data.antonyms){
+    const rel=await enrichRelations(word);
+    data.synonyms=data.synonyms||rel.synonyms;
+    data.antonyms=data.antonyms||rel.antonyms;
+   }
+  }
+ }
+ // Sözlük bulunamasa bile İngilizce kelimeyi tamamen kaybetme: çeviri ile devam et.
+ if(!data){
+  const autoMeaning=await translateWordToTurkish(word);
+  if(autoMeaning){
+   data={type:'word',phonetic:'',definition:'',meaning:autoMeaning,example:'',synonyms:'',antonyms:''};
+   source='🌐 Türkçe anlam otomatik bulundu';
+  }
  }
  if(!data){
-  result.innerHTML=`<div class="info error">Bu kelime için otomatik bilgi bulunamadı.</div>
-  <div class="card" style="margin-top:12px"><div class="mini"><b>Manuel ekleme</b> Kelimeyi yine de kaydedebilirsin.</div>
-  <div class="resultgrid"><div class="mini"><b>Kelime</b>${esc(word)}</div>
-  <label>Türkçe anlam *</label><input id="meaning" placeholder="Türkçe anlamını yaz">
-  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>TOEFL Academic</option><option>Business</option><option>Daily English</option><option>General English</option><option>Banking</option></select></div>
+  result.innerHTML=`<div class="info error">Bu kelime için otomatik bilgi alınamadı. İnternet bağlantını kontrol et veya kelimeyi manuel ekle.</div>
+  <div class="card" style="margin-top:12px"><div class="mini"><b>Manuel ekleme</b> Türkçe anlamı, örnek cümleyi ve notunu ekleyerek yine de kaydedebilirsin.</div>
+  <div class="resultgrid"><div class="mini"><b>Kelime</b> ${esc(word)}</div>
+  <label>🇹🇷 Türkçe anlam *</label><input id="meaning" placeholder="Örn. önemli, anlamlı">
+  <div class="selectrow"><div><label>Kategori</label><select id="category"><option>General English</option><option>Daily English</option><option>TOEFL Academic</option><option>Business</option><option>Banking</option></select></div>
   <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
-  <label>📘 Örnek cümle</label><textarea id="example" placeholder="Sözlükten gelen örnek cümle"></textarea>
+  <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option>General English</option><option>Daily English</option><option>TOEFL</option><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>Business</option><option>Banking</option></select>
+  <label>📘 Örnek cümle</label><textarea id="example" placeholder="Kelimeyi kullanan doğal bir İngilizce cümle"></textarea>
   <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="Kelimeyi kullanarak kendi cümleni yaz..."></textarea>
-  <label>Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
-  <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet</button></div></div>`;return}
- if(!data.meaning){
-   result.innerHTML='<div class="info">🔎 Türkçe anlam otomatik hazırlanıyor...</div>';
-   const autoMeaning=await translateWordToTurkish(word);
-   if(autoMeaning)data.meaning=autoMeaning;
+  <label>📝 Notun</label><textarea id="note" placeholder="Kelimeyi hatırlatacak kısa not..."></textarea>
+  <button class="btn primary" onclick='saveWord(${JSON.stringify({word,type:'word',phonetic:'',definition:'',meaning:'',example:'',synonyms:'',antonyms:''})})'>💾 Kelimeyi kaydet ve öğrenmeye başla</button></div></div>`;return;
  }
- const sourceNote=fallback[word]?'📚 Yerleşik sözlükten bulundu':'🌐 İnternet sözlüğünden bulundu';
+ if(!data.meaning){
+  result.innerHTML='<div class="info">🔎 Türkçe anlam otomatik hazırlanıyor...</div>';
+  data.meaning=await translateWordToTurkish(word);
+ }
  const suggestedCategory=guessCategory(word,data.definition||'');
- result.innerHTML=`<div class="info">${sourceNote} ${data.meaning?'• 🇹🇷 Türkçe anlam otomatik bulundu.':'• Türkçe anlam bulunamazsa elle düzenleyebilirsin.'}</div>
+ const defaultContext=suggestedCategory==='TOEFL Academic'?'TOEFL':suggestedCategory;
+ result.innerHTML=`<div class="info">${source} ${data.meaning?'• 🇹🇷 Türkçe anlam otomatik bulundu.':'• Türkçe anlamı aşağıdan ekleyebilirsin.'}</div>
  <div class="word-profile">
    <div class="profile-word">${esc(word)} <button class="speak" onclick="speakWord(${JSON.stringify(word)})">🔊</button></div>
    <div class="profile-meta">${esc(data.phonetic||'Telaffuz bulunamadı')} <span>•</span> ${esc(data.type||'word')}</div>
    <div class="profile-grid">
-     <div class="profile-box"><div class="profile-label">📖 Tanım</div><div>${esc(data.definition||'Tanım bulunamadı.')}</div></div>
-     <div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Anlamı otomatik geldiyse kontrol et"></div>
+     <div class="profile-box"><div class="profile-label">📖 Tanım</div><div>${esc(data.definition||'Tanım bulunamadı; kelime yine de kaydedilebilir.')}</div></div>
+     <div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><input id="meaning" value="${esc(data.meaning||'')}" placeholder="Türkçe anlam"></div>
    </div>
-   ${data.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms)}</div></div>`:''}
-   ${data.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms)}</div></div>`:''}
+   <div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(data.synonyms||'Bulunamadı')}</div></div>
+   <div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(data.antonyms||'Bulunamadı')}</div></div>
  </div>
  <div class="selectrow"><div><label>Kategori</label><select id="category"><option ${suggestedCategory==='TOEFL Academic'?'selected':''}>TOEFL Academic</option><option ${suggestedCategory==='General English'?'selected':''}>General English</option><option ${suggestedCategory==='Daily English'?'selected':''}>Daily English</option><option ${suggestedCategory==='Business'?'selected':''}>Business</option><option ${suggestedCategory==='Banking'?'selected':''}>Banking</option></select></div>
  <div><label>Zorluk</label><select id="difficulty"><option>Orta</option><option>Kolay</option><option>Zor</option></select></div></div>
- <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option>TOEFL</option><option>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option>General English</option><option>Business</option><option>Banking</option></select>
+ <label>📍 Nerede karşılaştın?</label><select id="sourceContext" class="full-select"><option ${defaultContext==='TOEFL'?'selected':''}>TOEFL</option><option ${defaultContext==='Reading'?'selected':''}>Reading</option><option>Listening</option><option>Speaking</option><option>Writing</option><option ${defaultContext==='General English'?'selected':''}>General English</option><option ${defaultContext==='Daily English'?'selected':''}>Daily English</option><option ${defaultContext==='Business'?'selected':''}>Business</option><option ${defaultContext==='Banking'?'selected':''}>Banking</option></select>
  <label>📘 Örnek cümle</label><textarea id="example">${esc(data.example||'')}</textarea>
  <div class="mini">💡 Örneği yüksek sesle oku; sonra kendi cümleni kur.</div>
  <label>✍️ Kendi örnek cümlen</label><textarea id="userExample" placeholder="I used this word because...">${esc(data.userExample||'')}</textarea>
