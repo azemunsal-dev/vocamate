@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v32.0</title>
+<title>VocaMate v33.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -184,6 +184,17 @@ body{padding-bottom:180px}
 
 .v32-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.v32-tools select,.v32-tools button{width:100%}
 .mastery-mini{height:7px;background:#e7ebf3;border-radius:8px;overflow:hidden;margin-top:8px}.mastery-mini span{display:block;height:100%;background:#4772e6;border-radius:8px}.fav-btn{border:0;background:#f3f6fb;border-radius:12px;width:38px;height:38px;font-size:19px;cursor:pointer}.fav-btn.active{background:#fff1bf}.library-word-head{display:flex;align-items:center;gap:8px}.library-word-head .library-word-name{flex:1}.library-word-progress{font-size:11px;color:#71809a;margin-top:5px;display:flex;justify-content:space-between}.v32-review-history{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.v32-history{padding:7px 9px;border-radius:11px;font-size:12px;font-weight:800;background:#f4f6fa;color:#61708a}.v32-history.good{background:#eaf8f0;color:#287b52}.v32-history.hard{background:#fff6e4;color:#9b6a12}.v32-history.again{background:#fff0f0;color:#b33a3a}.v32-overall{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.v32-overall .box{background:#f7f9fc;border:1px solid #e5eaf2;border-radius:16px;padding:13px}.v32-overall strong{display:block;font-size:24px;color:#23406f}.v32-overall span{font-size:12px;color:#71809a}.
+
+/* V33 Vocabulary completion */
+.v33-dashboard{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.v33-metric{background:#fff;border:1px solid #e5eaf2;border-radius:18px;padding:14px;box-shadow:0 5px 18px #203b6808}
+.v33-metric strong{display:block;font-size:25px;color:#23406f}.v33-metric span{font-size:12px;color:#71809a;font-weight:750}
+.v33-goal{background:linear-gradient(135deg,#edf3ff,#fff);border:1px solid #dbe5fa;border-radius:20px;padding:16px;margin:12px 0}.v33-goal-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.v33-goal h3{margin:0;color:#23406f;font-size:18px}.v33-goal-num{font-weight:900;color:#23406f}.v33-goal-bar{height:9px;background:#dfe7f5;border-radius:9px;overflow:hidden;margin:10px 0 6px}.v33-goal-bar span{display:block;height:100%;background:#4772e6;border-radius:9px}
+.v33-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.v33-actions button{border:1px solid #dfe5ef;background:#fff;border-radius:13px;padding:10px;color:#23406f;font-weight:850}.v33-actions .primary-mini{background:#23406f;color:#fff;border-color:#23406f}
+.v33-recognize{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#eef3ff;border:1px solid #d6e1fa;border-radius:15px;padding:12px 13px;margin-top:10px}.v33-recognize button{border:0;background:#23406f;color:#fff;border-radius:11px;padding:9px 11px;font-weight:850}.v33-quiz{background:#fff;border:1px solid #e2e8f2;border-radius:22px;padding:18px;margin-top:14px}.v33-quiz .option{width:100%;text-align:left;border:1px solid #dfe5ef;background:#fff;border-radius:14px;padding:12px;margin-top:8px;font-weight:750;color:#263650}.v33-quiz .option.correct{background:#eaf8f1;border-color:#2ca36d;color:#176b49}.v33-quiz .option.wrong{background:#fff0f0;border-color:#d85a5a;color:#9b3030}.v33-quiz-feedback{margin-top:10px;border-radius:14px;padding:11px;line-height:1.45;font-weight:700}.v33-quiz-feedback.good{background:#eaf8f1;color:#176b49}.v33-quiz-feedback.bad{background:#fff0f0;color:#9b3030}
+.v33-level{font-size:12px;color:#71809a;margin-top:4px}.v33-due{background:#fff7e6;color:#8a6411;border-radius:11px;padding:6px 9px;font-size:11px;font-weight:850}
+@media(max-width:380px){.v33-dashboard{grid-template-columns:1fr 1fr}.v33-actions{grid-template-columns:1fr}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
@@ -225,10 +236,10 @@ body{padding-bottom:180px}
   </button>
 </nav>
 <script>
-const KEY='vocamate_words_v32', TARGET=20;
+const KEY='vocamate_words_v33', TARGET=20;
 // V20: kelime verilerini eski sürümlerden koru; boşsa daha önce kullandığımız temel kelimeleri geri getir.
 function loadWordsSafely(){
-  const keys=['vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
+  const keys=['vocamate_words_v33','vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
   const merged=[]; const seen=new Set();
   for(const k of keys){
     try{
@@ -1187,6 +1198,85 @@ function markToeflUse(encoded){const word=decodeURIComponent(encoded),w=words.fi
 function startSingleReview(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;w.nextReview=new Date().toISOString();save();nav('review');}
 function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;pushPage('add');render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');if(currentPage==='wordDetail')nav('stats');else render()}
+
+/* ================= V33 VOCABULARY ENGINE ================= */
+function v33NormalizeWords(){
+  words=words.map(w=>({
+    ...w,
+    word:String(w.word||'').trim().toLowerCase(),
+    reviewCount:Number(w.reviewCount||0), repetitions:Number(w.repetitions||0), interval:Number(w.interval||0),
+    quizCorrect:Number(w.quizCorrect||0), quizWrong:Number(w.quizWrong||0), toeflUseCount:Number(w.toeflUseCount||0),
+    favorite:!!w.favorite, reviewHistory:Array.isArray(w.reviewHistory)?w.reviewHistory:[],
+    recognized:!!w.recognized, pronunciationPracticed:!!w.pronunciationPracticed,
+    activeSentenceScore:Number(w.activeSentenceScore||0), nextReview:w.nextReview||null, added:w.added||w.createdAt||today()
+  })).filter(w=>w.word);
+  save();
+}
+v33NormalizeWords();
+
+function v33DailyKey(){return 'vocamate_daily_'+new Date().toISOString().slice(0,10)}
+function v33Daily(){try{return JSON.parse(localStorage.getItem(v33DailyKey())||'{"learned":0,"reviewed":0,"quiz":0,"sentences":0}')}catch(e){return {learned:0,reviewed:0,quiz:0,sentences:0}}}
+function v33Bump(field){const d=v33Daily();d[field]=(d[field]||0)+1;localStorage.setItem(v33DailyKey(),JSON.stringify(d));}
+function v33DailyCount(){const d=v33Daily();return (d.learned||0)+(d.reviewed||0)+(d.quiz||0)+(d.sentences||0)}
+function v33DashboardHtml(due,avg,strong,favs,learned){
+ const d=v33Daily(), done=Math.min(TARGET,v33DailyCount()), pct=Math.min(100,Math.round(done/TARGET*100));
+ return `<div class="v33-dashboard"><div class="v33-metric"><strong>${words.length}</strong><span>📚 Toplam kelime</span></div><div class="v33-metric"><strong>${due.length}</strong><span>🔁 Bugün tekrar</span></div><div class="v33-metric"><strong>${avg}%</strong><span>⭐ Ortalama mastery</span></div><div class="v33-metric"><strong>${strong.length}</strong><span>🟢 Güçlü kelime</span></div></div><div class="v33-goal"><div class="v33-goal-head"><h3>🎯 Bugünkü Vocabulary hedefi</h3><div class="v33-goal-num">${done}/${TARGET}</div></div><div class="v33-goal-bar"><span style="width:${pct}%"></span></div><div class="v33-level">Bugün: ${d.learned||0} yeni öğrenme · ${d.reviewed||0} tekrar · ${d.quiz||0} quiz · ${d.sentences||0} cümle</div></div>`;
+}
+
+function markMeaningKnown(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.recognized=true;v33Bump('learned');save();toast('🧠 Kelimeyi tanıdığın kaydedildi');render();}
+
+function v33TargetQuiz(encoded){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;
+ const pool=words.filter(x=>x.word!==word && x.meaning).sort(()=>Math.random()-.5).slice(0,3);if(pool.length<3){toast('🎯 Bu kelime için quiz oluşturmak adına en az 4 kayıtlı kelime gerekiyor.');return;}
+ const opts=[{text:w.meaning,correct:true},...pool.map(x=>({text:x.meaning,correct:false}))].sort(()=>Math.random()-.5);
+ const m=document.getElementById('main');
+ m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="openWordDetail('${encodeURIComponent(word)}')">‹</button><div><div class="practice-title">🎯 ${esc(word)} Quiz</div><div class="practice-sub">Türkçe anlamını hatırla</div></div></div><div class="v33-quiz"><div class="practice-kicker">VOCABULARY QUIZ</div><div class="practice-q">“${esc(word)}” kelimesinin en uygun Türkçe anlamı hangisi?</div>${opts.map((o,i)=>`<button class="option" id="vq${i}" onclick="v33QuizAnswer('${encodeURIComponent(word)}',${i},${o.correct})">${String.fromCharCode(65+i)}) ${esc(o.text)}</button>`).join('')}<div id="v33QuizFeedback"></div></div>`;
+}
+function v33QuizAnswer(encoded,index,correct){
+ const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;
+ document.querySelectorAll('.v33-quiz .option').forEach((b,i)=>b.disabled=true);
+ const chosen=document.getElementById('vq'+index);if(chosen)chosen.classList.add(correct?'correct':'wrong');
+ const box=document.getElementById('v33QuizFeedback');
+ if(correct){w.quizCorrect=(w.quizCorrect||0)+1;v33Bump('quiz');box.className='v33-quiz-feedback good';box.innerHTML=`✅ Doğru! Kelimeyi anlamıyla eşleştirdin.<br><button class="btn primary" style="margin-top:8px;width:100%" onclick="openWordDetail('${encodeURIComponent(word)}')">Kelimeye dön</button>`;}
+ else{w.quizWrong=(w.quizWrong||0)+1;box.className='v33-quiz-feedback bad';box.innerHTML=`❌ Yanlış. Doğru cevap: <b>${esc(w.meaning)}</b><br><button class="btn primary" style="margin-top:8px;width:100%" onclick="openWordDetail('${encodeURIComponent(word)}')">Tekrar incele</button>`;}
+ save();
+}
+
+function v33RateWord(encoded,quality){rateWord(encoded,quality);v33Bump('reviewed');}
+
+function stats(m){
+ const due=dueWords(), strong=words.filter(w=>w.reviewLevel==='Güçlü'), learned=words.filter(w=>(w.repetitions||0)>0), forgotten=words.filter(w=>w.reviewLevel==='Unutuldu');
+ let list=words.slice().filter(w=>{const q=!vocabSearch||w.word.toLowerCase().includes(vocabSearch)||(w.meaning||'').toLowerCase().includes(vocabSearch)||(w.definition||'').toLowerCase().includes(vocabSearch);return q&&filterMatch(w);});
+ const sort=document.getElementById('vocabSort')?.value||'recent';
+ if(sort==='az')list.sort((a,b)=>a.word.localeCompare(b.word)); else if(sort==='mastery')list.sort((a,b)=>masteryPercent(b)-masteryPercent(a)); else if(sort==='due')list.sort((a,b)=>new Date(a.nextReview||0)-new Date(b.nextReview||0)); else if(sort==='favorite')list.sort((a,b)=>(b.favorite?1:0)-(a.favorite?1:0)); else list.sort((a,b)=>new Date(b.added||0)-new Date(a.added||0));
+ const avg=words.length?Math.round(words.reduce((sum,w)=>sum+masteryPercent(w),0)/words.length):0, favs=words.filter(w=>w.favorite).length;
+ const chips=[['all','Tümü'],['due','🔁 Tekrar'],['strong','🟢 Güçlü'],['toefl','🎓 TOEFL'],['source:Reading','📖 Reading'],['source:Listening','🎧 Listening'],['source:Speaking','🎤 Speaking'],['source:Writing','✍️ Writing'],['general','🌎 Genel']];
+ m.innerHTML=`<h1>📚 Kelime hazinem</h1><div class="sub">VocaMate Vocabulary merkezi: kelime ekle, çalış, ölç, tekrar et ve ilerlemeni takip et.</div>${v33DashboardHtml(due,avg,strong,favs,learned)}<div class="v32-overall"><div class="box"><strong>${favs}</strong><span>⭐ Favori kelime</span></div><div class="box"><strong>${learned.length}</strong><span>🧠 Çalışılmış kelime</span></div></div><div class="card"><label style="margin-top:0">🔎 Kelime ara</label><input id="vocabSearch" value="${esc(vocabSearch)}" placeholder="Kelime, anlam veya tanım..." oninput="filterWords()"><div class="library-filters" style="margin-top:12px">${chips.map(([k,l])=>`<button class="library-filter ${vocabFilter===k?'active':''}" onclick="setVocabFilter('${k}')">${l}</button>`).join('')}</div><div class="v32-tools"><select id="vocabSort" onchange="vocabSortChange()"><option value="recent">Son eklenen</option><option value="due">Tekrar tarihi</option><option value="mastery">Mastery yüksek → düşük</option><option value="az">A → Z</option><option value="favorite">Favoriler</option></select><button class="btn secondary" onclick="exportVocabulary()">📥 Dışa aktar</button></div></div><div class="vocab-summary"><span><b>${list.length}</b> kelime gösteriliyor</span><span>${forgotten.length} unutuldu · ${due.length} tekrar</span></div><div class="card" style="padding:8px 15px">${list.length?list.map(w=>{const st=wordStatus(w),dueNow=!w.nextReview||new Date(w.nextReview)<=new Date(),source=w.sourceContext||w.category||'General English',mp=masteryPercent(w);return `<div class="library-word" onclick="openWordDetail('${encodeURIComponent(w.word)}')"><div class="library-word-main"><div class="library-word-head"><div class="library-word-name"><span class="status-dot dot-${st.cls}"></span>${esc(w.word)} <button class="speak" onclick="event.stopPropagation();speakWord(${JSON.stringify(w.word)})">🔊</button></div><button class="fav-btn ${w.favorite?'active':''}" onclick="event.stopPropagation();toggleFavorite('${encodeURIComponent(w.word)}')">${w.favorite?'⭐':'☆'}</button></div><div class="library-word-meaning">${esc(w.meaning||'Anlam eklenmedi')}</div><div class="library-word-meta"><span class="source-pill">${esc(source)}</span><span class="badge">${esc(w.difficulty||'Orta')}</span><span class="badge">${esc(st.label)}</span>${dueNow?'<span class="v33-due">Tekrar zamanı</span>':''}</div><div class="library-word-progress"><span>Mastery</span><b>${mp}%</b></div><div class="mastery-mini"><span style="width:${mp}%"></span></div></div><div class="library-arrow">›</div></div>`}).join(''):'<div class="empty">Bu filtrede kelime bulunamadı.<br><br>＋ Yeni bir kelime ekleyelim.</div>'}</div><div class="btnrow" style="margin-top:12px"><button class="btn primary" style="flex:1" onclick="nav('add')">＋ Yeni kelime ekle</button><button class="btn secondary" style="flex:1" onclick="startReview()">🧠 Tekrar</button></div>`;
+}
+
+function wordDetail(m){
+ const w=words.find(x=>x.word===window._detailWord);if(!w){nav('stats');return;}
+ const st=wordStatus(w),dueNow=!w.nextReview||new Date(w.nextReview)<=new Date(),next=w.nextReview?new Date(w.nextReview).toLocaleDateString('tr-TR',{day:'2-digit',month:'long'}):'İlk tekrar',source=w.sourceContext||w.category||'General English',exWord=esc(w.word),mastery=masteryInfo(w),sentenceDone=!!(w.userExample&&w.userExample.trim()),quizDone=(w.quizCorrect||0)>0,reviewDone=(w.repetitions||0)>0,pronunciationDone=!!w.pronunciationPracticed,learnedDone=!!w.meaning;
+ const speakingUse=`One important advantage is that this approach can improve the overall result.`.replace(/important/gi,w.word),writingUse=`There has been an important increase in the number of people using this approach.`.replace(/important/gi,w.word);
+ const steps=[{done:learnedDone,icon:'📖',title:'Anlamı öğren',sub:'Türkçe ve İngilizce anlamı incele',action:!w.recognized?`<button onclick="markMeaningKnown('${encodeURIComponent(w.word)}')">Tanıyorum</button>`:''},{done:pronunciationDone,icon:'🔊',title:'Dinle & söyle',sub:pronunciationDone?'Telaffuz çalışıldı':'Kelimeyi sesli olarak tekrar et',action:`<button onclick="practicePronunciation(${JSON.stringify(w.word)})">${pronunciationDone?'Tekrar':'Başlat'}</button>`},{done:sentenceDone,icon:'✍️',title:'Kendi cümleni kur',sub:sentenceDone?'Cümlen kaydedildi':'Kelimeyi kendi cümlende kullan',action:`<button onclick="document.getElementById('activeSentence')?.focus()">${sentenceDone?'Düzenle':'Yaz'}</button>`},{done:quizDone,icon:'🎯',title:'Quizde göster',sub:quizDone?'Quizde doğru yaptın':'Bu kelimeyle mini quiz çöz',action:`<button onclick="v33TargetQuiz('${encodeURIComponent(w.word)}')">Quiz</button>`},{done:reviewDone,icon:'🧠',title:'Tekrarla',sub:reviewDone?'En az bir başarılı tekrar var':'Spaced repetition ile pekiştir',action:`<button onclick="startSingleReview('${encodeURIComponent(w.word)}')">Tekrar</button>`}];
+ const doneCount=steps.filter(s=>s.done).length,pct=Math.round(doneCount/5*100),pathHtml=steps.map(s=>`<div class="v23-step ${s.done?'done':''}"><div class="vicon">${s.done?'✓':s.icon}</div><div><b>${s.title}</b><span>${s.sub}</span></div>${s.action||''}</div>`).join('');
+ const mission=sentenceDone?`Bu kelimeyi aktif kullanmaya başladın. Şimdi ${exWord} kelimesini bir TOEFL Speaking veya Writing cevabında kullan.`:`Bugünün mini görevi: <b>${exWord}</b> kelimesini kullanarak en az 6 kelimelik doğal bir İngilizce cümle yaz.`;
+ const saved=w.userExample?`<div class="v22-saved">✅ <b>Kayıtlı cümlen:</b> ${esc(w.userExample)}</div>`:'';
+ m.innerHTML=`<div class="word-profile"><div class="profile-word">${exWord} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})">🔊</button></div><div class="profile-meta">${esc(w.phonetic||'Telaffuz yok')} <span>•</span> ${esc(w.type||'word')}</div><div class="profile-meta"><span class="source-pill">${esc(source)}</span> <span class="badge">${esc(w.difficulty||'Orta')}</span> <button class="fav-btn ${w.favorite?'active':''}" style="vertical-align:middle" onclick="toggleFavorite('${encodeURIComponent(w.word)}');setTimeout(()=>wordDetail(document.getElementById('main')),0)">${w.favorite?'⭐':'☆'}</button></div></div><div class="review-banner">🔄 Sonraki tekrar: <b>${esc(next)}</b>${dueNow?' · şimdi çalışabilirsin':''}</div><div class="v23-path"><div class="v23-path-head"><div><h3>🧠 Kelime öğrenme yolu</h3><p>Bir kelimeyi bilmek = görmek değil, aktif kullanabilmek.</p></div><div class="v23-score">${doneCount}/5</div></div><div class="v23-progress"><span style="width:${pct}%"></span></div><div class="v23-steps">${pathHtml}</div></div><div class="mastery-card"><div class="mastery-head"><div><div class="mastery-title">⭐ Vocabulary Mastery</div><div class="mastery-sub">Kelimeyi tanımaktan bağımsız kullanıma kadar ilerlet.</div></div><div class="mastery-level">${mastery.level}</div></div><div class="mastery-bar"><span style="width:${mastery.pct}%"></span></div><div class="mastery-stages">${mastery.stages.map((x,i)=>`<div class="mastery-stage ${x.done?'done':''} ${i===mastery.index?'current':''}"><div class="mastery-dot">${x.done?'✓':i+1}</div><div>${x.label}</div></div>`).join('')}</div><div class="v33-recognize"><span>${w.recognized?'✅ Kelimeyi tanıyorum olarak işaretledin.':'💡 İlk adım: anlamını öğrendiğinde “Tanıyorum” de.'}</span>${!w.recognized?`<button onclick="markMeaningKnown('${encodeURIComponent(w.word)}')">Tanıyorum</button>`:''}</div></div><div class="profile-grid"><div class="profile-box highlight"><div class="profile-label">🇹🇷 Türkçe anlam</div><div style="font-size:20px;font-weight:800">${esc(w.meaning||'Anlam eklenmedi')}</div></div><div class="profile-box"><div class="profile-label">📖 İngilizce tanım</div><div>${esc(w.definition||'Tanım bulunamadı.')}</div></div>${w.example?`<div class="profile-box"><div class="profile-label">📘 VocaMate örnek cümlesi</div><div>${esc(w.example)}</div></div>`:''}${w.readingContext?`<div class="profile-box"><div class="profile-label">📖 Reading bağlamı</div><div>${esc(w.readingContext)}</div></div>`:''}${w.synonyms?`<div class="profile-box"><div class="profile-label">🔗 Synonyms</div><div>${esc(w.synonyms)}</div></div>`:''}${w.antonyms?`<div class="profile-box"><div class="profile-label">↔️ Antonyms</div><div>${esc(w.antonyms)}</div></div>`:''}${w.note?`<div class="profile-box"><div class="profile-label">📝 Notum</div><div>${esc(w.note)}</div></div>`:''}</div><div class="v23-mission"><div class="kicker">BUGÜNÜN KELİME GÖREVİ</div><h3>${sentenceDone?'Bir adım daha!':'Kelimeyi aktif hale getir'}</h3><p>${mission}</p>${!sentenceDone?`<button onclick="document.getElementById('activeSentence')?.focus()">✍️ Cümlemi yaz</button>`:`<button onclick="v33TargetQuiz('${encodeURIComponent(w.word)}')">🎯 Mini quiz</button>`}</div><div class="v22-focus"><div class="v22-focus-head"><div class="v22-focus-icon">✍️</div><div><h3>Aktif kullanım</h3><div class="small">Vocabulary'nin en önemli adımı: kelimeyi sen kullan.</div></div></div><p>Write one natural English sentence using <b>${exWord}</b>. Try to use the word in the same meaning shown above.</p><div class="v22-prompt">💡 <b>Mini görev:</b> ${w.word} kelimesini bugün bir konuşmada veya yazıda kullan.</div><textarea id="activeSentence" class="sentence-box" style="margin-top:10px" placeholder="Write your own sentence with ${exWord}...">${esc(w.userExample||'')}</textarea><button class="ai-coach-btn ai-coach-btn-main" onclick="aiCoachSentence('${encodeURIComponent(w.word)}')">🤖 AI Cümle Koçu <span>Grammar • Doğallık • Öneri</span></button><div class="v22-row"><button class="listen" onclick="saveActiveSentence('${encodeURIComponent(w.word)}')">💾 Kaydet</button><button class="practice" onclick="checkActiveSentence('${encodeURIComponent(w.word)}')">✓ Cümlemi kontrol et</button></div><div id="sentenceFeedback"></div>${saved}</div><div class="active-learning"><h3>🎓 TOEFL'da kullan</h3><p>Öğrendiğin kelimeyi sınavın Speaking ve Writing cevaplarına taşı.</p><div class="toefl-use"><div class="use-card"><b>🎤 Speaking</b><span>${esc(speakingUse)}</span></div><div class="use-card"><b>✍️ Writing</b><span>${esc(writingUse)}</span></div></div><button class="btn primary" style="width:100%;margin-top:10px" onclick="markToeflUse('${encodeURIComponent(w.word)}')">🎓 Bu kelimeyi TOEFL'da kullandım</button></div><div class="card" style="margin-top:14px"><div class="section-title">🔄 Tekrar geçmişi</div><div class="meta">Son çalışmaların ve mevcut aralığın.</div><div class="v32-review-history">${reviewHistoryHtml(w)}</div></div><div class="stats" style="margin-top:14px"><div class="stat"><strong>${w.reviewCount||0}</strong><span>Tekrar sayısı</span></div><div class="stat"><strong>${w.quizCorrect||0}</strong><span>Quiz doğru</span></div><div class="stat"><strong>${w.repetitions||0}</strong><span>Başarılı tekrar</span></div><div class="stat"><strong>${w.interval||0} gün</strong><span>Aralık</span></div></div><div class="detail-actions" style="margin-top:14px"><button class="btn primary" onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Şimdi tekrar et</button><button class="btn secondary" onclick="editWord('${encodeURIComponent(w.word)}')">✏️ Düzenle</button></div><button class="delete" style="width:100%;margin-top:10px;padding:14px" onclick="deleteWord('${encodeURIComponent(w.word)}')">🗑️ Kelimeyi sil</button>`;
+}
+
+function saveActiveSentence(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence');if(!w||!input)return;const val=input.value.trim();if(!val){toast('✍️ Önce bir cümle yaz.');return;}const was=!w.userExample;w.userExample=val;if(was)v33Bump('sentences');save();toast('✍️ Kendi cümlen kaydedildi');render();}
+
+/* Keep the existing mastery model, but let recognized state contribute to the first milestone. */
+function masteryInfo(w){
+ const stages=[{label:'Tanıyorum',done:!!(w.meaning||w.recognized)},{label:'Telaffuz',done:!!w.pronunciationPracticed},{label:'Cümlede',done:!!(w.userExample&&w.userExample.trim())},{label:'Aktif',done:(w.activeSentenceScore||0)>=70},{label:'TOEFL',done:(w.toeflUseCount||0)>0}];
+ const done=stages.filter(x=>x.done).length;let level='Tanıyorum',index=0;if(done>=5){level='TOEFL kullanıyorum';index=4}else if(done>=4){level='Aktif kullanıyorum';index=3}else if(done>=3){level='Cümlede kullanıyorum';index=2}else if(done>=2){level='Tanıyorum + telaffuz';index=1}return {level,index,pct:Math.round(done/5*100),stages};
+}
+
+/* Make the existing sentence checker feed the learning system. */
+const _v33OriginalCheckActiveSentence=checkActiveSentence;
+function checkActiveSentence(encoded){_v33OriginalCheckActiveSentence(encoded);const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(w && (w.activeSentenceScore||0)>=70){v33Bump('sentences');w.sentencePracticeCount=(w.sentencePracticeCount||0)+1;save();}}
+
 render();
 updateBottomNav();
 </script>
