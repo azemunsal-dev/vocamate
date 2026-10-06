@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v41.0</title>
+<title>VocaMate v42.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -217,6 +217,7 @@ body{padding-bottom:180px}
 
 <style>
 /* V41 compact navigation + phrasal search fix */
+/* V42: home-only add button + phrasal meanings and alternatives */
 .home-add-compact{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:8px 4px;background:transparent;border:0;width:100%;text-align:left;cursor:pointer}
 .home-add-compact .round-plus{width:58px;height:58px;border-radius:50%;background:#23406f;color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;box-shadow:0 8px 20px #23406f30;flex:0 0 58px}
 .home-add-compact .compact-copy b{display:block;color:#23406f;font-size:18px}.home-add-compact .compact-copy small{display:block;color:#71809a;font-size:13px;margin-top:2px}
@@ -224,6 +225,9 @@ body{padding-bottom:180px}
 .phrase-study-card{background:#fff;border:1px solid #e4eaf3;border-radius:24px;padding:22px;box-shadow:0 8px 25px #203b6810}.phrase-study-word{font-size:36px;font-weight:900;color:#1b2941;text-align:center;margin:8px 0}.phrase-study-example{background:#f5f7fb;border-radius:16px;padding:14px;line-height:1.55;color:#45556f;margin:15px 0}.phrase-study-answer{background:#eef3ff;color:#23406f;border-radius:16px;padding:14px;margin-top:12px;font-weight:800}.phrase-study-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.phrase-study-actions button{border:0;border-radius:15px;padding:13px;font-weight:850}.phrase-study-actions .know{background:#e8f7ee;color:#23704a}.phrase-study-actions .again{background:#fff0f0;color:#a83d3d}.phrase-add-card{margin-top:14px}
 /* V36 home + phrasal verbs */
 .home-add-big{display:flex;align-items:center;gap:14px;background:#23406f;color:#fff;border:0;border-radius:22px;padding:18px 20px;width:100%;text-align:left;box-shadow:0 10px 26px #23406f22;margin:0 0 14px;cursor:pointer}.home-add-big .plus{width:46px;height:46px;border-radius:15px;background:#ffffff20;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800}.home-add-big b{display:block;font-size:19px}.home-add-big small{display:block;margin-top:3px;color:#dbe4f5;font-size:13px}.phrase-hero{background:linear-gradient(135deg,#23406f,#4772e6);color:#fff;border-radius:26px;padding:22px;margin-bottom:15px}.phrase-hero h2{margin:0;font-size:27px}.phrase-hero p{margin:7px 0 0;color:#dce6fa;line-height:1.45}.phrase-levels{display:flex;gap:7px;overflow:auto;margin-top:16px}.phrase-levels span{white-space:nowrap;background:#ffffff18;border:1px solid #ffffff25;padding:7px 10px;border-radius:12px;font-size:12px;font-weight:800}.phrase-card{background:#fff;border:1px solid #e4eaf3;border-radius:22px;padding:18px;margin-bottom:11px;box-shadow:0 6px 20px #203b6810}.phrase-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.phrase{font-size:23px;font-weight:850;color:#1b2941}.phrase-meaning{font-size:16px;font-weight:750;color:#23406f;margin-top:4px}.phrase-example{margin-top:12px;padding:12px 14px;background:#f5f7fb;border-radius:15px;color:#45556f;line-height:1.5}.phrase-tag{background:#eef3ff;color:#23406f;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:800;white-space:nowrap}.phrase-card button{border:0;background:#eef3ff;color:#23406f;border-radius:12px;padding:9px 12px;font-weight:800;margin-top:10px}.phrase-search{margin-bottom:12px}.phrase-note{color:#71809a;font-size:13px;line-height:1.45;margin-bottom:14px}
+
+/* V42 phrasal detail + alternatives */
+.phrase-alts{margin-top:10px;padding:11px 13px;background:#eef3ff;border-radius:14px;color:#23406f;line-height:1.45;font-size:14px}.phrase-alts b{font-weight:850}.phrase-search{font-size:17px;padding:15px 16px!important}.phrase-card{transition:box-shadow .15s}.phrase-card:has(.phrase-meaning){ }
 </style>
 </head>
 <body>
@@ -363,9 +367,11 @@ function dueWords(){return words.filter(w=>!w.nextReview||new Date(w.nextReview)
 function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open')}
 function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open')}
 function updateBottomNav(){
- const back=document.getElementById('bottomBack'), fwd=document.getElementById('bottomForward');
+ const back=document.getElementById('bottomBack'), fwd=document.getElementById('bottomForward'), add=document.getElementById('bottomAdd');
  if(back)back.disabled=appHistoryIndex<=0;
  if(fwd)fwd.disabled=appHistoryIndex>=appHistory.length-1;
+ // + Yeni kelime yalnızca ana sayfada görünsün; oklar tüm sayfalarda kalsın.
+ if(add){add.style.display=currentPage==='home'?'flex':'none';}
 }
 function syncDrawer(){document.querySelectorAll('.drawer-item[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===currentPage))}
 function pushPage(page){
@@ -1095,6 +1101,9 @@ const phrasalVerbs=[
  {p:'stand up',m:'ayağa kalkmak',e:'Everyone stood up when the teacher entered.'},
  {p:'look at',m:'bakmak, incelemek',e:'Look at this example carefully.'},
  {p:'look for',m:'aramak',e:'I am looking for my keys.'},
+ {p:'look after',m:'ilgilenmek, bakımını yapmak',e:'She looks after her younger sister.'},
+ {p:'look into',m:'araştırmak, incelemek',e:'We will look into the problem tomorrow.'},
+ {p:'look forward to',m:'dört gözle beklemek, sabırsızlıkla beklemek',e:'I look forward to hearing from you.'},
  {p:'find out',m:'öğrenmek, ortaya çıkarmak',e:'I need to find out what happened.'},
  {p:'pick up',m:'alıp kaldırmak; gidip almak',e:'Can you pick me up after work?'},
  {p:'put on',m:'giymek; takmak',e:'Put on your jacket before you go outside.'},
@@ -1127,15 +1136,60 @@ function loadCustomPhrasalVerbs(){
 }
 loadCustomPhrasalVerbs();
 
+const phraseAlternatives={
+ 'get up':'rise, get out of bed',
+ 'wake up':'awaken, get up',
+ 'go out':'leave, socialize, go outside',
+ 'come back':'return, come again',
+ 'sit down':'take a seat, be seated',
+ 'stand up':'rise, get to your feet',
+ 'look at':'examine, observe, watch',
+ 'look for':'search for, seek',
+ 'look after':'take care of, care for',
+ 'look into':'investigate, examine',
+ 'look forward to':'anticipate, await, eagerly expect',
+ 'find out':'discover, learn, determine',
+ 'pick up':'collect, fetch, lift',
+ 'put on':'wear, dress in',
+ 'take off':'remove, leave the ground',
+ 'turn on':'switch on, activate',
+ 'turn off':'switch off, deactivate',
+ 'give up':'quit, abandon, stop trying',
+ 'carry on':'continue, proceed',
+ 'go on':'continue, proceed',
+ 'come in':'enter, go inside',
+ 'go back':'return, head back',
+ 'bring up':'mention, raise, introduce',
+ 'call back':'return a call, phone back',
+ 'fill out':'complete, fill in',
+ 'check in':'register, sign in',
+ 'check out':'leave, inspect, examine',
+ 'deal with':'handle, manage, address',
+ 'work out':'solve, figure out, exercise',
+ 'set up':'establish, arrange, install',
+ 'take care of':'look after, care for, handle',
+ 'run out of':'use up, exhaust, have no more',
+ 'figure out':'understand, solve, determine'
+};
+function getPhraseAlternatives(x){
+ const key=String(x.p||'').trim().toLowerCase();
+ if(x.alternatives)return x.alternatives;
+ return phraseAlternatives[key]||'Benzer anlamlı alternatif henüz eklenmedi';
+}
 function phraseResultsHTML(){
  const q=(phraseSearch||'').trim().toLowerCase();
- const list=phrasalVerbs.filter(x=>!q||String(x.p).toLowerCase().includes(q)||String(x.m).toLowerCase().includes(q)||String(x.e||'').toLowerCase().includes(q));
- return list.length?list.map((x,i)=>`<div class="phrase-card"><div class="phrase-top"><div><div class="phrase">${esc(x.p)}</div><div class="phrase-meaning">${esc(x.m)}</div></div><span class="phrase-tag">${i<10?'Temel':'Sık kullanım'}</span></div><div class="phrase-example">📘 <b>Örnek:</b> ${esc(x.e)}</div><button onclick="speakWord(${JSON.stringify(x.p)})">🔊 Dinle</button><button onclick="savePhrasalAsWord(${JSON.stringify(x.p)})">＋ Kelime hazineme ekle</button></div>`).join(''):`<div class="card"><div class="empty">🔎 Bu aramayla phrasal verb bulunamadı.<br><br><button class="btn primary" onclick="showAddPhrasalForm()">＋ Bu phrasal verb'i ekle</button></div></div>`;
+ const list=phrasalVerbs.filter(x=>{
+   const alts=getPhraseAlternatives(x);
+   return !q || String(x.p).toLowerCase().includes(q) || String(x.m).toLowerCase().includes(q) || String(x.e||'').toLowerCase().includes(q) || String(alts).toLowerCase().includes(q);
+ });
+ return list.length?list.map((x,i)=>`<div class="phrase-card"><div class="phrase-top"><div><div class="phrase">${esc(x.p)}</div><div class="phrase-meaning">🇹🇷 ${esc(x.m)}</div></div><span class="phrase-tag">${i<10?'Temel':'Sık kullanım'}</span></div><div class="phrase-example">📘 <b>Örnek:</b> ${esc(x.e)}</div><div class="phrase-alts"><b>🔁 Alternatifler:</b> ${esc(getPhraseAlternatives(x))}</div><button onclick="speakWord(${JSON.stringify(x.p)})">🔊 Dinle</button><button onclick="savePhrasalAsWord(${JSON.stringify(x.p)})">＋ Kelime hazineme ekle</button></div>`).join(''):`<div class="card"><div class="empty">🔎 Bu aramayla phrasal verb bulunamadı.<br><br><button class="btn primary" onclick="showAddPhrasalForm()">＋ Bu phrasal verb'i ekle</button></div></div>`;
 }
 function updatePhraseSearch(){
- phraseSearch=document.getElementById('phraseSearchInput')?.value||'';
+ const input=document.getElementById('phraseSearchInput');
+ phraseSearch=input?input.value:'';
  const results=document.getElementById('phraseResults');
  if(results)results.innerHTML=phraseResultsHTML();
+ // Arama sırasında input yeniden oluşturulmaz; iPhone klavyesi açık kalır.
 }
 function phrases(m){
  m.innerHTML=`<div class="phrase-hero"><h2>🔗 Phrasal Verbs</h2><p>Basitten başlayalım. Günlük İngilizcede çok kullanılan phrasal verb'leri öğren, dinle ve kendi kelime hazinene ekle.</p><div class="phrase-levels"><span>🟢 Başlangıç</span><span>${phrasalVerbs.length} ifade</span><span>Günlük English</span></div></div>
