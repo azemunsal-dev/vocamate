@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v36.0</title>
+<title>VocaMate v37.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -277,6 +277,12 @@ function loadWordsSafely(){
   return merged;
 }
 let words=loadWordsSafely();
+// V37: vocabulary denemelerini tek seferlik sıfırla; kelime içerikleri korunur.
+if(!localStorage.getItem('vocamate_v37_reset_done')){
+  words=words.map(w=>({...w,reviewLevel:'Öğreniliyor',status:'Yeni',nextReview:null,lastReviewed:null,lastStudied:null,reviewCount:0,correctCount:0,interval:0}));
+  localStorage.setItem('vocamate_v37_reset_done','1');
+  try{localStorage.setItem(KEY,JSON.stringify(words));}catch(e){}
+}
 let currentPage='home', quizIndex=0;
 let appHistory=['home'], appHistoryIndex=0, historyBusy=false;
 
@@ -455,6 +461,7 @@ function home(m){
  const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null;
  m.innerHTML=`
  <div class="home-topline"><div><div class="home-date">${todayLabel()}</div><h1>Bugün ne çalışalım?</h1><div class="sub" style="margin:0;font-size:16px">Kelime hazineni büyüt, öğrendiklerini unutma.</div></div><div class="streak">🔥 1 gün</div></div>
+ <button class="home-add-big" onclick="nav('add')"><span class="plus">＋</span><div><b>Yeni kelime ekle</b><small>Uygulamayı açar açmaz kelimeni ekle.</small></div></button>
  
  <div class="vocab-hero">
    <div class="vh-head"><div><div class="vh-kicker">VOCABULARY ODAĞI</div><div class="vh-title">Akıllı tekrar</div><div class="vh-sub">${due.length?`Bugün tekrar etmen gereken <b>${due.length} kelime</b> var.`:'Bugün tekrar bekleyen kelimen yok. 🎉'}</div></div><div class="vh-count">${due.length}</div></div>
@@ -471,7 +478,6 @@ function home(m){
  </div>
  
  <div class="section-head home-section"><div><div class="section-title">⚡ Hızlı erişim</div><div class="meta">Vocabulary çalışmaların</div></div></div>
- <button class="home-add-big" onclick="nav('add')"><span class="plus">＋</span><div><b>Yeni kelime ekle</b><small>Bir kelime yaz, VocaMate bilgileri hazırlasın.</small></div></button>
  <div class="home-actions">
    <button class="home-action blue" onclick="nav('add')"><span>＋</span><b>Kelime ekle</b><small>Yeni kelime oluştur</small></button>
    <button class="home-action purple" onclick="nav('stats')"><span>📚</span><b>Kelime hazinem</b><small>${total} kelimeni yönet</small></button>
