@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v35.0</title>
+<title>VocaMate v36.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -208,6 +208,11 @@ body{padding-bottom:180px}
 .pronounce-panel button.secondary{background:#e9eef8;color:#23406f}
 .pronounce-panel .pp-result{margin-top:12px;padding:11px 13px;border-radius:13px;background:#fff;color:#24324b;font-size:14px;line-height:1.45}
 </style>
+
+<style>
+/* V36 home + phrasal verbs */
+.home-add-big{display:flex;align-items:center;gap:14px;background:#23406f;color:#fff;border:0;border-radius:22px;padding:18px 20px;width:100%;text-align:left;box-shadow:0 10px 26px #23406f22;margin:0 0 14px;cursor:pointer}.home-add-big .plus{width:46px;height:46px;border-radius:15px;background:#ffffff20;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800}.home-add-big b{display:block;font-size:19px}.home-add-big small{display:block;margin-top:3px;color:#dbe4f5;font-size:13px}.phrase-hero{background:linear-gradient(135deg,#23406f,#4772e6);color:#fff;border-radius:26px;padding:22px;margin-bottom:15px}.phrase-hero h2{margin:0;font-size:27px}.phrase-hero p{margin:7px 0 0;color:#dce6fa;line-height:1.45}.phrase-levels{display:flex;gap:7px;overflow:auto;margin-top:16px}.phrase-levels span{white-space:nowrap;background:#ffffff18;border:1px solid #ffffff25;padding:7px 10px;border-radius:12px;font-size:12px;font-weight:800}.phrase-card{background:#fff;border:1px solid #e4eaf3;border-radius:22px;padding:18px;margin-bottom:11px;box-shadow:0 6px 20px #203b6810}.phrase-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.phrase{font-size:23px;font-weight:850;color:#1b2941}.phrase-meaning{font-size:16px;font-weight:750;color:#23406f;margin-top:4px}.phrase-example{margin-top:12px;padding:12px 14px;background:#f5f7fb;border-radius:15px;color:#45556f;line-height:1.5}.phrase-tag{background:#eef3ff;color:#23406f;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:800;white-space:nowrap}.phrase-card button{border:0;background:#eef3ff;color:#23406f;border-radius:12px;padding:9px 12px;font-weight:800;margin-top:10px}.phrase-search{margin-bottom:12px}.phrase-note{color:#71809a;font-size:13px;line-height:1.45;margin-bottom:14px}
+</style>
 </head>
 <body>
 <div class="app">
@@ -227,6 +232,7 @@ body{padding-bottom:180px}
   <button class="drawer-item" data-page="quiz" onclick="nav('quiz')"><span class="drawer-icon">🎯</span>Quiz</button>
   <button class="drawer-item" data-page="reading" onclick="nav('reading')"><span class="drawer-icon">📖</span>Reading Lab</button>
   <button class="drawer-item" data-page="patterns" onclick="nav('patterns')"><span class="drawer-icon">💬</span>TOEFL Kalıpları</button>
+  <button class="drawer-item" data-page="phrases" onclick="nav('phrases')"><span class="drawer-icon">🔗</span>Phrasal Verbs</button>
   <button class="drawer-item" data-page="stats" onclick="nav('stats')"><span class="drawer-icon">📊</span>İlerleme</button>
   <div class="drawer-divider"></div>
   <div class="drawer-section">TOEFL Bölümleri</div>
@@ -372,6 +378,7 @@ function render(){
  if(currentPage==='quiz')quiz(m);
  if(currentPage==='reading')reading(m);
  if(currentPage==='patterns')patterns(m);
+ if(currentPage==='phrases')phrases(m);
  if(currentPage==='stats')stats(m);
   if(currentPage==='wordDetail')wordDetail(m);
   if(currentPage==='review')showReview(0);
@@ -464,10 +471,12 @@ function home(m){
  </div>
  
  <div class="section-head home-section"><div><div class="section-title">⚡ Hızlı erişim</div><div class="meta">Vocabulary çalışmaların</div></div></div>
+ <button class="home-add-big" onclick="nav('add')"><span class="plus">＋</span><div><b>Yeni kelime ekle</b><small>Bir kelime yaz, VocaMate bilgileri hazırlasın.</small></div></button>
  <div class="home-actions">
    <button class="home-action blue" onclick="nav('add')"><span>＋</span><b>Kelime ekle</b><small>Yeni kelime oluştur</small></button>
    <button class="home-action purple" onclick="nav('stats')"><span>📚</span><b>Kelime hazinem</b><small>${total} kelimeni yönet</small></button>
    <button class="home-action orange" onclick="nav('quiz')"><span>🎯</span><b>Kelime Quiz</b><small>Hızlı test yap</small></button>
+   <button class="home-action green" onclick="nav('phrases')"><span>🔗</span><b>Phrasal Verbs</b><small>Günlük hayatta çok kullanılanlar</small></button>
    <button class="home-action green" onclick="startToeflSprint()"><span>🚀</span><b>TOEFL Sprint</b><small>10 soruluk tur</small></button>
  </div>
  
@@ -1061,6 +1070,52 @@ function copyPhrase(i){
  navigator.clipboard?.writeText(p.en).then(()=>toast('📋 Kalıp kopyalandı')).catch(()=>toast('Kalıbı seçip kopyalayabilirsin.'));
 }
 
+
+const phrasalVerbs=[
+ {p:'get up',m:'yataktan kalkmak',e:'I usually get up at 7 a.m.',tr:'Günlük hayatta çok temel ve sık kullanılan.'},
+ {p:'wake up',m:'uyanmak',e:'I wake up early on weekdays.'},
+ {p:'go out',m:'dışarı çıkmak',e:'We usually go out for dinner on Friday.'},
+ {p:'come back',m:'geri dönmek',e:'I will come back after work.'},
+ {p:'sit down',m:'oturmak',e:'Please sit down and make yourself comfortable.'},
+ {p:'stand up',m:'ayağa kalkmak',e:'Everyone stood up when the teacher entered.'},
+ {p:'look at',m:'bakmak, incelemek',e:'Look at this example carefully.'},
+ {p:'look for',m:'aramak',e:'I am looking for my keys.'},
+ {p:'find out',m:'öğrenmek, ortaya çıkarmak',e:'I need to find out what happened.'},
+ {p:'pick up',m:'alıp kaldırmak; gidip almak',e:'Can you pick me up after work?'},
+ {p:'put on',m:'giymek; takmak',e:'Put on your jacket before you go outside.'},
+ {p:'take off',m:'çıkarmak; havalanmak',e:'Please take off your shoes.'},
+ {p:'turn on',m:'açmak',e:'Can you turn on the light?'},
+ {p:'turn off',m:'kapatmak',e:'Please turn off the TV.'},
+ {p:'give up',m:'vazgeçmek',e:'Never give up when learning English.'},
+ {p:'carry on',m:'devam etmek',e:'Please carry on with your work.'},
+ {p:'go on',m:'devam etmek; olmak',e:'Please go on. I am listening.'},
+ {p:'come in',m:'içeri girmek',e:'Come in and have a seat.'},
+ {p:'go back',m:'geri dönmek',e:'I need to go back home.'},
+ {p:'bring up',m:'konuyu açmak; gündeme getirmek',e:'She brought up an interesting point.'},
+ {p:'call back',m:'geri aramak',e:'I will call you back later.'},
+ {p:'fill out',m:'form doldurmak',e:'Please fill out this form.'},
+ {p:'check in',m:'giriş yapmak; kayıt olmak',e:'We need to check in before the flight.'},
+ {p:'check out',m:'çıkış yapmak; incelemek',e:'We checked out of the hotel at noon.'},
+ {p:'deal with',m:'ilgilenmek, başa çıkmak',e:'We need to deal with this problem quickly.'},
+ {p:'work out',m:'çözmek; egzersiz yapmak',e:'We need to work out a solution.'},
+ {p:'set up',m:'kurmak, ayarlamak',e:'They set up a new system.'},
+ {p:'take care of',m:'ilgilenmek, bakımını yapmak',e:'I will take care of the customer.'},
+ {p:'run out of',m:'tükenmek',e:'We have run out of time.'},
+ {p:'figure out',m:'anlamak, çözmek',e:'I am trying to figure out the answer.'}
+];
+let phraseSearch='';
+function phrases(m){
+ const q=phraseSearch.toLowerCase();
+ const list=phrasalVerbs.filter(x=>!q||x.p.includes(q)||x.m.includes(q));
+ m.innerHTML=`<div class="phrase-hero"><h2>🔗 Phrasal Verbs</h2><p>Basitten başlayalım. Günlük İngilizcede ve TOEFL konuşmalarında çok sık karşılaşacağın phrasal verb'leri adım adım öğren.</p><div class="phrase-levels"><span>🟢 Başlangıç</span><span>30 temel ifade</span><span>Günlük English</span></div></div><div class="card"><label>🔎 Phrasal verb ara</label><input class="phrase-search" value="${esc(phraseSearch)}" placeholder="Örn. get up, look for..." oninput="phraseSearch=this.value;phrases(document.getElementById('main'))"><div class="phrase-note">💡 Önce en sık kullanılanları öğren. Her ifadeyi örnek cümle içinde gör ve yüksek sesle tekrar et.</div></div>${list.map((x,i)=>`<div class="phrase-card"><div class="phrase-top"><div><div class="phrase">${esc(x.p)}</div><div class="phrase-meaning">${esc(x.m)}</div></div><span class="phrase-tag">${i<10?'Temel':'Sık kullanım'}</span></div><div class="phrase-example">📘 <b>Örnek:</b> ${esc(x.e)}</div><button onclick="speakWord(${JSON.stringify(x.p)})">🔊 Dinle</button><button onclick="savePhrasalAsWord(${JSON.stringify(x.p)})">＋ Kelime hazineme ekle</button></div>`).join('')}`;
+}
+function savePhrasalAsWord(phrase){
+ const found=phrasalVerbs.find(x=>x.p===phrase); if(!found)return;
+ if(words.some(w=>w.word===phrase)){toast('🔗 Bu ifade zaten kelime hazinende.');return;}
+ words.push({word:phrase,type:'phrasal verb',phonetic:'',definition:'A commonly used English phrasal verb.',meaning:found.m,example:found.e,synonyms:'',antonyms:'',category:'General English',difficulty:'Kolay',sourceContext:'Phrasal Verbs',status:'Yeni',reviewLevel:'Öğreniliyor',nextReview:null,reviewCount:0,repetitions:0,quizCorrect:0,quizWrong:0,createdAt:new Date().toISOString(),lastStudied:null,userExample:'',note:''});
+ save();toast('🔗 Phrasal verb kelime hazinene eklendi.');
+}
+
 function patterns(m){
  const groups=[...new Set(phraseBank.map(p=>p.group))];
  m.innerHTML=`<h1>💬 TOEFL kalıpları</h1>
@@ -1284,6 +1339,16 @@ function markToeflUse(encoded){const word=decodeURIComponent(encoded),w=words.fi
 function startSingleReview(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;w.nextReview=new Date().toISOString();save();nav('review');}
 function editWord(encoded){const word=decodeURIComponent(encoded);const w=words.find(x=>x.word===word);if(!w)return;pushPage('add');render();setTimeout(()=>{const input=document.getElementById('wordInput');if(input){input.value=w.word;prepareWord().then(()=>{setTimeout(()=>{if(document.getElementById('meaning'))document.getElementById('meaning').value=w.meaning||'';if(document.getElementById('example'))document.getElementById('example').value=w.example||'';if(document.getElementById('userExample'))document.getElementById('userExample').value=w.userExample||'';if(document.getElementById('note'))document.getElementById('note').value=w.note||'';if(document.getElementById('category'))document.getElementById('category').value=w.category||'TOEFL Academic';if(document.getElementById('difficulty'))document.getElementById('difficulty').value=w.difficulty||'Orta'},250)})}},50)}
 function deleteWord(encoded){const word=decodeURIComponent(encoded);words=words.filter(w=>w.word!==word);save();toast('Kelime silindi');if(currentPage==='wordDetail')nav('stats');else render()}
+
+/* ================= V36 CLEAN START ================= */
+function resetPracticeAttemptsOnce(){
+ const flag='vocamate_v36_practice_reset';
+ if(localStorage.getItem(flag)) return;
+ words=words.map(w=>({...w,reviewCount:0,repetitions:0,interval:0,quizCorrect:0,quizWrong:0,reviewHistory:[],nextReview:null,lastStudied:null,recognized:false,pronunciationPracticed:false,pronunciationLastHeard:'',pronunciationPassed:false,activeSentenceScore:0,toeflUseCount:0}));
+ try{Object.keys(localStorage).filter(k=>k.startsWith('vocamate_daily_')).forEach(k=>localStorage.removeItem(k));}catch(e){}
+ save();localStorage.setItem(flag,'1');
+}
+resetPracticeAttemptsOnce();
 
 /* ================= V33 VOCABULARY ENGINE ================= */
 function v33NormalizeWords(){
