@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v38.0</title>
+<title>VocaMate v39.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -464,7 +464,7 @@ function home(m){
  const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null;
  m.innerHTML=`
  <div class="home-topline"><div><div class="home-date">${todayLabel()}</div><h1>Bugün ne çalışalım?</h1><div class="sub" style="margin:0;font-size:16px">Kelime hazineni büyüt, öğrendiklerini unutma.</div></div><div class="streak">🔥 1 gün</div></div>
- <button class="home-add-big" onclick="nav('add')"><span class="plus">＋</span><div><b>Yeni kelime ekle</b><small>Uygulamayı açar açmaz kelimeni ekle.</small></div></button>
+ <button class="home-add-big" style="margin:0 0 16px;min-height:72px;position:relative;z-index:2" onclick="nav('add')"><span class="plus">＋</span><div><b>Yeni kelime ekle</b><small>Kelimeyi hemen yaz ve öğrenmeye başla</small></div><strong style="font-size:30px;margin-left:auto">›</strong></button>
  
  <div class="vocab-hero">
    <div class="vh-head"><div><div class="vh-kicker">VOCABULARY ODAĞI</div><div class="vh-title">Akıllı tekrar</div><div class="vh-sub">${due.length?`Bugün tekrar etmen gereken <b>${due.length} kelime</b> var.`:'Bugün tekrar bekleyen kelimen yok. 🎉'}</div></div><div class="vh-count">${due.length}</div></div>
@@ -474,7 +474,6 @@ function home(m){
  </div>
  
  <div class="vocab-next-card" style="background:#fff;border:1px solid #e4eaf3;border-radius:22px;padding:16px;margin:0 0 14px;display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div style="font-size:13px;color:#7a879d;font-weight:800">BUGÜNÜN KELİME PLANI</div><div style="font-size:20px;font-weight:850;color:#23406f;margin-top:3px">${Math.min(due.length,TARGET)} kelime tekrar</div><div style="font-size:13px;color:#71809a;margin-top:3px">Hedef ${TARGET} kelime • Kalan ${Math.max(0,TARGET-reviewedTodayCount())}</div></div><button class="btn primary" style="margin:0;padding:11px 14px" onclick="startReview()">▶ Başla</button></div>
- <button class="home-add-word" onclick="nav('add')">➕ <span><b>Yeni kelime ekle</b><small>Kelimeyi hemen yaz ve öğrenmeye başla</small></span> <strong>›</strong></button>
  <div class="vocab-stats">
    <button onclick="nav('stats')"><b>${total}</b><span>Toplam kelime</span></button>
    <button onclick="startReview()"><b>${due.length}</b><span>Tekrar zamanı</span></button>
