@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v42.0</title>
+<title>VocaMate v43.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -228,6 +228,9 @@ body{padding-bottom:180px}
 
 /* V42 phrasal detail + alternatives */
 .phrase-alts{margin-top:10px;padding:11px 13px;background:#eef3ff;border-radius:14px;color:#23406f;line-height:1.45;font-size:14px}.phrase-alts b{font-weight:850}.phrase-search{font-size:17px;padding:15px 16px!important}.phrase-card{transition:box-shadow .15s}.phrase-card:has(.phrase-meaning){ }
+
+/* V43: recommended vocabulary resources */
+.resource-section{margin:22px 0 0}.resource-grid{display:grid;gap:10px}.resource-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e4eaf3;border-radius:18px;padding:13px 14px;text-decoration:none;color:#172033;box-shadow:0 5px 16px #203b6808;transition:transform .12s,box-shadow .12s}.resource-card:active{transform:scale(.99)}.resource-icon{width:42px;height:42px;border-radius:13px;background:#eef3ff;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}.resource-copy{min-width:0;flex:1}.resource-name{font-weight:850;font-size:16px;color:#23406f}.resource-desc{font-size:12px;line-height:1.35;color:#71809a;margin-top:3px}.resource-tag{display:inline-block;font-size:10px;font-weight:850;color:#4772e6;background:#eef3ff;border-radius:9px;padding:4px 7px;margin-left:5px;vertical-align:2px}.resource-arrow{font-size:20px;color:#8a95a8;flex:none}.resource-note{font-size:12px;color:#7a879d;line-height:1.45;margin:8px 2px 0}
 </style>
 </head>
 <body>
@@ -499,6 +502,19 @@ function home(m){
    <button class="home-action orange" onclick="nav('quiz')"><span>🎯</span><b>Kelime Quiz</b><small>Hızlı test yap</small></button>
    <button class="home-action green" onclick="nav('phrases')"><span>🔗</span><b>Phrasal Verbs</b><small>Günlük hayatta çok kullanılanlar</small></button>
    <button class="home-action green" onclick="startToeflSprint()"><span>🚀</span><b>TOEFL Sprint</b><small>10 soruluk tur</small></button>
+ </div>
+
+ <div class="resource-section">
+   <div class="section-head home-section"><div><div class="section-title">🔗 Önerilen kelime kaynakları</div><div class="meta">Oyun, kelime kartları ve TOEFL odaklı çalışma</div></div></div>
+   <div class="resource-grid">
+     <a class="resource-card" href="https://toefl.magoosh.com/flashcards/vocabulary" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🎓</div><div class="resource-copy"><div class="resource-name">Magoosh TOEFL Vocabulary <span class="resource-tag">TOEFL</span></div><div class="resource-desc">TOEFL için seçilmiş 600 önemli kelime ve ücretsiz flashcard çalışması.</div></div><div class="resource-arrow">↗</div></a>
+     <a class="resource-card" href="https://quizlet.com/features/learn-english" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🧠</div><div class="resource-copy"><div class="resource-name">Quizlet <span class="resource-tag">TOEFL</span></div><div class="resource-desc">Flashcards, Learn, Test ve Match; TOEFL için uzman doğrulamalı içerikler.</div></div><div class="resource-arrow">↗</div></a>
+     <a class="resource-card" href="https://wordwall.net/en" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🎮</div><div class="resource-copy"><div class="resource-name">Wordwall <span class="resource-tag">OYUN</span></div><div class="resource-desc">Eşleştirme, çark, kelime avı, quiz ve farklı oyunlarla kelime pratiği.</div></div><div class="resource-arrow">↗</div></a>
+     <a class="resource-card" href="https://apps.ankiweb.net/" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🔄</div><div class="resource-copy"><div class="resource-name">Anki <span class="resource-tag">SRS</span></div><div class="resource-desc">Aralıklı tekrar sistemiyle kelimeleri uzun süreli hafızaya taşımaya odaklanır.</div></div><div class="resource-arrow">↗</div></a>
+     <a class="resource-card" href="https://www.vocabulary.com/" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🏆</div><div class="resource-copy"><div class="resource-name">Vocabulary.com <span class="resource-tag">OYUN</span></div><div class="resource-desc">Uyarlanabilir kelime oyunları, sözlük, listeler ve puanlama sistemi.</div></div><div class="resource-arrow">↗</div></a>
+     <a class="resource-card" href="https://www.memrise.com/tr/ingilizce-ogrenmek/ingilizce-kursu" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🗣️</div><div class="resource-copy"><div class="resource-name">Memrise <span class="resource-tag">GÜNLÜK</span></div><div class="resource-desc">Yerli konuşmacı videoları, gerçek hayat ifadeleri ve oyunlaştırılmış çalışmalar.</div></div><div class="resource-arrow">↗</div></a>
+   </div>
+   <div class="resource-note">💡 VocaMate'in amacı başka uygulamaların yerini almak değil; gerektiğinde seni doğru kaynağa hızlıca yönlendirmek.</div>
  </div>
  
  ${last?`<div class="last-word-card"><div class="section-head"><div><div class="section-title">🆕 Son öğrendiğin kelime</div><div class="meta">Kelime hazinene en son eklediğin</div></div><button onclick="nav('stats')">Tümünü gör →</button></div><div class="last-word-row"><div><div class="last-word-name">${esc(last.word)} <button class="speak" onclick="speakWord(${JSON.stringify(last.word)})">🔊</button></div><div class="last-word-meaning">${esc(last.meaning||'Anlam eklenmedi')}</div><span class="badge">${esc(last.category||'General English')}</span> <span class="badge">${esc(last.difficulty||'Orta')}</span></div><div class="last-review">${intervalLabel(last.interval||0)}<small>tekrar aralığı</small></div></div></div>`:''}
