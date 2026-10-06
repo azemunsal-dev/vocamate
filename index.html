@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v39.0</title>
+<title>VocaMate v40.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -213,6 +213,12 @@ body{padding-bottom:180px}
 </style>
 
 <style>
+/* V40 compact home add + phrasal study */
+.home-add-compact{display:flex;align-items:center;gap:12px;margin:0 0 14px;padding:8px 4px;background:transparent;border:0;width:100%;text-align:left;cursor:pointer}
+.home-add-compact .round-plus{width:58px;height:58px;border-radius:50%;background:#23406f;color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;box-shadow:0 8px 20px #23406f30;flex:0 0 58px}
+.home-add-compact .compact-copy b{display:block;color:#23406f;font-size:18px}.home-add-compact .compact-copy small{display:block;color:#71809a;font-size:13px;margin-top:2px}
+.phrase-tools{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.phrase-tools .btn{margin:0}
+.phrase-study-card{background:#fff;border:1px solid #e4eaf3;border-radius:24px;padding:22px;box-shadow:0 8px 25px #203b6810}.phrase-study-word{font-size:36px;font-weight:900;color:#1b2941;text-align:center;margin:8px 0}.phrase-study-example{background:#f5f7fb;border-radius:16px;padding:14px;line-height:1.55;color:#45556f;margin:15px 0}.phrase-study-answer{background:#eef3ff;color:#23406f;border-radius:16px;padding:14px;margin-top:12px;font-weight:800}.phrase-study-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:15px}.phrase-study-actions button{border:0;border-radius:15px;padding:13px;font-weight:850}.phrase-study-actions .know{background:#e8f7ee;color:#23704a}.phrase-study-actions .again{background:#fff0f0;color:#a83d3d}.phrase-add-card{margin-top:14px}
 /* V36 home + phrasal verbs */
 .home-add-big{display:flex;align-items:center;gap:14px;background:#23406f;color:#fff;border:0;border-radius:22px;padding:18px 20px;width:100%;text-align:left;box-shadow:0 10px 26px #23406f22;margin:0 0 14px;cursor:pointer}.home-add-big .plus{width:46px;height:46px;border-radius:15px;background:#ffffff20;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800}.home-add-big b{display:block;font-size:19px}.home-add-big small{display:block;margin-top:3px;color:#dbe4f5;font-size:13px}.phrase-hero{background:linear-gradient(135deg,#23406f,#4772e6);color:#fff;border-radius:26px;padding:22px;margin-bottom:15px}.phrase-hero h2{margin:0;font-size:27px}.phrase-hero p{margin:7px 0 0;color:#dce6fa;line-height:1.45}.phrase-levels{display:flex;gap:7px;overflow:auto;margin-top:16px}.phrase-levels span{white-space:nowrap;background:#ffffff18;border:1px solid #ffffff25;padding:7px 10px;border-radius:12px;font-size:12px;font-weight:800}.phrase-card{background:#fff;border:1px solid #e4eaf3;border-radius:22px;padding:18px;margin-bottom:11px;box-shadow:0 6px 20px #203b6810}.phrase-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.phrase{font-size:23px;font-weight:850;color:#1b2941}.phrase-meaning{font-size:16px;font-weight:750;color:#23406f;margin-top:4px}.phrase-example{margin-top:12px;padding:12px 14px;background:#f5f7fb;border-radius:15px;color:#45556f;line-height:1.5}.phrase-tag{background:#eef3ff;color:#23406f;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:800;white-space:nowrap}.phrase-card button{border:0;background:#eef3ff;color:#23406f;border-radius:12px;padding:9px 12px;font-weight:800;margin-top:10px}.phrase-search{margin-bottom:12px}.phrase-note{color:#71809a;font-size:13px;line-height:1.45;margin-bottom:14px}
 </style>
@@ -388,6 +394,7 @@ function render(){
  if(currentPage==='reading')reading(m);
  if(currentPage==='patterns')patterns(m);
  if(currentPage==='phrases')phrases(m);
+ if(currentPage==='phraseStudy')phraseStudy(m);
  if(currentPage==='stats')stats(m);
   if(currentPage==='wordDetail')wordDetail(m);
   if(currentPage==='review')showReview(0);
@@ -464,7 +471,7 @@ function home(m){
  const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null;
  m.innerHTML=`
  <div class="home-topline"><div><div class="home-date">${todayLabel()}</div><h1>Bugün ne çalışalım?</h1><div class="sub" style="margin:0;font-size:16px">Kelime hazineni büyüt, öğrendiklerini unutma.</div></div><div class="streak">🔥 1 gün</div></div>
- <button class="home-add-big" style="margin:0 0 16px;min-height:72px;position:relative;z-index:2" onclick="nav('add')"><span class="plus">＋</span><div><b>Yeni kelime ekle</b><small>Kelimeyi hemen yaz ve öğrenmeye başla</small></div><strong style="font-size:30px;margin-left:auto">›</strong></button>
+ <button class="home-add-compact" onclick="nav('add')"><span class="round-plus">＋</span><span class="compact-copy"><b>Yeni kelime ekle</b><small>Hemen bir kelime ekle</small></span><strong style="margin-left:auto;font-size:28px;color:#aab5c7">›</strong></button>
  
  <div class="vocab-hero">
    <div class="vh-head"><div><div class="vh-kicker">VOCABULARY ODAĞI</div><div class="vh-title">Akıllı tekrar</div><div class="vh-sub">${due.length?`Bugün tekrar etmen gereken <b>${due.length} kelime</b> var.`:'Bugün tekrar bekleyen kelimen yok. 🎉'}</div></div><div class="vh-count">${due.length}</div></div>
@@ -1113,18 +1120,52 @@ const phrasalVerbs=[
  {p:'figure out',m:'anlamak, çözmek',e:'I am trying to figure out the answer.'}
 ];
 let phraseSearch='';
-function phrases(m){
- const q=phraseSearch.toLowerCase();
- const list=phrasalVerbs.filter(x=>!q||x.p.includes(q)||x.m.includes(q));
- m.innerHTML=`<div class="phrase-hero"><h2>🔗 Phrasal Verbs</h2><p>Basitten başlayalım. Günlük İngilizcede ve TOEFL konuşmalarında çok sık karşılaşacağın phrasal verb'leri adım adım öğren.</p><div class="phrase-levels"><span>🟢 Başlangıç</span><span>30 temel ifade</span><span>Günlük English</span></div></div><div class="card"><label>🔎 Phrasal verb ara</label><input class="phrase-search" value="${esc(phraseSearch)}" placeholder="Örn. get up, look for..." oninput="phraseSearch=this.value;phrases(document.getElementById('main'))"><div class="phrase-note">💡 Önce en sık kullanılanları öğren. Her ifadeyi örnek cümle içinde gör ve yüksek sesle tekrar et.</div></div>${list.map((x,i)=>`<div class="phrase-card"><div class="phrase-top"><div><div class="phrase">${esc(x.p)}</div><div class="phrase-meaning">${esc(x.m)}</div></div><span class="phrase-tag">${i<10?'Temel':'Sık kullanım'}</span></div><div class="phrase-example">📘 <b>Örnek:</b> ${esc(x.e)}</div><button onclick="speakWord(${JSON.stringify(x.p)})">🔊 Dinle</button><button onclick="savePhrasalAsWord(${JSON.stringify(x.p)})">＋ Kelime hazineme ekle</button></div>`).join('')}`;
+let phraseStudyIndex=0;
+let phraseStudyDeck=[];
+
+function loadCustomPhrasalVerbs(){
+ try{const a=JSON.parse(localStorage.getItem('vocamate_custom_phrasals')||'[]');if(Array.isArray(a))phrasalVerbs.push(...a)}catch(e){}
 }
+loadCustomPhrasalVerbs();
+
+function phrases(m){
+ const q=(phraseSearch||'').trim().toLowerCase();
+ const list=phrasalVerbs.filter(x=>!q||String(x.p).toLowerCase().includes(q)||String(x.m).toLowerCase().includes(q)||String(x.e||'').toLowerCase().includes(q));
+ m.innerHTML=`<div class="phrase-hero"><h2>🔗 Phrasal Verbs</h2><p>Basitten başlayalım. Günlük İngilizcede çok kullanılan phrasal verb'leri öğren, dinle ve kendi kelime hazinene ekle.</p><div class="phrase-levels"><span>🟢 Başlangıç</span><span>${phrasalVerbs.length} ifade</span><span>Günlük English</span></div></div>
+ <div class="card"><label>🔎 Phrasal verb ara</label><input id="phraseSearchInput" class="phrase-search" value="${esc(phraseSearch)}" placeholder="Örn. get up, look for..." oninput="phraseSearch=this.value;phrases(document.getElementById('main'));setTimeout(()=>{const e=document.getElementById('phraseSearchInput');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length)}},0)">
+ <div class="phrase-tools"><button class="btn primary" onclick="startPhraseStudy()">🧠 Phrasal Verbs çalış</button><button class="btn secondary" onclick="showAddPhrasalForm()">＋ Yeni phrasal verb</button></div>
+ <div class="phrase-note" style="margin-top:12px">💡 Arama İngilizce ifade, Türkçe anlam ve örnek cümlede çalışır.</div></div>
+ <div id="phraseAddArea"></div>
+ ${list.length?list.map((x,i)=>`<div class="phrase-card"><div class="phrase-top"><div><div class="phrase">${esc(x.p)}</div><div class="phrase-meaning">${esc(x.m)}</div></div><span class="phrase-tag">${i<10?'Temel':'Sık kullanım'}</span></div><div class="phrase-example">📘 <b>Örnek:</b> ${esc(x.e)}</div><button onclick="speakWord(${JSON.stringify(x.p)})">🔊 Dinle</button><button onclick="savePhrasalAsWord(${JSON.stringify(x.p)})">＋ Kelime hazineme ekle</button></div>`).join(''):`<div class="card"><div class="empty">🔎 Bu aramayla phrasal verb bulunamadı.<br><br><button class="btn primary" onclick="showAddPhrasalForm()">＋ Bu phrasal verb'i ekle</button></div></div>`}`;
+}
+function showAddPhrasalForm(){
+ const area=document.getElementById('phraseAddArea');if(!area)return;
+ area.innerHTML=`<div class="card phrase-add-card"><div class="section-title">＋ Yeni Phrasal Verb Ekle</div><div class="sub">Kendi kullandığın bir ifadeyi de bu bölüme ekleyebilirsin.</div><label>İngilizce ifade</label><input id="newPhraseP" placeholder="Örn. look after"><label>Türkçe anlam</label><input id="newPhraseM" placeholder="Örn. ilgilenmek"><label>Örnek cümle</label><textarea id="newPhraseE" placeholder="She looks after her younger sister."></textarea><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="addCustomPhrasal()">💾 Kaydet</button><button class="btn secondary" onclick="phrases(document.getElementById('main'))">İptal</button></div></div>`;
+ area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function addCustomPhrasal(){
+ const p=(document.getElementById('newPhraseP')?.value||'').trim();const m=(document.getElementById('newPhraseM')?.value||'').trim();const e=(document.getElementById('newPhraseE')?.value||'').trim();
+ if(!p||!m||!e){toast('Lütfen ifade, anlam ve örnek cümleyi doldur.');return}
+ if(phrasalVerbs.some(x=>x.p.toLowerCase()===p.toLowerCase())){toast('Bu phrasal verb zaten listede.');return}
+ const item={p,m,e,custom:true};phrasalVerbs.push(item);const customs=phrasalVerbs.filter(x=>x.custom);localStorage.setItem('vocamate_custom_phrasals',JSON.stringify(customs));phraseSearch='';phrases(document.getElementById('main'));toast('🔗 Phrasal verb eklendi.');
+}
+function startPhraseStudy(){
+ phraseStudyDeck=[...phrasalVerbs].sort(()=>Math.random()-.5).slice(0,10);phraseStudyIndex=0;currentPage='phraseStudy';showPhraseStudy();
+}
+function showPhraseStudy(){
+ const m=document.getElementById('main');if(!m||!phraseStudyDeck.length){nav('phrases');return}
+ const x=phraseStudyDeck[phraseStudyIndex];
+ m.innerHTML=`<div class="practice-head"><button class="back-btn" onclick="nav('phrases')">‹</button><div><div class="practice-title">🧠 Phrasal Verbs Çalışması</div><div class="practice-sub">${phraseStudyIndex+1}/${phraseStudyDeck.length} • Anlamını hatırla</div></div></div>
+ <div class="phrase-study-card"><div class="phrase-tag" style="display:inline-block">${phraseStudyIndex<5?'Başlangıç':'Sık kullanım'}</div><div class="phrase-study-word">${esc(x.p)}</div><div class="phrase-study-example">📘 ${esc(x.e)}</div><button class="btn secondary" style="width:100%" onclick="speakWord(${JSON.stringify(x.p)})">🔊 Dinle</button><button class="btn primary" style="width:100%;margin-top:10px" onclick="document.getElementById('phraseAnswer').style.display='block';this.style.display='none'">Anlamı göster</button><div id="phraseAnswer" class="phrase-study-answer" style="display:none">🇹🇷 ${esc(x.m)}</div><div class="phrase-study-actions"><button class="again" onclick="nextPhraseStudy()">Tekrar et</button><button class="know" onclick="nextPhraseStudy()">Hatırladım ✓</button></div></div>`;
+}
+function nextPhraseStudy(){phraseStudyIndex++;if(phraseStudyIndex>=phraseStudyDeck.length){const m=document.getElementById('main');m.innerHTML=`<div class="practice-shell" style="text-align:center"><div style="font-size:48px">🎉</div><h2>Phrasal Verbs turu tamamlandı</h2><p class="sub">10 ifadeyi çalıştın. Şimdi öğrendiklerini günlük cümlelerde kullan.</p><button class="btn primary" style="width:100%;margin-top:12px" onclick="startPhraseStudy()">🔄 Yeni tur</button><button class="btn secondary" style="width:100%;margin-top:9px" onclick="nav('phrases')">Phrasal Verbs listesine dön</button></div>`;return}showPhraseStudy();}
+
 function savePhrasalAsWord(phrase){
  const found=phrasalVerbs.find(x=>x.p===phrase); if(!found)return;
  if(words.some(w=>w.word===phrase)){toast('🔗 Bu ifade zaten kelime hazinende.');return;}
  words.push({word:phrase,type:'phrasal verb',phonetic:'',definition:'A commonly used English phrasal verb.',meaning:found.m,example:found.e,synonyms:'',antonyms:'',category:'General English',difficulty:'Kolay',sourceContext:'Phrasal Verbs',status:'Yeni',reviewLevel:'Öğreniliyor',nextReview:null,reviewCount:0,repetitions:0,quizCorrect:0,quizWrong:0,createdAt:new Date().toISOString(),lastStudied:null,userExample:'',note:''});
  save();toast('🔗 Phrasal verb kelime hazinene eklendi.');
 }
-
 function patterns(m){
  const groups=[...new Set(phraseBank.map(p=>p.group))];
  m.innerHTML=`<h1>💬 TOEFL kalıpları</h1>
