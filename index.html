@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v43.0</title>
+<title>VocaMate v44.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -230,7 +230,7 @@ body{padding-bottom:180px}
 .phrase-alts{margin-top:10px;padding:11px 13px;background:#eef3ff;border-radius:14px;color:#23406f;line-height:1.45;font-size:14px}.phrase-alts b{font-weight:850}.phrase-search{font-size:17px;padding:15px 16px!important}.phrase-card{transition:box-shadow .15s}.phrase-card:has(.phrase-meaning){ }
 
 /* V43: recommended vocabulary resources */
-.resource-section{margin:22px 0 0}.resource-grid{display:grid;gap:10px}.resource-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e4eaf3;border-radius:18px;padding:13px 14px;text-decoration:none;color:#172033;box-shadow:0 5px 16px #203b6808;transition:transform .12s,box-shadow .12s}.resource-card:active{transform:scale(.99)}.resource-icon{width:42px;height:42px;border-radius:13px;background:#eef3ff;display:flex;align-items:center;justify-content:center;font-size:21px;flex:none}.resource-copy{min-width:0;flex:1}.resource-name{font-weight:850;font-size:16px;color:#23406f}.resource-desc{font-size:12px;line-height:1.35;color:#71809a;margin-top:3px}.resource-tag{display:inline-block;font-size:10px;font-weight:850;color:#4772e6;background:#eef3ff;border-radius:9px;padding:4px 7px;margin-left:5px;vertical-align:2px}.resource-arrow{font-size:20px;color:#8a95a8;flex:none}.resource-note{font-size:12px;color:#7a879d;line-height:1.45;margin:8px 2px 0}
+.resource-section{margin:18px 0 0;padding:14px;background:#eef3ff;border:1px solid #dce6ff;border-radius:22px}.resource-section .section-head{margin:0 0 10px}.resource-section .section-title{font-size:19px}.resource-section .meta{font-size:13px}.resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.resource-card{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;background:#fff;border:1px solid #e4eaf3;border-radius:16px;padding:12px;text-decoration:none;color:#172033;box-shadow:0 3px 10px #203b6808;transition:transform .12s,box-shadow .12s}.resource-card:active{transform:scale(.99)}.resource-icon{width:34px;height:34px;border-radius:11px;background:#eef3ff;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}.resource-copy{min-width:0;width:100%;flex:1}.resource-name{font-weight:850;font-size:14px;line-height:1.25;color:#23406f}.resource-desc{font-size:11px;line-height:1.35;color:#71809a;margin-top:5px}.resource-tag{display:inline-block;font-size:9px;font-weight:850;color:#4772e6;background:#eef3ff;border-radius:7px;padding:3px 5px;margin:4px 0 0;vertical-align:middle}.resource-arrow{font-size:16px;color:#4772e6;align-self:flex-end;flex:none}.resource-note{font-size:11px;color:#7a879d;line-height:1.4;margin:9px 2px 0}
 </style>
 </head>
 <body>
@@ -514,7 +514,7 @@ function home(m){
      <a class="resource-card" href="https://www.vocabulary.com/" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🏆</div><div class="resource-copy"><div class="resource-name">Vocabulary.com <span class="resource-tag">OYUN</span></div><div class="resource-desc">Uyarlanabilir kelime oyunları, sözlük, listeler ve puanlama sistemi.</div></div><div class="resource-arrow">↗</div></a>
      <a class="resource-card" href="https://www.memrise.com/tr/ingilizce-ogrenmek/ingilizce-kursu" target="_blank" rel="noopener noreferrer"><div class="resource-icon">🗣️</div><div class="resource-copy"><div class="resource-name">Memrise <span class="resource-tag">GÜNLÜK</span></div><div class="resource-desc">Yerli konuşmacı videoları, gerçek hayat ifadeleri ve oyunlaştırılmış çalışmalar.</div></div><div class="resource-arrow">↗</div></a>
    </div>
-   <div class="resource-note">💡 VocaMate'in amacı başka uygulamaların yerini almak değil; gerektiğinde seni doğru kaynağa hızlıca yönlendirmek.</div>
+   <div class="resource-note">💡 TOEFL ve günlük kelime pratiği için seçilmiş dış kaynaklar. Kartlara dokunarak açabilirsin.</div>
  </div>
  
  ${last?`<div class="last-word-card"><div class="section-head"><div><div class="section-title">🆕 Son öğrendiğin kelime</div><div class="meta">Kelime hazinene en son eklediğin</div></div><button onclick="nav('stats')">Tümünü gör →</button></div><div class="last-word-row"><div><div class="last-word-name">${esc(last.word)} <button class="speak" onclick="speakWord(${JSON.stringify(last.word)})">🔊</button></div><div class="last-word-meaning">${esc(last.meaning||'Anlam eklenmedi')}</div><span class="badge">${esc(last.category||'General English')}</span> <span class="badge">${esc(last.difficulty||'Orta')}</span></div><div class="last-review">${intervalLabel(last.interval||0)}<small>tekrar aralığı</small></div></div></div>`:''}
