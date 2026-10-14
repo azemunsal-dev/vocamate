@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v45.0</title>
+<title>VocaMate v46.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -270,9 +270,9 @@ body{padding-bottom:180px}
 </nav>
 <script>
 const KEY='vocamate_words_v33', TARGET=20;
-// V45: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
-const V45_FRESH_START=!localStorage.getItem('vocamate_v45_fresh_start_done');
-if(V45_FRESH_START){
+// V46: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
+const V46_FRESH_START=!localStorage.getItem('vocamate_v45_fresh_start_done');
+if(V46_FRESH_START){
   try{Object.keys(localStorage).filter(k=>/^vocamate_words_/.test(k)||/^vocamate_daily_/.test(k)||k==='vocamate_custom_phrasals'||k==='vocamate_v37_reset_done').forEach(k=>localStorage.removeItem(k));}catch(e){}
   try{localStorage.setItem('vocamate_v45_fresh_start_done','1');localStorage.setItem(KEY,'[]');}catch(e){}
 }
@@ -298,8 +298,8 @@ function loadWordsSafely(){
   }
   return merged;
 }
-let words=V45_FRESH_START?[]:loadWordsSafely();
-if(V45_FRESH_START){try{localStorage.setItem(KEY,'[]')}catch(e){}}
+let words=V46_FRESH_START?[]:loadWordsSafely();
+if(V46_FRESH_START){try{localStorage.setItem(KEY,'[]')}catch(e){}}
 // V37: vocabulary denemelerini tek seferlik sıfırla; kelime içerikleri korunur.
 if(!localStorage.getItem('vocamate_v37_reset_done')){
   words=words.map(w=>({...w,reviewLevel:'Öğreniliyor',status:'Yeni',nextReview:null,lastReviewed:null,lastStudied:null,reviewCount:0,correctCount:0,interval:0}));
@@ -1565,27 +1565,36 @@ function checkActiveSentence(encoded){_v33OriginalCheckActiveSentence(encoded);c
 render();
 updateBottomNav();
 
-// V45: accept a word shared from iOS Shortcuts via ?addWord=...
+// V46: accept a word shared from iOS Shortcuts via ?addWord=...
 function openSharedWordFromUrl(){
-  let shared='';
-  try{const params=new URLSearchParams(window.location.search);shared=params.get('addWord')||params.get('text')||'';}catch(e){}
+  let params, hasShareParam=false, shared='';
+  try{
+    params=new URLSearchParams(window.location.search);
+    hasShareParam=params.has('addWord') || params.has('text');
+    shared=params.get('addWord') || params.get('text') || '';
+  }catch(e){}
   shared=String(shared||'').replace(/[\r\n]+/g,' ').trim();
-  if(!shared)return;
-  // Remove surrounding punctuation/quotes, preserving internal hyphens and apostrophes.
+  // A share shortcut may open with an empty input when run manually.
+  // Still open the Add Word screen if the addWord parameter exists.
+  if(!hasShareParam)return;
   shared=shared.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g,'').trim();
-  if(!shared)return;
-  // Avoid reprocessing on refresh after the word has been picked up.
   try{history.replaceState({},document.title,window.location.pathname+window.location.hash);}catch(e){}
   currentPage='add';appHistory=['home','add'];appHistoryIndex=1;closeDrawer();render();updateBottomNav();
   setTimeout(()=>{
     const input=document.getElementById('wordInput');
     if(!input)return;
-    input.value=shared;
-    if(typeof prepareWord==='function')prepareWord();
-    toast('📥 Paylaşılan kelime VocaMate’ye aktarıldı');
-  },180);
+    if(shared){
+      input.value=shared;
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+      if(typeof prepareWord==='function')prepareWord();
+      toast('📥 “'+shared+'” VocaMate’ye aktarıldı');
+    } else {
+      input.focus();
+      toast('Kelime aktarılmadı. Kestirmeyi bir kelime seçip Paylaş menüsünden çalıştır.');
+    }
+  },350);
 }
-setTimeout(openSharedWordFromUrl,250);
+setTimeout(openSharedWordFromUrl,350);
 </script>
 </body>
 </html>
