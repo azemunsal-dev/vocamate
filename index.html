@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v44.0</title>
+<title>VocaMate v45.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -270,6 +270,12 @@ body{padding-bottom:180px}
 </nav>
 <script>
 const KEY='vocamate_words_v33', TARGET=20;
+// V45: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
+const V45_FRESH_START=!localStorage.getItem('vocamate_v45_fresh_start_done');
+if(V45_FRESH_START){
+  try{Object.keys(localStorage).filter(k=>/^vocamate_words_/.test(k)||/^vocamate_daily_/.test(k)||k==='vocamate_custom_phrasals'||k==='vocamate_v37_reset_done').forEach(k=>localStorage.removeItem(k));}catch(e){}
+  try{localStorage.setItem('vocamate_v45_fresh_start_done','1');localStorage.setItem(KEY,'[]');}catch(e){}
+}
 // V20: kelime verilerini eski sürümlerden koru; boşsa daha önce kullandığımız temel kelimeleri geri getir.
 function loadWordsSafely(){
   const keys=['vocamate_words_v33','vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
@@ -292,7 +298,8 @@ function loadWordsSafely(){
   }
   return merged;
 }
-let words=loadWordsSafely();
+let words=V45_FRESH_START?[]:loadWordsSafely();
+if(V45_FRESH_START){try{localStorage.setItem(KEY,'[]')}catch(e){}}
 // V37: vocabulary denemelerini tek seferlik sıfırla; kelime içerikleri korunur.
 if(!localStorage.getItem('vocamate_v37_reset_done')){
   words=words.map(w=>({...w,reviewLevel:'Öğreniliyor',status:'Yeni',nextReview:null,lastReviewed:null,lastStudied:null,reviewCount:0,correctCount:0,interval:0}));
@@ -1557,6 +1564,28 @@ function checkActiveSentence(encoded){_v33OriginalCheckActiveSentence(encoded);c
 
 render();
 updateBottomNav();
+
+// V45: accept a word shared from iOS Shortcuts via ?addWord=...
+function openSharedWordFromUrl(){
+  let shared='';
+  try{const params=new URLSearchParams(window.location.search);shared=params.get('addWord')||params.get('text')||'';}catch(e){}
+  shared=String(shared||'').replace(/[\r\n]+/g,' ').trim();
+  if(!shared)return;
+  // Remove surrounding punctuation/quotes, preserving internal hyphens and apostrophes.
+  shared=shared.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g,'').trim();
+  if(!shared)return;
+  // Avoid reprocessing on refresh after the word has been picked up.
+  try{history.replaceState({},document.title,window.location.pathname+window.location.hash);}catch(e){}
+  currentPage='add';appHistory=['home','add'];appHistoryIndex=1;closeDrawer();render();updateBottomNav();
+  setTimeout(()=>{
+    const input=document.getElementById('wordInput');
+    if(!input)return;
+    input.value=shared;
+    if(typeof prepareWord==='function')prepareWord();
+    toast('📥 Paylaşılan kelime VocaMate’ye aktarıldı');
+  },180);
+}
+setTimeout(openSharedWordFromUrl,250);
 </script>
 </body>
 </html>
