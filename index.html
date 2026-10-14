@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v46.0</title>
+<title>VocaMate v47.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -202,7 +202,7 @@ body{padding-bottom:180px}
 .home-add-word{width:100%;display:flex;align-items:center;gap:12px;border:0;border-radius:22px;background:#4d73e6;color:#fff;padding:17px 20px;margin:14px 0 14px;box-shadow:0 8px 20px rgba(35,64,111,.14);text-align:left;cursor:pointer;font-family:inherit}
 .home-add-word>span{display:flex;flex-direction:column;flex:1;gap:3px}.home-add-word b{font-size:20px;font-weight:850}.home-add-word small{font-size:13px;opacity:.88}.home-add-word strong{font-size:30px;line-height:1}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <style>
 /* V35 pronunciation practice */
@@ -269,8 +269,21 @@ body{padding-bottom:180px}
   <button id="bottomForward" onclick="appForward()" aria-label="İleri" title="İleri"><span class="arrow">›</span></button>
 </nav>
 <script>
+/* V47 safety net: surface startup errors instead of leaving the app content blank. */
+window.addEventListener('error', function(event) {
+  const main = document.getElementById('main');
+  if (main && !main.innerHTML.trim()) {
+    main.innerHTML = '<div style="background:#fff;border:1px solid #f2c6c6;border-radius:18px;padding:18px;margin-top:18px;color:#7f2b2b"><b>VocaMate açılış hatası</b><p style="line-height:1.5;margin-bottom:0">Uygulama başlatılırken bir hata oluştu. Sayfayı yenileyin; sorun sürerse hata ayrıntılarını geliştiriciye iletin.</p></div>';
+  }
+});
+window.addEventListener('unhandledrejection', function() {
+  const main = document.getElementById('main');
+  if (main && !main.innerHTML.trim()) {
+    main.innerHTML = '<div style="background:#fff;border:1px solid #f2c6c6;border-radius:18px;padding:18px;margin-top:18px;color:#7f2b2b"><b>VocaMate başlatılamadı</b><p style="line-height:1.5;margin-bottom:0">Bir işlem tamamlanamadı. Sayfayı yenileyip tekrar deneyin.</p></div>';
+  }
+});
 const KEY='vocamate_words_v33', TARGET=20;
-// V46: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
+// V47: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
 const V46_FRESH_START=!localStorage.getItem('vocamate_v45_fresh_start_done');
 if(V46_FRESH_START){
   try{Object.keys(localStorage).filter(k=>/^vocamate_words_/.test(k)||/^vocamate_daily_/.test(k)||k==='vocamate_custom_phrasals'||k==='vocamate_v37_reset_done').forEach(k=>localStorage.removeItem(k));}catch(e){}
@@ -1565,7 +1578,7 @@ function checkActiveSentence(encoded){_v33OriginalCheckActiveSentence(encoded);c
 render();
 updateBottomNav();
 
-// V46: accept a word shared from iOS Shortcuts via ?addWord=...
+// V47: accept a word shared from iOS Shortcuts via ?addWord=...
 function openSharedWordFromUrl(){
   let params, hasShareParam=false, shared='';
   try{
