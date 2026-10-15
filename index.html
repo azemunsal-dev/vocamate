@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#23406f">
-<title>VocaMate v48.0</title>
+<title>VocaMate v49.0</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
@@ -269,7 +269,7 @@ body{padding-bottom:180px}
   <button id="bottomForward" onclick="appForward()" aria-label="İleri" title="İleri"><span class="arrow">›</span></button>
 </nav>
 <script>
-/* V48 diagnostic: show the actual startup error so it can be fixed precisely. */
+/* V49 diagnostic: show the actual startup error so it can be fixed precisely. */
 window.addEventListener('error', function(event) {
   const main = document.getElementById('main');
   if (main && !main.innerHTML.trim()) {
@@ -285,45 +285,14 @@ window.addEventListener('unhandledrejection', function() {
   }
 });
 const KEY='vocamate_words_v33', TARGET=20;
-// V48: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
+// V49: one-time fresh start requested by the user. Remove old vocabulary/progress only once.
 const V46_FRESH_START=!localStorage.getItem('vocamate_v45_fresh_start_done');
 if(V46_FRESH_START){
   try{Object.keys(localStorage).filter(k=>/^vocamate_words_/.test(k)||/^vocamate_daily_/.test(k)||k==='vocamate_custom_phrasals'||k==='vocamate_v37_reset_done').forEach(k=>localStorage.removeItem(k));}catch(e){}
   try{localStorage.setItem('vocamate_v45_fresh_start_done','1');localStorage.setItem(KEY,'[]');}catch(e){}
 }
 // V20: kelime verilerini eski sürümlerden koru; boşsa daha önce kullandığımız temel kelimeleri geri getir.
-function loadWordsSafely(){
-  const keys=['vocamate_words_v33','vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
-  const merged=[]; const seen=new Set();
-  for(const k of keys){
-    try{
-      const arr=JSON.parse(localStorage.getItem(k)||'[]');
-      if(Array.isArray(arr)) arr.forEach(w=>{
-        const word=String(w.word||'').trim().toLowerCase();
-        if(word && !seen.has(word)){seen.add(word); merged.push(w)}
-      });
-    }catch(e){}
-  }
-  if(!merged.length){
-    const starter=['significant','substantial','mitigate'];
-    starter.forEach(word=>{
-      const d=fallback[word];
-      if(d) merged.push({word, ...d, category:word==='mitigate'?'TOEFL Academic':'TOEFL Academic', difficulty:'Orta', source:'TOEFL', status:'Yeni', reviewLevel:'Öğreniliyor', nextReview:null, reviewCount:0, correctCount:0, createdAt:new Date().toISOString(), lastStudied:null, personalSentence:'', note:''});
-    });
-  }
-  return merged;
-}
-let words=V46_FRESH_START?[]:loadWordsSafely();
-if(V46_FRESH_START){try{localStorage.setItem(KEY,'[]')}catch(e){}}
-// V37: vocabulary denemelerini tek seferlik sıfırla; kelime içerikleri korunur.
-if(!localStorage.getItem('vocamate_v37_reset_done')){
-  words=words.map(w=>({...w,reviewLevel:'Öğreniliyor',status:'Yeni',nextReview:null,lastReviewed:null,lastStudied:null,reviewCount:0,correctCount:0,interval:0}));
-  localStorage.setItem('vocamate_v37_reset_done','1');
-  try{localStorage.setItem(KEY,JSON.stringify(words));}catch(e){}
-}
-let currentPage='home', quizIndex=0;
-let appHistory=['home'], appHistoryIndex=0, historyBusy=false;
-
+// V49 fix: initialize fallback vocabulary before loadWordsSafely can use it.
 const fallback={
  significant:{type:'adjective',phonetic:'/sɪɡˈnɪfɪkənt/',definition:'important or notable; having a clear or meaningful effect',meaning:'önemli, kayda değer, anlamlı',example:'The study found a significant difference between the two groups.',synonyms:'important, notable, considerable',antonyms:'insignificant, minor'},
  substantial:{type:'adjective',phonetic:'/səˈstænʃəl/',definition:'of considerable importance, size, or worth',meaning:'önemli, kayda değer; büyük miktarda',example:'The project requires a substantial amount of time.',synonyms:'considerable, significant',antonyms:'insignificant, minor'},
@@ -383,6 +352,39 @@ const fallback={
   discipline:{type:'noun',phonetic:'/ˈdɪsəplɪn/',definition:'a particular area of study or knowledge',meaning:'disiplin, bilim dalı',example:'Archaeology became an established academic discipline.',synonyms:'field, subject',antonyms:''},
   recognized:{type:'adjective',phonetic:'/ˈrekəɡnaɪzd/',definition:'accepted or acknowledged as real, important, or established',meaning:'tanınmış, kabul edilmiş',example:'The field became a recognized discipline.',synonyms:'acknowledged, accepted',antonyms:'unrecognized'}
 };
+function loadWordsSafely(){
+  const keys=['vocamate_words_v33','vocamate_words_v32','vocamate_words_v31','vocamate_words_v3','vocamate_words_v2'];
+  const merged=[]; const seen=new Set();
+  for(const k of keys){
+    try{
+      const arr=JSON.parse(localStorage.getItem(k)||'[]');
+      if(Array.isArray(arr)) arr.forEach(w=>{
+        const word=String(w.word||'').trim().toLowerCase();
+        if(word && !seen.has(word)){seen.add(word); merged.push(w)}
+      });
+    }catch(e){}
+  }
+  if(!merged.length){
+    const starter=['significant','substantial','mitigate'];
+    starter.forEach(word=>{
+      const d=fallback[word];
+      if(d) merged.push({word, ...d, category:word==='mitigate'?'TOEFL Academic':'TOEFL Academic', difficulty:'Orta', source:'TOEFL', status:'Yeni', reviewLevel:'Öğreniliyor', nextReview:null, reviewCount:0, correctCount:0, createdAt:new Date().toISOString(), lastStudied:null, personalSentence:'', note:''});
+    });
+  }
+  return merged;
+}
+let words=V46_FRESH_START?[]:loadWordsSafely();
+if(V46_FRESH_START){try{localStorage.setItem(KEY,'[]')}catch(e){}}
+// V37: vocabulary denemelerini tek seferlik sıfırla; kelime içerikleri korunur.
+if(!localStorage.getItem('vocamate_v37_reset_done')){
+  words=words.map(w=>({...w,reviewLevel:'Öğreniliyor',status:'Yeni',nextReview:null,lastReviewed:null,lastStudied:null,reviewCount:0,correctCount:0,interval:0}));
+  localStorage.setItem('vocamate_v37_reset_done','1');
+  try{localStorage.setItem(KEY,JSON.stringify(words));}catch(e){}
+}
+let currentPage='home', quizIndex=0;
+let appHistory=['home'], appHistoryIndex=0, historyBusy=false;
+
+
 
 function save(){localStorage.setItem(KEY,JSON.stringify(words))}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -1580,7 +1582,7 @@ function checkActiveSentence(encoded){_v33OriginalCheckActiveSentence(encoded);c
 render();
 updateBottomNav();
 
-// V48: accept a word shared from iOS Shortcuts via ?addWord=...
+// V49: accept a word shared from iOS Shortcuts via ?addWord=...
 function openSharedWordFromUrl(){
   let params, hasShareParam=false, shared='';
   try{
