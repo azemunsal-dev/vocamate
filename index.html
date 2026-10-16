@@ -518,10 +518,16 @@ function reviewedTodayCount(){const t=today();return words.filter(w=>w.lastRevie
 function getRecallWord(){
  const pool=words.filter(w=>!w.memorized);
  if(!pool.length)return null;
- const previous=window._vocamateLastRecallWord||localStorage.getItem('vocamate_last_recall_word')||'';
- const alternatives=pool.filter(w=>w.word!==previous);
- const choices=alternatives.length?alternatives:pool;
- const picked=choices[Math.floor(Math.random()*choices.length)];
+ const forced=window._vocamateForceRecallWord||localStorage.getItem('vocamate_force_recall_word')||'';
+ let picked=forced?pool.find(w=>w.word===forced):null;
+ try{localStorage.removeItem('vocamate_force_recall_word')}catch(e){}
+ window._vocamateForceRecallWord='';
+ if(!picked){
+  const previous=window._vocamateLastRecallWord||localStorage.getItem('vocamate_last_recall_word')||'';
+  const alternatives=pool.filter(w=>w.word!==previous);
+  const choices=alternatives.length?alternatives:pool;
+  picked=choices[Math.floor(Math.random()*choices.length)];
+ }
  window._vocamateLastRecallWord=picked.word;
  try{localStorage.setItem('vocamate_last_recall_word',picked.word)}catch(e){}
  return picked;
@@ -535,7 +541,16 @@ function recallCardHtml(w){
 }
 function toggleRecallMeaning(){const box=document.getElementById('recallMeaning'),btn=document.getElementById('recallRevealBtn');if(!box||!btn)return;const hidden=box.classList.toggle('hidden');btn.textContent=hidden?'👀 Anlamı göster':'🙈 Anlamı gizle';}
 function markRecallMemorized(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.memorized=true;w.memorizedAt=new Date().toISOString();save();toast('✅ '+w.word+' ezberlendi olarak işaretlendi');render();updateBottomNav();}
-function nextRecallWord(){const current=window._vocamateLastRecallWord||localStorage.getItem('vocamate_last_recall_word')||'';const pool=words.filter(w=>!w.memorized&&w.word!==current);if(!pool.length){toast('Gösterilecek başka kelime yok.');return;}if(currentPage==='home'){render();updateBottomNav();}}
+function toggleMemorizedWord(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.memorized=!w.memorized;if(w.memorized)w.memorizedAt=new Date().toISOString();else delete w.memorizedAt;save();toast(w.memorized?'✅ '+w.word+' ezberlendi olarak işaretlendi':'↩ '+w.word+' tekrar listesine alındı');render();updateBottomNav();}
+function nextRecallWord(){
+ const current=window._vocamateLastRecallWord||localStorage.getItem('vocamate_last_recall_word')||'';
+ const pool=words.filter(w=>!w.memorized&&w.word!==current);
+ if(!pool.length){toast('Gösterilecek başka kelime yok.');return;}
+ const picked=pool[Math.floor(Math.random()*pool.length)];
+ window._vocamateForceRecallWord=picked.word;
+ try{localStorage.setItem('vocamate_force_recall_word',picked.word)}catch(e){}
+ if(currentPage==='home'){render();updateBottomNav();}
+}
 
 function home(m){
  const due=dueWords(), reviewed=reviewedTodayCount(), total=words.length, strong=words.filter(w=>w.reviewLevel==='Güçlü').length;
@@ -1460,7 +1475,7 @@ function wordDetail(m){
  <div class="active-learning"><h3>🎓 TOEFL'da kullan</h3><p>Öğrendiğin kelimeyi sınavın Speaking ve Writing cevaplarına taşı.</p><div class="toefl-use"><div class="use-card"><b>🎤 Speaking</b><span>${esc(speakingUse)}</span></div><div class="use-card"><b>✍️ Writing</b><span>${esc(writingUse)}</span></div></div><button class="btn primary" style="width:100%;margin-top:10px" onclick="markToeflUse('${encodeURIComponent(w.word)}')">🎓 Bu kelimeyi TOEFL'da kullandım</button></div>
  <div class="card" style="margin-top:14px"><div class="section-title">🔄 Tekrar geçmişi</div><div class="meta">Son çalışmaların ve mevcut aralığın.</div><div class="v32-review-history">${reviewHistoryHtml(w)}</div></div>
  <div class="stats" style="margin-top:14px"><div class="stat"><strong>${w.reviewCount||0}</strong><span>Tekrar sayısı</span></div><div class="stat"><strong>${w.quizCorrect||0}</strong><span>Quiz doğru</span></div><div class="stat"><strong>${w.repetitions||0}</strong><span>Başarılı tekrar</span></div><div class="stat"><strong>${w.interval||0} gün</strong><span>Aralık</span></div></div>
- <div class="detail-actions" style="margin-top:14px"><button class="btn primary" onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Şimdi tekrar et</button><button class="btn secondary" onclick="editWord('${encodeURIComponent(w.word)}')">✏️ Düzenle</button></div><button class="delete" style="width:100%;margin-top:10px;padding:14px" onclick="deleteWord('${encodeURIComponent(w.word)}')">🗑️ Kelimeyi sil</button>`;
+ <div class="detail-actions" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px"><button class="btn ${w.memorized?'secondary':'primary'}" onclick="toggleMemorizedWord('${encodeURIComponent(w.word)}')">${w.memorized?'↩ Tekrar öğreniyorum':'✓ Ezberledim'}</button><button class="btn secondary" onclick="startSingleReview('${encodeURIComponent(w.word)}')">🧠 Şimdi tekrar et</button><button class="btn secondary" onclick="editWord('${encodeURIComponent(w.word)}')">✏️ Düzenle</button></div><button class="delete" style="width:100%;margin-top:10px;padding:14px" onclick="deleteWord('${encodeURIComponent(w.word)}')">🗑️ Kelimeyi sil</button>`;
 }
 function saveActiveSentence(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word),input=document.getElementById('activeSentence');if(!w||!input)return;w.userExample=input.value.trim();save();toast('✍️ Kendi cümlen kaydedildi');}
 function masteryInfo(w){
