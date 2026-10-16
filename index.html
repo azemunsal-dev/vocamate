@@ -558,6 +558,11 @@ function home(m){
  </div>
  
  ${recallCardHtml(recallWord)}
+ <div class="card" style="margin-top:12px;border:1px solid #dce6fb;background:#f8faff">
+   <div class="section-title">📱 Widget ile kelimelerini kullan</div>
+   <div class="meta" style="margin:6px 0 12px">Kaydettiğin kelimeleri iPhone widget’ına aktarmak için güncel kelime dosyanı oluştur.</div>
+   <button class="btn primary" style="width:100%" onclick="exportWidgetWords()">📤 Widget kelimelerini dışa aktar</button>
+ </div>
  
  <div class="section-head home-section"><div><div class="section-title">⚡ Hızlı erişim</div><div class="meta">Vocabulary çalışmaların</div></div></div>
  <div class="home-actions">
@@ -1359,6 +1364,29 @@ function reviewHistoryHtml(w){ const h=w.reviewHistory||[]; if(!h.length)return 
 function masteryPercent(w){ return masteryInfo(w).pct; }
 function toggleFavorite(encoded){ const word=decodeURIComponent(encoded), w=words.find(x=>x.word===word); if(!w)return; w.favorite=!w.favorite; save(); stats(document.getElementById('main')); }
 function vocabSortChange(){ stats(document.getElementById('main')); }
+function exportWidgetWords(){
+ const payload={
+  app:"VocaMate",
+  exportedAt:new Date().toISOString(),
+  words:words.map(w=>({
+   word:String(w.word||'').trim(),
+   meaning:String(w.meaning||''),
+   phonetic:String(w.phonetic||''),
+   type:String(w.type||''),
+   example:String(w.example||w.definition||''),
+   memorized:!!w.memorized,
+   favorite:!!w.favorite,
+   category:String(w.category||'General English')
+  })).filter(w=>w.word && w.meaning)
+ };
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='VocaMateWords.json';a.style.display='none';
+ document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+ toast('📲 Kelime dosyası hazır. Dosyalar’a kaydedip Scriptable klasörüne taşı.');
+}
+
 function exportVocabulary(){ const rows=[['word','meaning','definition','category','difficulty','source','mastery','interval','nextReview','reviewCount','repetitions','quizCorrect','quizWrong','favorite']]; words.forEach(w=>rows.push([w.word,w.meaning||'',w.definition||'',w.category||'',w.difficulty||'',w.sourceContext||'',masteryPercent(w),w.interval||0,w.nextReview||'',w.reviewCount||0,w.repetitions||0,w.quizCorrect||0,w.quizWrong||0,w.favorite?'yes':'no'])); const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='vocamate-vocabulary.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000); toast('📥 Kelime listen dışa aktarıldı'); }
 function stats(m){
   const due=dueWords(), strong=words.filter(w=>w.reviewLevel==='Güçlü'), learned=words.filter(w=>(w.repetitions||0)>0), forgotten=words.filter(w=>w.reviewLevel==='Unutuldu');
