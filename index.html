@@ -109,6 +109,22 @@ header{display:flex;justify-content:space-between;align-items:center;margin:4px 
 /* V13 home dashboard + V14 app navigation */
 .home-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:4px 0 20px}.home-topline h1{font-size:31px;line-height:1.12;margin:4px 0 7px}.home-date{font-size:14px;font-weight:750;color:#8793a9;text-transform:capitalize}.vocab-hero{background:#23406f;color:#fff;border-radius:26px;padding:22px;margin-bottom:14px;box-shadow:0 10px 28px #203b6820}.vh-head{display:flex;justify-content:space-between;gap:15px}.vh-kicker{font-size:12px;letter-spacing:1.1px;font-weight:850;opacity:.72}.vh-title{font-size:25px;font-weight:850;margin-top:4px}.vh-sub{font-size:15px;line-height:1.45;color:#dbe4f5;margin-top:6px}.vh-count{min-width:58px;height:58px;border-radius:18px;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:850}.vh-progress{height:9px;background:#ffffff2d;border-radius:10px;overflow:hidden;margin:20px 0 9px}.vh-progress span{display:block;height:100%;background:#8daaf7;border-radius:10px}.vh-bottom{display:flex;justify-content:space-between;font-size:13px;color:#dbe4f5}.vh-bottom b{color:#fff}.vh-btn{width:100%;border:0;border-radius:17px;padding:14px 16px;margin-top:15px;background:#fff;color:#23406f;font-size:16px;font-weight:850}.vh-btn span{float:right;font-size:20px}.vocab-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:23px}.vocab-stats button{border:1px solid #e8edf4;background:#fff;border-radius:18px;padding:14px 7px;text-align:center;color:#23406f}.vocab-stats b{display:block;font-size:23px}.vocab-stats span{display:block;font-size:11px;color:#7a879e;margin-top:3px;font-weight:700}.home-section{margin:0 2px 10px}.home-actions{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}.home-action{border:1px solid #e7ebf2;border-radius:20px;background:#fff;padding:15px;text-align:left;min-height:104px;box-shadow:0 5px 16px #203b6808}.home-action span{display:block;font-size:22px;margin-bottom:8px}.home-action b{display:block;font-size:15px;color:#233553}.home-action small{display:block;color:#7a879e;font-size:12px;margin-top:4px}.home-action.blue{border-top:3px solid #4772e6}.home-action.purple{border-top:3px solid #7b43d7}.home-action.orange{border-top:3px solid #e4a400}.home-action.green{border-top:3px solid #19a56b}.last-word-card{background:#fff;border:1px solid #e8edf4;border-radius:24px;padding:19px;margin-bottom:14px}.last-word-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.last-word-name{font-size:28px;font-weight:850;color:#172033}.last-word-meaning{font-size:16px;font-weight:700;color:#52627b;margin:4px 0 9px}.last-review{font-size:14px;font-weight:800;color:#4772e6;text-align:right;white-space:nowrap}.last-review small{display:block;color:#8995aa;font-size:11px;font-weight:600;margin-top:3px}.toefl-home-card{display:flex;align-items:center;gap:13px;background:#eef3ff;border:1px solid #dce6ff;border-radius:22px;padding:16px;margin-bottom:10px}.toefl-home-icon{width:45px;height:45px;border-radius:15px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:23px}.toefl-home-copy{flex:1}.toefl-home-card button{border:0;background:#23406f;color:#fff;width:40px;height:40px;border-radius:14px;font-size:20px}.badge{display:inline-block;background:#eef2f8;color:#5d6b82;border-radius:10px;padding:5px 8px;font-size:11px;font-weight:750;margin-top:2px}
 
+/* V51: rotating saved-word memory card */
+.recall-card{background:linear-gradient(145deg,#f0f5ff,#ffffff 72%);border:1px solid #dce6fb;border-radius:24px;padding:18px;margin:0 0 18px;box-shadow:0 7px 22px #203b680b}
+.recall-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.recall-kicker{font-size:11px;letter-spacing:.9px;font-weight:900;color:#4772e6}
+.recall-count{font-size:11px;font-weight:800;color:#5c6f91;background:#e2eaff;border-radius:10px;padding:6px 8px;white-space:nowrap}
+.recall-word{font-size:29px;line-height:1.15;font-weight:900;color:#23406f;margin:14px 0 4px;overflow-wrap:anywhere}
+.recall-phonetic{font-size:13px;color:#7786a0}
+.recall-meaning{background:#fff;border:1px solid #e5ebf6;border-radius:14px;padding:12px;margin-top:13px;color:#344661;font-weight:750;line-height:1.45}
+.recall-example{font-size:13px;color:#63728b;line-height:1.5;margin-top:9px}
+.recall-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.recall-actions button{min-height:43px;border:0;border-radius:13px;padding:10px 12px;font:inherit;font-size:13px;font-weight:850;cursor:pointer}
+.recall-reveal{background:#23406f;color:#fff;flex:1}
+.recall-known{background:#dff6e9;color:#176b47;flex:1}
+.recall-next{background:#e7edfb;color:#23406f;width:44px;font-size:20px!important;padding:8px!important}
+.recall-empty{font-size:14px;color:#66758e;line-height:1.5;margin-top:9px}
+
 /* V14 bottom navigation */
 .app-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:0;z-index:1000;pointer-events:none}
 .app-bottom-nav button{appearance:none;-webkit-appearance:none;position:fixed;bottom:82px;width:54px;height:54px;border:0;border-radius:50%;background:#23406f;color:#fff;box-shadow:0 8px 24px #203b6840;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:34px;line-height:1;pointer-events:auto;transition:transform .15s,opacity .15s}
@@ -499,9 +515,31 @@ function saveWritingPractice(){const ta=document.getElementById('writingAnswer')
 
 function todayLabel(){return new Intl.DateTimeFormat('tr-TR',{weekday:'long',day:'numeric',month:'long'}).format(new Date())}
 function reviewedTodayCount(){const t=today();return words.filter(w=>w.lastReviewed&&w.lastReviewed.slice(0,10)===t).length}
+function getRecallWord(){
+ const pool=words.filter(w=>!w.memorized);
+ if(!pool.length)return null;
+ const previous=window._vocamateLastRecallWord||localStorage.getItem('vocamate_last_recall_word')||'';
+ const alternatives=pool.filter(w=>w.word!==previous);
+ const choices=alternatives.length?alternatives:pool;
+ const picked=choices[Math.floor(Math.random()*choices.length)];
+ window._vocamateLastRecallWord=picked.word;
+ try{localStorage.setItem('vocamate_last_recall_word',picked.word)}catch(e){}
+ return picked;
+}
+function recallCardHtml(w){
+ if(!w){
+  return `<div class="recall-card"><div class="recall-top"><div class="recall-kicker">🧠 KELİMELERİ HATIRLA</div><div class="recall-count">Tebrikler!</div></div><div class="recall-empty">Tüm kayıtlı kelimelerini ezberledim olarak işaretledin. Yeni kelimeler eklediğinde burada tekrar karşına çıkacaklar.</div><button class="btn primary" style="width:100%;margin-top:12px" onclick="nav('add')">＋ Yeni kelime ekle</button></div>`;
+ }
+ const knownCount=words.filter(x=>x.memorized).length;
+ return `<div class="recall-card"><div class="recall-top"><div class="recall-kicker">🧠 KELİMELERİ HATIRLA</div><div class="recall-count">${knownCount} ezberlendi</div></div><div class="recall-word">${esc(w.word)} <button class="speak" onclick="speakWord(${JSON.stringify(w.word)})" aria-label="Kelimeyi dinle">🔊</button></div><div class="recall-phonetic">${esc(w.phonetic||'')} ${w.type?'• '+esc(w.type):''}</div><div id="recallMeaning" class="recall-meaning hidden">🇹🇷 ${esc(w.meaning||'Türkçe anlam eklenmemiş')}<div class="recall-example">${esc(w.example||w.definition||'')}</div></div><div class="recall-actions"><button class="recall-reveal" id="recallRevealBtn" onclick="toggleRecallMeaning()">👀 Anlamı göster</button><button class="recall-known" onclick="markRecallMemorized('${encodeURIComponent(w.word)}')">✓ Ezberledim</button><button class="recall-next" onclick="nextRecallWord()" aria-label="Başka kelime" title="Başka kelime">↻</button></div><div class="meta" style="margin-top:10px">Her ana sayfaya dönüşünde farklı bir kelime. Ezberlediklerin bu kartta tekrar gösterilmez; kelime hazinende kalır.</div></div>`;
+}
+function toggleRecallMeaning(){const box=document.getElementById('recallMeaning'),btn=document.getElementById('recallRevealBtn');if(!box||!btn)return;const hidden=box.classList.toggle('hidden');btn.textContent=hidden?'👀 Anlamı göster':'🙈 Anlamı gizle';}
+function markRecallMemorized(encoded){const word=decodeURIComponent(encoded),w=words.find(x=>x.word===word);if(!w)return;w.memorized=true;w.memorizedAt=new Date().toISOString();save();toast('✅ '+w.word+' ezberlendi olarak işaretlendi');render();updateBottomNav();}
+function nextRecallWord(){const current=window._vocamateLastRecallWord||localStorage.getItem('vocamate_last_recall_word')||'';const pool=words.filter(w=>!w.memorized&&w.word!==current);if(!pool.length){toast('Gösterilecek başka kelime yok.');return;}if(currentPage==='home'){render();updateBottomNav();}}
+
 function home(m){
  const due=dueWords(), reviewed=reviewedTodayCount(), total=words.length, strong=words.filter(w=>w.reviewLevel==='Güçlü').length;
- const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null;
+ const goal=20, goalPct=Math.min(100,reviewed/goal*100), last=words.length?words[words.length-1]:null, recallWord=getRecallWord();
  m.innerHTML=`
  <div class="home-topline"><div><div class="home-date">${todayLabel()}</div><h1>Bugün ne çalışalım?</h1><div class="sub" style="margin:0;font-size:16px">Kelime hazineni büyüt, öğrendiklerini unutma.</div></div><div class="streak">🔥 1 gün</div></div>
  
@@ -518,6 +556,8 @@ function home(m){
    <button onclick="startReview()"><b>${due.length}</b><span>Tekrar zamanı</span></button>
    <button onclick="nav('stats')"><b>${strong}</b><span>Güçlü kelime</span></button>
  </div>
+ 
+ ${recallCardHtml(recallWord)}
  
  <div class="section-head home-section"><div><div class="section-title">⚡ Hızlı erişim</div><div class="meta">Vocabulary çalışmaların</div></div></div>
  <div class="home-actions">
